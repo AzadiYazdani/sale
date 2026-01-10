@@ -31,10 +31,6 @@ import java.util.List;
 @Slf4j
 public class SwaggerConfig {
 
-//    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-//    private final BuildProperties buildProperties;
-
     @Value("${swagger.api.title}")
     private String apiTitle;
 
@@ -46,11 +42,6 @@ public class SwaggerConfig {
 
     @Value("${security.oauth2.token-uri}")
     private String TOKEN_URL;
-
-//    @Autowired
-//    public SwaggerConfig(BuildProperties buildProperties) {
-//        this.buildProperties = buildProperties;
-//    }
 
     @PostConstruct
     private void InitLog() {
@@ -74,20 +65,6 @@ public class SwaggerConfig {
         AuthorizationScope[] scopes = {
                 new AuthorizationScope("openid", "Getting access token")
         };
-
-//        OAuthBuilder oAuthBuilder = new OAuthBuilder();
-//        SecurityScheme oAuth = oAuthBuilder.name("auth.azadi.modern")
-//                .grantTypes(Arrays.asList(clientCredentialsGrant))
-//                .scopes(Arrays.asList(scopes))
-//                .build();
-//
-//        SecurityContext keycloak = SecurityContext.builder()
-//                .securityReferences(
-//                        Arrays.asList(new SecurityReference("auth.azadi.modern", scopes))
-//                )
-//                .forPaths(PathSelectors.any())
-//                .build();
-
 
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())

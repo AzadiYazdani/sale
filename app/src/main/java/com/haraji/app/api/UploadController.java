@@ -1,8 +1,8 @@
 package com.haraji.app.api;
 
+import com.haraji.app.mapper.UploadedMultipartFileMapper;
 import com.haraji.app.model.ThunderUploadedMultipartFile;
 import com.haraji.app.model.dto.UploadedMultipartFileDto;
-import com.haraji.app.model.mapper.UploadedMultipartFileMapper;
 import com.haraji.app.util.FileUploadUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

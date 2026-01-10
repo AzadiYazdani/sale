@@ -1,10 +1,10 @@
 package com.haraji.business.mapper;
 
 
+import com.haraji.business.api.SaleResponseDto;
 import com.haraji.business.database.entity.SaleViewEntity;
 import com.haraji.business.model.SaleView;
 import com.haraji.common.mapper.StructMapper;
-import com.haraji.business.api.SaleResponseDto;
 import org.mapstruct.Mapper;
 
 

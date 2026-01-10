@@ -8,6 +8,7 @@
         <module>baseInfo</module>
         <module>business</module>
         <module>app</module>
+        <module>security</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

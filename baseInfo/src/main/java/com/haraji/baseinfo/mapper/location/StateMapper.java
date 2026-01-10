@@ -2,8 +2,8 @@ package com.haraji.baseinfo.mapper.location;
 
 
 import com.haraji.baseinfo.api.location.state.StateResponseDto;
-import com.haraji.baseinfo.model.location.State;
 import com.haraji.baseinfo.database.entity.location.StateEntity;
+import com.haraji.baseinfo.model.location.State;
 import org.mapstruct.Builder;
 import org.mapstruct.Mapper;
 

@@ -1,10 +1,8 @@
 package com.haraji.baseinfo.api.util;
 
 
-import com.haraji.baseinfo.api.location.state.StateResponseDto;
 import com.haraji.common.dto.ResponseDto;
 import com.haraji.common.util.DateUtility;
-import java.time.LocalDate;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -19,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 
 @RestController
 @Api(value = "Util operations")
