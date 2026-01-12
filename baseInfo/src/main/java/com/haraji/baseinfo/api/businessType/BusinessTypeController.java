@@ -73,11 +73,11 @@ public class BusinessTypeController {
         return new ResponseEntity<ResponseDto<BusinessTypeResponseDto>>(ResponseDto.success(dtoResponse), HttpStatus.OK);
     }
 
-    @GetMapping("/businessType?")
+    @GetMapping("")
     @ApiOperation(value = "یافتن همه کسب و کارهایی که بخشی از یک واژه را دارند", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseDto<List<BusinessTypeResponseDto>>> search(@RequestParam("name") @Valid @NotNull @ApiParam(value = "بخشی از نام استان مورد نظر", example = "آذر", required = true) String value) {
-        log.debug("received value for searching name is {}", value);
-        List<BusinessType> businessTypeList = businessTypeService.searchTitle(value);
+    public ResponseEntity<ResponseDto<List<BusinessTypeResponseDto>>> search(@RequestParam("title") @Valid @NotNull @ApiParam(value = "بخشی از نام کسب و کار مورد نظر", example = "آذر", required = true) String title) {
+        log.debug("received value for searching name is {}", title);
+        List<BusinessType> businessTypeList = businessTypeService.searchTitle(title);
         List<BusinessTypeResponseDto> businessTypeResponseDtoList = businessTypeMapper.toDtoResponseList(businessTypeList);
         log.debug("the list of businessType for sending is {}", businessTypeResponseDtoList);
         return new ResponseEntity<ResponseDto<List<BusinessTypeResponseDto>>>(ResponseDto.success(businessTypeResponseDtoList), HttpStatus.OK);
