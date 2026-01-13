@@ -1,9 +1,15 @@
 package com.haraji.security.exception.authentication;
 
-public class UserNotFoundException extends RuntimeException {
+import com.haraji.common.exception.BaseException;
+
+public class UserNotFoundException extends BaseException {
 
     public UserNotFoundException() {
-        super("User not found");
+        super("user.not.found", null, null);
+    }
+
+    public UserNotFoundException(String username) {
+        super("user.not.found", null, username);
     }
 
 }

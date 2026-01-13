@@ -1,13 +1,14 @@
 package com.haraji.baseinfo.exception;
 
-public class BusinessTypeNotFoundException extends RuntimeException {
+import com.haraji.common.exception.BaseException;
 
-    public BusinessTypeNotFoundException(Long id) {
-        super(String.format("the business type %d not found", id));
+public class BusinessTypeNotFoundException extends BaseException {
+    public BusinessTypeNotFoundException() {
+        super("business.type.not.found", null, null);
     }
 
-    public BusinessTypeNotFoundException() {
-        super("No business type found");
+    public BusinessTypeNotFoundException(Long id) {
+        super("business.type.not.found", null, String.valueOf(id));
     }
 
 }

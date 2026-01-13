@@ -2,6 +2,7 @@ package com.haraji.security.util;
 
 
 import com.haraji.security.config.SecurityConfig;
+import com.haraji.security.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -35,9 +36,10 @@ public class JwtUtil {
         return null;
     }
 
-    public String generateToken(String username) {
+    public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, username);
+        claims.put("role", user.getRole());
+        return createToken(claims, user.getUsername());
     }
 
     public Boolean validateJwtToken(String token) {

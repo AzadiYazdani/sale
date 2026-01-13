@@ -13,7 +13,11 @@ public interface UserService {
 
     User getByName(String username);
 
-    User getById(int id);
+    User getById(Long id);
 
-    User createUser(UserRequestDto userRequest);
+    String createUser(UserRequestDto userRequest);
+
+    List<User> searchUsername(String title);
+
+    String login(String userName, String password);
 }

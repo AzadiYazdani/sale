@@ -1,14 +1,15 @@
 package com.haraji.security.exception.authentication;
 
-public class UserNotCreatedException extends RuntimeException {
+import com.haraji.common.exception.BaseException;
 
-    public UserNotCreatedException(String message){
-        super(message);
+public class UserNotCreatedException extends BaseException {
+
+    public UserNotCreatedException(String messageCode, String extraMessage){
+        super(messageCode, null, extraMessage);
     }
 
-
     public UserNotCreatedException() {
-        super("No user created");
+        super("user.not.created", null, null);
     }
 
 }

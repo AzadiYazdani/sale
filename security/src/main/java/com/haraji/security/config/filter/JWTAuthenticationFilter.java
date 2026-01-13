@@ -26,7 +26,6 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
     public JWTAuthenticationFilter(JwtUtil jwtUtil, CustomUserDetailsService userDetailsService) {
         this.jwtUtil = jwtUtil;
-
         this.userDetailsService = userDetailsService;
     }
 
@@ -55,9 +54,6 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         } catch (Exception e) {
             logger.error("Cannot set user authentication: {}", e);
         }
-
         filterChain.doFilter(request, response);
     }
-
-
 }

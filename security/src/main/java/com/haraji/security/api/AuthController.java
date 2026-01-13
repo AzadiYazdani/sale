@@ -14,8 +14,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,30 +26,25 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final UserService userService;
-    private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
-
-    public AuthController(UserService userService, AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
+    public AuthController(UserService userService, JwtUtil jwtUtil) {
         this.userService = userService;
-        this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
     }
 
     @PostMapping(value = "/login")
     @ApiOperation(value = "دریافت توکن", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<LoginResponse> login(@RequestBody @NonNull @ApiParam(value = "نام کاربری و گذواژه دامنه برای جستجو در DB", required = true) LoginRequestDto loginRequest) {
-        log.info("get token");
-        Authentication authentication = this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
-        String token = jwtUtil.generateToken(authentication.getName());
-        return ResponseEntity.ok(new LoginResponse(token));
+        log.debug("login request username: {}", loginRequest.getUsername() );
+        String jwtToken = userService.login(loginRequest.getUsername(), loginRequest.getPassword());
+        return ResponseEntity.ok(new LoginResponse(jwtToken));
     }
 
     @PostMapping("/register")
     public ResponseEntity<LoginResponse> register(@RequestBody UserRequestDto userRequestDto) {
         log.debug("received user request for creating a user is {}", userRequestDto);
-        User user = userService.createUser(userRequestDto);
-        String jwtToken = jwtUtil.generateToken(user.getUsername());
+        String jwtToken = userService.createUser(userRequestDto);
         return ResponseEntity.ok(new LoginResponse(jwtToken));
     }
 }

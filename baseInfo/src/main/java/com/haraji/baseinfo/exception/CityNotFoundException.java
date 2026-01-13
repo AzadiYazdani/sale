@@ -1,13 +1,16 @@
 package com.haraji.baseinfo.exception;
 
-public class CityNotFoundException extends RuntimeException {
+import com.haraji.common.exception.BaseException;
 
-    public CityNotFoundException(int id) {
-        super(String.format("No cities were found for the state with id %d", id));
-    }
+public class CityNotFoundException extends BaseException {
 
     public CityNotFoundException() {
-        super("No city found");
+        super("city.not.found", null, null);
     }
+
+    public CityNotFoundException(int id) {
+        super("state.cities.not.found", null, String.valueOf(id));
+    }
+
 
 }

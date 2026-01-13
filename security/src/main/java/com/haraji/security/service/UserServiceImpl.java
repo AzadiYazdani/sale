@@ -8,17 +8,23 @@ import com.haraji.security.database.repository.PersonRepository;
 import com.haraji.security.database.repository.UserRepository;
 import com.haraji.security.exception.authentication.UserNotCreatedException;
 import com.haraji.security.exception.authentication.UserNotFoundException;
+import com.haraji.security.exception.authentication.WrongPasswordException;
 import com.haraji.security.mapper.PersonMapper;
 import com.haraji.security.mapper.UserMapper;
-import com.haraji.security.model.Person;
 import com.haraji.security.model.User;
+import com.haraji.security.util.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -30,13 +36,17 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final PersonMapper personMapper;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
 
-    public UserServiceImpl(UserRepository userRepository, PersonRepository personRepository, UserMapper userMapper, PersonMapper personMapper, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, PersonRepository personRepository, UserMapper userMapper, PersonMapper personMapper, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
         this.userRepository = userRepository;
         this.personRepository = personRepository;
         this.userMapper = userMapper;
         this.personMapper = personMapper;
         this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+        this.jwtUtil = jwtUtil;
     }
 
     @Override
@@ -55,8 +65,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getByName(String username) {
         try {
-            UserEntity userEntity = userRepository.findByUsername(username).get();
-            return userMapper.toModel(userEntity);
+            Optional<UserEntity> optional = userRepository.findByUsername(username);
+            if (optional.isPresent())
+                return userMapper.toModel(optional.get());
+            throw new UserNotFoundException();
         } catch (Exception e) {
             log.info("\nThe exception '{}' was thrown for userService.getAll()", e.getMessage());
             throw new UserNotFoundException();
@@ -64,13 +76,34 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getById(int id) {
-        return null;
+    public User getById(Long id) {
+        try {
+            Optional<UserEntity> optional = userRepository.findById(id);
+            if (optional.isPresent())
+                return userMapper.toModel(optional.get());
+            throw new UserNotFoundException();
+        } catch (Exception e) {
+            log.info("\nThe exception '{}' was thrown for userService.getAll()", e.getMessage());
+            throw new UserNotFoundException();
+        }
+    }
+
+    @Override
+    public List<User> searchUsername(String title) {
+        try {
+            Optional<List<UserEntity>> userEntities = userRepository.findAllByUsernameContains(title);
+            if (userEntities.isPresent())
+                return userMapper.toModelList(userEntities.get());
+            throw new UserNotFoundException();
+        } catch (Exception e) {
+            log.info("\nThe exception '{}' was thrown for userService.getAll()", e.getMessage());
+            throw new UserNotFoundException();
+        }
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public User createUser(UserRequestDto userRequestDto) {
+    public String createUser(UserRequestDto userRequestDto) {
 
         checkUserName(userRequestDto.getUsername());
         checkNationalCode(userRequestDto.getNationalCode());
@@ -90,22 +123,36 @@ public class UserServiceImpl implements UserService {
             throw new UserNotCreatedException();
         }
         User user = userMapper.toModel(userEntity);
-        Person person = personMapper.toModel(personEntity);
-        user.setPerson(person);
-        return user;
+        return createToken(user);
+    }
+
+    @Override
+    public String login(String userName, String password) {
+        try {
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userName, password));
+            User user = this.getByName(userName);
+            return jwtUtil.generateToken(user);
+        } catch (BadCredentialsException ex) {
+            throw new WrongPasswordException();
+        }
     }
 
     private void checkNationalCode(String nationalCode) {
         personRepository.findByNationalCode(nationalCode).ifPresent(person -> {
             log.error("NationalCode already exists: {}", nationalCode);
-            throw new UserNotCreatedException("NationalCode exists ");
+            throw new UserNotCreatedException("national.code.exists", null);
         });
     }
 
     private void checkUserName(String username) {
         userRepository.findByUsername(username).ifPresent(user -> {
             log.error("Username already exists: {}", username);
-            throw new UserNotCreatedException("UserName exists ");
+            throw new UserNotCreatedException("username.exists", null);
         });
     }
+
+    private String createToken(User user) {
+        return jwtUtil.generateToken(user);
+    }
+
 }

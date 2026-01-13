@@ -13,14 +13,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController
@@ -39,6 +38,7 @@ public class UserController {
     }
 
     @GetMapping(value = "/all")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     @ApiOperation(value = "یافتن همه کاربران", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseDto<UserResponseDto>> getAllUsers() {
         List<User> user = userService.getAll();
@@ -62,11 +62,23 @@ public class UserController {
 
     @GetMapping(value = "/{userId}")
     @ApiOperation(value = "یافتن یک کاربر با شناسه", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<ResponseDto<UserResponseDto>> getById(@PathVariable("userId") @Valid @Min(1) @ApiParam(value = "شناسه کاربر", example = "1", required = true) int userId) {
         log.debug("received userId for retrieving a user is {}", userId);
-        User user = userService.getById(userId);
+        User user = userService.getById((long) userId);
         UserResponseDto dtoResponse = userMapper.toDtoResponse(user);
         log.debug("the UserDto for sending is {}", dtoResponse);
         return new ResponseEntity<ResponseDto<UserResponseDto>>(ResponseDto.success(dtoResponse), HttpStatus.OK);
+    }
+
+    @GetMapping("")
+    @ApiOperation(value = "یافتن همه کاربرانی که بخشی از یک واژه را دارند", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    public ResponseEntity<ResponseDto<List<UserResponseDto>>> searchUsername(@RequestParam("title") @Valid @NotNull @ApiParam(value = "بخشی از نام کاربر مورد نظر", example = "آذر", required = true) String title) {
+        log.debug("received value for searching name is {}", title);
+        List<User> userList = userService.searchUsername(title);
+        List<UserResponseDto> businessTypeResponseDtoList = userMapper.toDtoResponseList(userList);
+        log.debug("the list of businessType for sending is {}", businessTypeResponseDtoList);
+        return new ResponseEntity<ResponseDto<List<UserResponseDto>>>(ResponseDto.success(businessTypeResponseDtoList), HttpStatus.OK);
     }
 }
