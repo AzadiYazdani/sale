@@ -1,8 +1,8 @@
 package com.haraji.baseinfo.database.entity.business;
 
+import jakarta.persistence.*;
 import lombok.*;
 
-import javax.persistence.*;
 
 @Entity
 @Table(schema = "sale_db", name = "business_type")

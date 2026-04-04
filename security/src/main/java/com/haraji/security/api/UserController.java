@@ -2,7 +2,8 @@ package com.haraji.security.api;
 
 
 import com.haraji.common.dto.ResponseDto;
-import com.haraji.security.api.dto.UserResponseDto;
+import com.haraji.security.api.dto.UserEditRequestDto;
+import com.haraji.security.api.dto.register.UserResponseDto;
 import com.haraji.security.mapper.UserMapper;
 import com.haraji.security.model.User;
 import com.haraji.security.service.UserService;
@@ -13,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -64,7 +66,33 @@ public class UserController {
     @ApiOperation(value = "یافتن یک کاربر با شناسه", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<ResponseDto<UserResponseDto>> getById(@PathVariable("userId") @Valid @Min(1) @ApiParam(value = "شناسه کاربر", example = "1", required = true) int userId) {
-        log.debug("received userId for retrieving a user is {}", userId);
+        log.debug("getById received userId is {}", userId);
+        User user = userService.getById((long) userId);
+        UserResponseDto dtoResponse = userMapper.toDtoResponse(user);
+        log.debug("the UserDto for sending is {}", dtoResponse);
+        return new ResponseEntity<ResponseDto<UserResponseDto>>(ResponseDto.success(dtoResponse), HttpStatus.OK);
+    }
+
+    @PutMapping(value = "")
+    @ApiOperation(value = "ویرایش یک کاربر با شناسه", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyAuthority('VIEWER')")
+//    @Word.Operation(
+//            summary = "دسترسی ادمین",
+//            security = @SecurityRequirement(name = "bearerAuth")
+//    )
+    public ResponseEntity<ResponseDto<UserResponseDto>> editUser(@RequestBody @NonNull @ApiParam(value = "ویرایش ویژگی های کاربر", required = true) UserEditRequestDto userEditRequestDto) {
+        log.debug("editById received");
+        User user = userService.editUser(userEditRequestDto);
+        UserResponseDto dtoResponse = userMapper.toDtoResponse(user);
+        log.debug("the UserDto for sending is {}", dtoResponse);
+        return new ResponseEntity<ResponseDto<UserResponseDto>>(ResponseDto.success(dtoResponse), HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/{userId}")
+    @ApiOperation(value = "ویرایش یک کاربر با شناسه", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    public ResponseEntity<ResponseDto<UserResponseDto>> editByAdmin(@PathVariable("userId") @Valid @Min(1) @ApiParam(value = "شناسه کاربر", example = "1", required = true) int userId, @RequestBody @NonNull @ApiParam(value = "ویرایش ویژگی های کاربر", required = true) UserEditRequestDto userEditRequestDto) {
+        log.debug("editById received userId is {}", userId);
         User user = userService.getById((long) userId);
         UserResponseDto dtoResponse = userMapper.toDtoResponse(user);
         log.debug("the UserDto for sending is {}", dtoResponse);

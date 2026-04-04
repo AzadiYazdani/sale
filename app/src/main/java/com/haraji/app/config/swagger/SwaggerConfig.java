@@ -1,6 +1,7 @@
 package com.haraji.app.config.swagger;
 
-
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
@@ -13,13 +14,13 @@ import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.schema.ModelRef;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.AuthorizationScope;
-import springfox.documentation.service.ClientCredentialsGrant;
 import springfox.documentation.service.Parameter;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import javax.annotation.PostConstruct;
+
+import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +30,12 @@ import java.util.List;
 @PropertySource("classpath:application.yml")
 @Conditional(SwaggerEnabledCondition.class)
 @Slf4j
+@SecurityScheme(
+        name = "bearerAuth",
+        type = SecuritySchemeType.HTTP,
+        bearerFormat = "JWT",
+        scheme = "bearer"
+)
 public class SwaggerConfig {
 
     @Value("${swagger.api.title}")
@@ -40,8 +47,6 @@ public class SwaggerConfig {
     @Value("${swagger.api.version}")
     private String apiVersion;
 
-    @Value("${security.oauth2.token-uri}")
-    private String TOKEN_URL;
 
     @PostConstruct
     private void InitLog() {
@@ -60,8 +65,6 @@ public class SwaggerConfig {
                 .required(false);
         parameterBuildersList.add(parameterBuilder.build());
 
-        ClientCredentialsGrant clientCredentialsGrant = new ClientCredentialsGrant(TOKEN_URL);
-
         AuthorizationScope[] scopes = {
                 new AuthorizationScope("openid", "Getting access token")
         };
@@ -72,13 +75,27 @@ public class SwaggerConfig {
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.haraji"))
                 .paths(PathSelectors.any())
-                .build()
+                .build();
 //                .directModelSubstitute(LocalDate.class, String.class)
 //                .directModelSubstitute(LocalDateTime.class, String.class)
-////                .securitySchemes(Arrays.asList(oAuth))
-////                .securityContexts(Arrays.asList(keycloak))
-                ;
+//                .securitySchemes(Arrays.asList(securityScheme()))
+//                .securityContexts(Arrays.asList(securityContext()));
     }
+
+//    private SecurityScheme securityScheme() {
+//        GrantType grantType = new AuthorizationCodeGrantBuilder()
+//
+//                .tokenEndpoint(new TokenEndpoint(AUTH_SERVER + "/token", "oauthtoken"))
+//                .tokenRequestEndpoint(
+//                        new TokenRequestEndpoint(AUTH_SERVER + "/authorize", CLIENT_ID, CLIENT_SECRET))
+//                .build();
+//
+//        SecurityScheme oauth = new OAuthBuilder().name("spring_oauth")
+//                .grantTypes(Arrays.asList(grantType))
+//                .scopes(Arrays.asList(scopes()))
+//                .build();
+//        return oauth;
+//    }
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()

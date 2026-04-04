@@ -2,7 +2,7 @@ package com.haraji.baseinfo.database.entity.location;
 
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.List;
 
 @Entity

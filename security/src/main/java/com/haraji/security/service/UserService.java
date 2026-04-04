@@ -1,6 +1,7 @@
 package com.haraji.security.service;
 
-import com.haraji.security.api.dto.UserRequestDto;
+import com.haraji.security.api.dto.UserEditRequestDto;
+import com.haraji.security.api.dto.register.UserRequestDto;
 import com.haraji.security.model.User;
 import org.springframework.validation.annotation.Validated;
 
@@ -14,6 +15,8 @@ public interface UserService {
     User getByName(String username);
 
     User getById(Long id);
+
+    User editUser(UserEditRequestDto userEditRequestDto);
 
     String createUser(UserRequestDto userRequest);
 

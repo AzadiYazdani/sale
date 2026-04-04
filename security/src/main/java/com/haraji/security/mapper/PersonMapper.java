@@ -2,8 +2,8 @@ package com.haraji.security.mapper;
 
 
 import com.haraji.common.util.DateUtility;
-import com.haraji.security.api.dto.UserRequestDto;
-import com.haraji.security.api.dto.UserResponseDto;
+import com.haraji.security.api.dto.register.UserRequestDto;
+import com.haraji.security.api.dto.register.UserResponseDto;
 import com.haraji.security.database.entity.PersonEntity;
 import com.haraji.security.model.Person;
 import org.mapstruct.Builder;

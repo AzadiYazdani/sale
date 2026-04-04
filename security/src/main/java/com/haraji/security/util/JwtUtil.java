@@ -9,7 +9,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.spec.SecretKeySpec;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import java.security.Key;
 import java.util.*;
@@ -43,7 +43,7 @@ public class JwtUtil {
     }
 
     public Boolean validateJwtToken(String token) {
-        return extractExpiration(token).before(new Date());
+        return extractExpiration(token).after(new Date());
     }
 
     public boolean shouldRefreshToken(String token) {
@@ -74,7 +74,7 @@ public class JwtUtil {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parser().setSigningKey(securityConfig.getJwtSecretKey()).parseClaimsJws(token).getBody();
+        return Jwts.parser().setSigningKey(hmacKey).parseClaimsJws(token).getBody();
     }
 
     private String createToken(Map<String, Object> claims, String subject) {

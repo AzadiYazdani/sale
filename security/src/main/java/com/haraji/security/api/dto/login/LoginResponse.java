@@ -1,4 +1,4 @@
-package com.haraji.security.api.dto;
+package com.haraji.security.api.dto.login;
 
 import lombok.Getter;
 import lombok.Setter;

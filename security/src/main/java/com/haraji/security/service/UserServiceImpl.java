@@ -1,6 +1,7 @@
 package com.haraji.security.service;
 
-import com.haraji.security.api.dto.UserRequestDto;
+import com.haraji.security.api.dto.UserEditRequestDto;
+import com.haraji.security.api.dto.register.UserRequestDto;
 import com.haraji.security.constant.RoleEnum;
 import com.haraji.security.database.entity.PersonEntity;
 import com.haraji.security.database.entity.UserEntity;
@@ -12,12 +13,16 @@ import com.haraji.security.exception.authentication.WrongPasswordException;
 import com.haraji.security.mapper.PersonMapper;
 import com.haraji.security.mapper.UserMapper;
 import com.haraji.security.model.User;
+import com.haraji.security.util.CommonUtil;
 import com.haraji.security.util.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -89,6 +94,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User editUser(UserEditRequestDto userEditRequestDto) {
+        try {
+            UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getDetails();
+            if (StringUtils.isNotBlank(userDetails.getUsername())) {
+                Optional<UserEntity> optional = userRepository.findByUsername(userDetails.getUsername());
+                if (optional.isPresent())
+                    return userMapper.toModel(optional.get());
+            }
+            throw new UserNotFoundException();
+        } catch (Exception e) {
+            log.info("\nThe exception '{}' was thrown for userService.getAll()", e.getMessage());
+            throw new UserNotFoundException();
+        }
+    }
+
+    @Override
     public List<User> searchUsername(String title) {
         try {
             Optional<List<UserEntity>> userEntities = userRepository.findAllByUsernameContains(title);
@@ -128,6 +149,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String login(String userName, String password) {
+        CommonUtil.validateIdentifier(userName);
         try {
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userName, password));
             User user = this.getByName(userName);

@@ -30,4 +30,5 @@ public class UploadedMultipartFileDto implements Serializable {
     @ApiModelProperty(value = "مشخصات فایل")
     private Map<String, String> attributes;
 
+    private Boolean isEdit;
 }

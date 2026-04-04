@@ -8,21 +8,20 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(schema = "sale_db",name = "user")
+@Table(schema = "sale_db",name = "user_history")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(setterPrefix = "set", toBuilder = true, builderMethodName = "newInstance")
-public class UserEntity implements Serializable {
+public class UserHistoryEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private String username;
     private String password;
     private String email;
-
-    @Column (name="cell_phone")
-    private String phone;
 
     @Column (name="create_time")
     private LocalDateTime createTime;

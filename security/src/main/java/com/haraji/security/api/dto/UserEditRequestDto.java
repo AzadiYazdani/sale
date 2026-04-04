@@ -10,13 +10,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(setterPrefix = "set", toBuilder = true, builderMethodName = "newInstance")
-public class UserRequestDto  implements Serializable {
-
-    @ApiModelProperty(value = "نام کاربری", dataType = "String", required = true, example = "\"azadi.yazdani\"")
-    private String username;
-
-    @ApiModelProperty(value = "گذرواژه", dataType = "String", required = true, example = "\"Idaza123\"")
-    private String password;
+public class UserEditRequestDto implements Serializable {
 
     @ApiModelProperty(value = "ایمیل", dataType = "String", required = true, example = "\"azadi.yazdani@yahoo.com\"")
     private String email;
@@ -51,9 +45,7 @@ public class UserRequestDto  implements Serializable {
     @Override
     public String toString() {
         return "UserRequestDto{" +
-                "username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", email='" + email + '\'' +
+                "email='" + email + '\'' +
                 ", telephone='" + telephone + '\'' +
                 ", address='" + address + '\'' +
                 ", firstName='" + firstName + '\'' +

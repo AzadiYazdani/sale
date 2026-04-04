@@ -1,11 +1,9 @@
 package com.haraji.security.api;
 
-import com.haraji.security.api.dto.LoginRequestDto;
-import com.haraji.security.api.dto.LoginResponse;
-import com.haraji.security.api.dto.UserRequestDto;
-import com.haraji.security.model.User;
+import com.haraji.security.api.dto.login.LoginRequestDto;
+import com.haraji.security.api.dto.login.LoginResponse;
+import com.haraji.security.api.dto.register.UserRequestDto;
 import com.haraji.security.service.UserService;
-import com.haraji.security.util.JwtUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -13,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,11 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final UserService userService;
-    private final JwtUtil jwtUtil;
 
-    public AuthController(UserService userService, JwtUtil jwtUtil) {
+    public AuthController(UserService userService) {
         this.userService = userService;
-        this.jwtUtil = jwtUtil;
     }
 
     @PostMapping(value = "/login")
@@ -42,7 +37,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<LoginResponse> register(@RequestBody UserRequestDto userRequestDto) {
+    public ResponseEntity<LoginResponse> register(@RequestBody @NonNull @ApiParam(value = "ویژگی های ثبت نامی کاربر", required = true)UserRequestDto userRequestDto) {
         log.debug("received user request for creating a user is {}", userRequestDto);
         String jwtToken = userService.createUser(userRequestDto);
         return ResponseEntity.ok(new LoginResponse(jwtToken));

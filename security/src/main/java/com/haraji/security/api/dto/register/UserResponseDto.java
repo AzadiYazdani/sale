@@ -1,5 +1,6 @@
-package com.haraji.security.api.dto;
+package com.haraji.security.api.dto.register;
 
+import com.haraji.security.api.dto.PersonDto;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 

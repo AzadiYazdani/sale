@@ -17,6 +17,7 @@ public class BaseInfoExceptionHandler {
     public ResponseEntity<ApiError> handleUserNotFound(CityNotFoundException ex) {
         ApiError error = new ApiError(ex);
         error.setStatus(HttpStatus.NOT_FOUND);
+        error.setError(HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
@@ -24,6 +25,7 @@ public class BaseInfoExceptionHandler {
     public ResponseEntity<ApiError> handleUserNotCreated(StateNotFoundException ex) {
         ApiError error = new ApiError(ex);
         error.setStatus(HttpStatus.NOT_FOUND);
+        error.setError(HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 

@@ -6,9 +6,9 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Immutable;
 import org.joda.time.DateTime;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 
 
 @Entity
@@ -62,5 +62,7 @@ public class SaleViewEntity {
     private String description;
 
     private boolean active;
+
+    private Boolean isEdit;
 
 }

@@ -11,27 +11,40 @@ import java.util.ResourceBundle;
 @ToString
 public class ApiError {
 
-    private HttpStatus status;
     private LocalDateTime timestamp;
+    private int status;
+
+    private HttpStatus error;
     private String code;
     private String message;
     private String localizedMessage;
 
 
-    public ApiError(BaseException ex){
+    public ApiError(BaseException ex) {
         timestamp = LocalDateTime.now();
-        message= getMessage(ex.getMessageKey());
+        message = getMessage(ex.getMessageKey());
         localizedMessage = getLocalizedMessage(ex.getMessageKey());
         code = ex.getCode();
     }
-    public ApiError(RuntimeException ex){
+
+    public ApiError(RuntimeException ex) {
         timestamp = LocalDateTime.now();
-        message= ex.getMessage();
+        message = ex.getMessage();
         localizedMessage = getLocalizedMessage(ex.getMessage());
     }
 
+    public ApiError(String messageCode) {
+        timestamp = LocalDateTime.now();
+        message = getMessage(messageCode);
+        localizedMessage = getLocalizedMessage(messageCode);
+    }
+
     public void setStatus(HttpStatus status) {
-        this.status = status;
+        this.status = status.value();
+    }
+
+    public void setError(HttpStatus status) {
+        this.error = status;
     }
 
     public String getMessage(String errorCode) {

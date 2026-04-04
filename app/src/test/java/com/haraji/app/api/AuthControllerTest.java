@@ -2,7 +2,7 @@ package com.haraji.app.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.haraji.app.model.dto.UploadedMultipartFileDto;
-import com.haraji.security.api.dto.LoginRequestDto;
+import com.haraji.security.api.dto.login.LoginRequestDto;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
