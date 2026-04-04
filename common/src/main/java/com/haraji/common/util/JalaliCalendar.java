@@ -31,7 +31,7 @@ public class JalaliCalendar extends Calendar {
     private static final int ONE_SECOND = 1000;
     private static final int ONE_MINUTE = 60 * ONE_SECOND;
     private static final int ONE_HOUR = 60 * ONE_MINUTE;
-    static final int MIN_VALUES[] = {
+    static final int[] MIN_VALUES = {
             BCE,        // ERA
             1,        // YEAR
             FARVARDIN,    // MONTH
@@ -50,7 +50,7 @@ public class JalaliCalendar extends Calendar {
             -13 * ONE_HOUR,    // ZONE_OFFSET (UNIX compatibility)
             0        // DST_OFFSET
     };
-    static final int LEAST_MAX_VALUES[] = {
+    static final int[] LEAST_MAX_VALUES = {
             CE,        // ERA
             292269054,    // YEAR
             ESFAND,    // MONTH
@@ -69,7 +69,7 @@ public class JalaliCalendar extends Calendar {
             14 * ONE_HOUR,    // ZONE_OFFSET
             20 * ONE_MINUTE    // DST_OFFSET (historical least maximum)
     };
-    static final int MAX_VALUES[] = {
+    static final int[] MAX_VALUES = {
             CE,        // ERA
             292278994,    // YEAR
             ESFAND,    // MONTH
@@ -89,9 +89,9 @@ public class JalaliCalendar extends Calendar {
             2 * ONE_HOUR    // DST_OFFSET (double summer time)
     };
     private static final long ONE_DAY = 24 * ONE_HOUR;
-    public static int gregorianDaysInMonth[] = {31, 28, 31, 30, 31,
+    public static int[] gregorianDaysInMonth = {31, 28, 31, 30, 31,
             30, 31, 31, 30, 31, 30, 31};
-    public static int jalaliDaysInMonth[] = {31, 31, 31, 31, 31, 31,
+    public static int[] jalaliDaysInMonth = {31, 31, 31, 31, 31, 31,
             30, 30, 30, 30, 30, 29};
     private static TimeZone timeZone = TimeZone.getDefault();
     private static boolean isTimeSeted = false;
@@ -200,7 +200,7 @@ public class JalaliCalendar extends Calendar {
         jalaliNP = (int) Math.floor(jalaliDayNo / 12053);
         jalaliDayNo = jalaliDayNo % 12053;
 
-        jalaliYear = 979 + 33 * jalaliNP + 4 * (int) (jalaliDayNo / 1461);
+        jalaliYear = 979 + 33 * jalaliNP + 4 * (jalaliDayNo / 1461);
         jalaliDayNo = jalaliDayNo % 1461;
 
         if (jalaliDayNo >= 366) {
@@ -231,7 +231,7 @@ public class JalaliCalendar extends Calendar {
         jalali.setYear(jalali.getYear() - 979);
         jalali.setDay(jalali.getDay() - 1);
 
-        jalaliDayNo = 365 * jalali.getYear() + (int) (jalali.getYear() / 33) * 8
+        jalaliDayNo = 365 * jalali.getYear() + (jalali.getYear() / 33) * 8
                 + (int) Math.floor(((jalali.getYear() % 33) + 3) / 4);
         for (i = 0; i < jalali.getMonth(); ++i) {
             jalaliDayNo += jalaliDaysInMonth[i];
@@ -299,7 +299,6 @@ public class JalaliCalendar extends Calendar {
                 dayOfYear--;
                 break;
         }
-        ;
         dayOfYear = (int) Math.floor(dayOfYear / 7);
         return dayOfYear + 1;
     }
@@ -313,10 +312,8 @@ public class JalaliCalendar extends Calendar {
 
     public static boolean isLeepYear(int year) {
         //Algorithm from www.wikipedia.com
-        if ((year % 33 == 1 || year % 33 == 5 || year % 33 == 9 || year % 33 == 13 ||
-                year % 33 == 17 || year % 33 == 22 || year % 33 == 26 || year % 33 == 30)) {
-            return true;
-        } else return false;
+        return year % 33 == 1 || year % 33 == 5 || year % 33 == 9 || year % 33 == 13 ||
+                year % 33 == 17 || year % 33 == 22 || year % 33 == 26 || year % 33 == 30;
     }
 
     @Override
@@ -800,8 +797,7 @@ public class JalaliCalendar extends Calendar {
             if (obj == null) {
                 return false;
             }
-            if (obj instanceof YearMonthDate) {
-                YearMonthDate objValue = (YearMonthDate) obj;
+            if (obj instanceof YearMonthDate objValue) {
                 return year == objValue.year
                         && month == objValue.month
                         && day == objValue.day;

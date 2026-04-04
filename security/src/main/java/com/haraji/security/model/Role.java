@@ -19,8 +19,6 @@ public class Role {
 
     @Override
     public String toString() {
-       StringBuilder builder = new StringBuilder();
-        builder.append("title:"+ title);
-        return builder.toString();
+        return "title:" + title;
     }
 }

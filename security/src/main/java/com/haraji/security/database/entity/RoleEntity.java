@@ -31,8 +31,6 @@ public class RoleEntity implements Serializable {
 
     @Override
     public String toString() {
-       StringBuilder builder = new StringBuilder();
-        builder.append("title:"+ title);
-        return builder.toString();
+        return "title:" + title;
     }
 }

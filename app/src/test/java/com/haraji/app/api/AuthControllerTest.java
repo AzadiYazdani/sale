@@ -31,7 +31,7 @@ class AuthControllerTest {
         MockHttpServletResponse result = getToken();
         String response = result.getContentAsString();
         System.out.println(response);
-        assertEquals(result.getStatus(), 200);
+        assertEquals(200, result.getStatus());
     }
 
     private MockHttpServletResponse getToken() throws Exception {

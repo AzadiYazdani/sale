@@ -11,13 +11,13 @@ import java.util.ResourceBundle;
 @ToString
 public class ApiError {
 
-    private LocalDateTime timestamp;
+    private final LocalDateTime timestamp;
     private int status;
 
     private HttpStatus error;
     private String code;
-    private String message;
-    private String localizedMessage;
+    private final String message;
+    private final String localizedMessage;
 
 
     public ApiError(BaseException ex) {

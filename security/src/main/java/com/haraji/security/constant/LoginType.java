@@ -6,6 +6,5 @@ public enum LoginType {
 
     EMAIL,
     PHONE,
-    ;
 
 }

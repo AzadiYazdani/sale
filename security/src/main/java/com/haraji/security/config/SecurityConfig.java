@@ -22,8 +22,7 @@ public class SecurityConfig {
 
     @Bean
     public String[] defaultPermit() {
-        String[] permitAllURL = new String[]{"/csrf", "/v2/api-docs", "/csrf", "/swagger/**", "/swagger-ui/**", "/swagger**", "/webjars/**", "/swagger-resources/**", "/configuration/security", "/home", "/error", "/actuator", "/actuator/**"};
-        return permitAllURL;
+        return new String[]{"/csrf", "/v2/api-docs", "/csrf", "/swagger/**", "/swagger-ui/**", "/swagger**", "/webjars/**", "/swagger-resources/**", "/configuration/security", "/home", "/error", "/actuator", "/actuator/**"};
     }
 
 }
