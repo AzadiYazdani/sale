@@ -1,6 +1,6 @@
 package com.haraji.security.api.dto.login;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.io.Serializable;
@@ -10,12 +10,13 @@ import java.io.Serializable;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Schema(description = "مدل درخواست ورود به سیستم (لاگین)")
 public class LoginRequestDto implements Serializable {
     private static final long serialVersionUID = 2583865165014770858L;
 
-    @ApiModelProperty(value = "نام کاربری", dataType = "String", required = true, example = "azadi.yazdani")
+    @Schema(description = "نام کاربری", requiredMode = Schema.RequiredMode.REQUIRED, example = "azadi.yazdani")
     private String username;
 
-    @ApiModelProperty(value = "گذرواژه", dataType = "String", required = true, example = "Idaza123")
+    @Schema(description = "گذرواژه", requiredMode = Schema.RequiredMode.REQUIRED, example = "Idaza123")
     private String password;
 }

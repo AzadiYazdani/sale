@@ -46,26 +46,21 @@
                 <version>5.2.5.RELEASE</version>
             </dependency>
 
-            <dependency>
-                <groupId>javax.validation</groupId>
-                <artifactId>validation-api</artifactId>
-                <version>2.0.1.Final</version>
-            </dependency>
 
             <!--JWT...-->
             <dependency>
                 <groupId>io.jsonwebtoken</groupId>
                 <artifactId>jjwt</artifactId>
-                <version>0.9.1</version>
+                <version>0.12.3</version>
             </dependency>
 
 
 <!--LDAP-->
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-ldap</artifactId>
-                <version>5.7.6</version> <!-- Use the version compatible with your Spring Boot version -->
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.springframework.security</groupId>-->
+<!--                <artifactId>spring-security-ldap</artifactId>-->
+<!--&lt;!&ndash;                <version>5.7.6</version> &lt;!&ndash; Use the version compatible with your Spring Boot version &ndash;&gt;&ndash;&gt;-->
+<!--            </dependency>-->
 
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -222,29 +217,9 @@
 
             <!--Swagger...-->
             <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-boot-starter</artifactId>
-                <version>${swagger.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-swagger2</artifactId>
-                <version>${swagger.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-spring-web</artifactId>
-                <version>${swagger.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-swagger-ui</artifactId>
-                <version>${swagger.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.swagger</groupId>
-                <artifactId>swagger-annotations</artifactId>
-                <version>1.5.20</version>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>2.5.0</version>
             </dependency>
 
         </dependencies>

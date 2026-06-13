@@ -80,7 +80,7 @@ class AuthControllerTest {
                 MediaType.TEXT_PLAIN_VALUE,
                 "file",
                 "hello.txt",
-                null
+                null, Boolean.FALSE
         );
     }
 

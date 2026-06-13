@@ -1,7 +1,7 @@
 package com.haraji.security.api.dto.register;
 
 import com.haraji.security.api.dto.PersonDto;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.io.Serializable;
@@ -12,23 +12,22 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(setterPrefix = "set", toBuilder = true, builderMethodName = "newInstance")
+@Schema(description = "مدل پاسخ اطلاعات کاربر")
 public class UserResponseDto implements Serializable {
 
-//    @ApiModelProperty(value = "شناسه کاربر", dataType = "long", example = "1")
-//    private long id;
-
-    @ApiModelProperty(value = "نام کاربری", dataType = "String", example = "\"azadi.yazdani\"")
+    @Schema(description = "نام کاربری", example = "azadi.yazdani")
     private String username;
 
-    @ApiModelProperty(value = "ایمیل", dataType = "String", example = "\"azadi.yazdani@yahoo.com\"")
+    @Schema(description = "ایمیل", example = "azadi.yazdani@yahoo.com")
     private String email;
 
-    @ApiModelProperty(value = "زمان ساخته شدن", dataType = "String", example = "\"1/1/1403\"")
+    @Schema(description = "زمان ساخته شدن", example = "2024-03-20T10:00:00")
     private LocalDateTime createTime;
 
-    @ApiModelProperty(value = "زمان پایان اعتبار", dataType = "String", example = "\"1/10/1403\"")
+    @Schema(description = "زمان پایان اعتبار", example = "2024-06-20T10:00:00")
     private LocalDateTime expireTime;
 
+    @Schema(description = "اطلاعات شخصی کاربر")
     private PersonDto person;
 
     @Override

@@ -1,6 +1,6 @@
 package com.haraji.security.api.dto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.io.Serializable;
@@ -10,41 +10,42 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(setterPrefix = "set", toBuilder = true, builderMethodName = "newInstance")
+@Schema(description = "مدل درخواست ویرایش اطلاعات کاربر")
 public class UserEditRequestDto implements Serializable {
 
-    @ApiModelProperty(value = "ایمیل", dataType = "String", required = true, example = "\"azadi.yazdani@yahoo.com\"")
+    @Schema(description = "ایمیل", requiredMode = Schema.RequiredMode.REQUIRED, example = "azadi.yazdani@yahoo.com")
     private String email;
 
-    @ApiModelProperty(value = "تلفن", dataType = "String", example = "\"09122935797\"")
+    @Schema(description = "تلفن", example = "09122935797")
     private String telephone;
 
-    @ApiModelProperty(value = "نشانی", dataType = "String", example = "\"بالاتر از فلکه چهارم تهرانپارس\"")
+    @Schema(description = "نشانی", example = "بالاتر از فلکه چهارم تهرانپارس")
     private String address;
 
-    @ApiModelProperty(value = "نام کوچک", dataType = "String", example = "\"آزادی\"")
+    @Schema(description = "نام کوچک", example = "آزادی")
     private String firstName;
 
-    @ApiModelProperty(value = "نام خانوادگی", dataType = "String", example = "\"یزدانی\"")
+    @Schema(description = "نام خانوادگی", example = "یزدانی")
     private String lastName;
 
-    @ApiModelProperty(value = "نام پدر", dataType = "String", example = "\"حسن\"")
+    @Schema(description = "نام پدر", example = "حسن")
     private String fatherName;
 
-    @ApiModelProperty(value = "کد ملی", dataType = "String", example = "\"0451238680\"")
+    @Schema(description = "کد ملی", example = "0451238680")
     private String nationalCode;
 
-    @ApiModelProperty(value = "شماره شناسنامه", dataType = "String",  example = "\"1123\"")
+    @Schema(description = "شماره شناسنامه", example = "1123")
     private String identityNumber;
 
-    @ApiModelProperty(value = "تاریخ تولد", dataType = "String", example = "\"1/1/1358\"")
+    @Schema(description = "تاریخ تولد", example = "1/1/1358")
     private String birthDate;
 
-    @ApiModelProperty(value = "شهر تولد", dataType = "String", example = "\"تهران\"")
+    @Schema(description = "شهر تولد", example = "تهران")
     private String birthCity;
 
     @Override
     public String toString() {
-        return "UserRequestDto{" +
+        return "UserEditRequestDto{" +
                 "email='" + email + '\'' +
                 ", telephone='" + telephone + '\'' +
                 ", address='" + address + '\'' +

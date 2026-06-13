@@ -1,6 +1,6 @@
 package com.haraji.app.model.dto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,22 +13,24 @@ import java.util.Map;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "مدل انتقال اطلاعات فایل بارگذاری شده")
 public class UploadedMultipartFileDto implements Serializable {
 
-    @ApiModelProperty(value = "محتوای باینری", dataType = "bytes", required = true, example = "Hello, World!")
+    @Schema(description = "محتوای باینری فایل", requiredMode = Schema.RequiredMode.REQUIRED, example = "SGVsbG8sIFdvcmxkIQ==")
     private byte[] bytes;
 
-    @ApiModelProperty(value = "جنس محتوا", dataType = "String", required = true, example = "MediaType.TEXT_PLAIN_VALUE")
+    @Schema(description = "نوع محتوا (Content-Type)", requiredMode = Schema.RequiredMode.REQUIRED, example = "text/plain")
     private String contentType;
 
-    @ApiModelProperty(value = "شناسه شهر", dataType = "String", required = true, example = "file")
+    @Schema(description = "نام پارامتر فرم", requiredMode = Schema.RequiredMode.REQUIRED, example = "file")
     private String formParameterName;
 
-    @ApiModelProperty(value = "نام فایل", dataType = "String", required = true, example = "hello.txt")
+    @Schema(description = "نام اصلی فایل", requiredMode = Schema.RequiredMode.REQUIRED, example = "hello.txt")
     private String originalFilename;
 
-    @ApiModelProperty(value = "مشخصات فایل")
+    @Schema(description = "مشخصات و ویژگی‌های اضافی فایل")
     private Map<String, String> attributes;
 
+    @Schema(description = "وضعیت ویرایش فایل")
     private Boolean isEdit;
 }

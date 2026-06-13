@@ -1,6 +1,6 @@
 package com.haraji.business.api;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.joda.time.DateTime;
 
@@ -9,71 +9,71 @@ import org.joda.time.DateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(setterPrefix = "set", toBuilder = true, builderMethodName = "newInstance")
+@Schema(description = "مدل پاسخ اطلاعات حراجی")
 public class SaleResponseDto {
 
-    @ApiModelProperty(value = "شناسه حراجی", dataType = "long", example = "1")
+    @Schema(description = "شناسه حراجی", example = "1")
     private long id;
 
-    @ApiModelProperty(value = "شناسه کسب و کار", dataType = "int", example = "1")
+    @Schema(description = "شناسه کسب و کار", example = "1")
     private int id_business;
 
-    @ApiModelProperty(value = "نام فارسی کسب و کار", dataType = "String", example = "\"فروشگاه لوازم خانگی خانه سبز\"")
+    @Schema(description = "نام فارسی کسب و کار", example = "\"فروشگاه لوازم خانگی خانه سبز\"")
     private String business_title_per;
 
-    @ApiModelProperty(value = "شهر محل کسب و کار", dataType = "String", example = "\"تهران\"")
+    @Schema(description = "شهر محل کسب و کار", example = "\"تهران\"")
     private String business_city;
 
-    @ApiModelProperty(value = "نشانی محل کسب و کار و حراجی", dataType = "String", example = "\"چهارراه سیروس- کوچه قنادها- پلاک 82\"")
+    @Schema(description = "نشانی محل کسب و کار و حراجی", example = "\"چهارراه سیروس- کوچه قنادها- پلاک 82\"")
     private String address;
 
-    @ApiModelProperty(value = "تلفن کسب و کار", dataType = "String", example = "\"02166341231\"")
+    @Schema(description = "تلفن کسب و کار", example = "\"02166341231\"")
     private String business_tel;
 
-    @ApiModelProperty(value = "نوع کسب و کار", dataType = "String", example = "\"لوازم خانگی\"")
+    @Schema(description = "نوع کسب و کار", example = "\"لوازم خانگی\"")
     private String business_type;
 
-    @ApiModelProperty(value = "نام فرد پاسخگو به تلفن کسب و کار", dataType = "String", example = "\"جوادی\"")
+    @Schema(description = "نام فرد پاسخگو به تلفن کسب و کار", example = "\"جوادی\"")
     private String last_name;
 
-    @ApiModelProperty(value = "تاریخ ثبت حراجی", dataType = "String", example = "\"تهران\"")
+    @Schema(description = "تاریخ ثبت حراجی", example = "\"2023-10-25T10:00:00.000Z\"")
     private DateTime create_Date;
 
-    @ApiModelProperty(value = "تاریخ آغاز حراجی", dataType = "String", example = "\"تهران\"")
+    @Schema(description = "تاریخ آغاز حراجی", example = "\"2023-10-26T08:00:00.000Z\"")
     private DateTime start_Date;
 
-    @ApiModelProperty(value = "تاریخ پایان حراجی", dataType = "String", example = "\"تهران\"")
+    @Schema(description = "تاریخ پایان حراجی", example = "\"2023-11-26T22:00:00.000Z\"")
     private DateTime end_Date;
 
-    @ApiModelProperty(value = "طول حراجی", dataType = "String", example = "5")
+    @Schema(description = "طول حراجی", example = "5")
     private int duration;
 
-    @ApiModelProperty(value = "واحد زمانی طول حراجی (روز، هفته، ماه))", dataType = "String", example = "\"هفته\"")
+    @Schema(description = "واحد زمانی طول حراجی (مثلا 1 برای روز، 2 برای هفته)", example = "2")
     private int time_unit;
 
-    @ApiModelProperty(value = "ساعت آغاز حراجی", dataType = "integer", example = "9")
+    @Schema(description = "ساعت آغاز حراجی", example = "9")
     private int working_hour_from;
 
-    @ApiModelProperty(value = "ساعت پایان حراجی", dataType = "integer", example = "21")
+    @Schema(description = "ساعت پایان حراجی", example = "21")
     private int working_hour_to;
 
-    @ApiModelProperty(value = "کمترین درصد حراجی", dataType = "integer", example = "15")
+    @Schema(description = "کمترین درصد حراجی", example = "15")
     private int percentage_from;
 
-    @ApiModelProperty(value = "بیشترین درصد حراجی", dataType = "integer", example = "50")
+    @Schema(description = "بیشترین درصد حراجی", example = "50")
     private int percentage_to;
 
-    @ApiModelProperty(value = "بیشترین قیمت", dataType = "int", example = "\"200000\"")
+    @Schema(description = "بیشترین قیمت", example = "200000")
     private int highest_price;
 
-    @ApiModelProperty(value = "کمترین قیمت", dataType = "int", example = "\"50000\"")
+    @Schema(description = "کمترین قیمت", example = "50000")
     private int lowest_price;
 
-    @ApiModelProperty(value = "توضیحات حراجی", dataType = "String", example = "\"در این حراجی امکان پرداخت قسطی هم وجود دارد\"")
+    @Schema(description = "توضیحات حراجی", example = "\"در این حراجی امکان پرداخت قسطی هم وجود دارد\"")
     private String description;
 
-    @ApiModelProperty(value = "حراجی فعال ا ست", dataType = "boolean", example = "\"true\"")
+    @Schema(description = "حراجی فعال است", example = "true")
     private boolean active;
-
 
     @Override
     public String toString() {

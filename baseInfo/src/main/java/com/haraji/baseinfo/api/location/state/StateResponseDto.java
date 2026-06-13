@@ -1,6 +1,6 @@
 package com.haraji.baseinfo.api.location.state;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.io.Serializable;
@@ -10,12 +10,13 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(setterPrefix = "set", toBuilder = true, builderMethodName = "newInstance")
+@Schema(description = "مدل پاسخ اطلاعات استان")
 public class StateResponseDto implements Serializable {
 
-    @ApiModelProperty(value = "شناسه استان", dataType = "int", example = "1")
+    @Schema(description = "شناسه استان", example = "1")
     private int id;
 
-    @ApiModelProperty(value = "نام استان", dataType = "String", example = "\"آذربایجان شرقی\"")
+    @Schema(description = "نام استان", example = "\"آذربایجان شرقی\"")
     private String title;
 
     @Override

@@ -1,6 +1,6 @@
 package com.haraji.baseinfo.api.location.city;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 @Getter
@@ -8,15 +8,16 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(setterPrefix = "set", toBuilder = true, builderMethodName = "newInstance")
+@Schema(description = "مدل پاسخ اطلاعات شهر")
 public class CityResponseDto {
 
-    @ApiModelProperty(value = "شناسه شهر", dataType = "long", required = true, example = "1")
+    @Schema(description = "شناسه شهر", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
     private int id;
 
-    @ApiModelProperty(value = "شناسه استان", dataType = "long", required = true, example = "1")
+    @Schema(description = "شناسه استان", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
     private int stateId;
 
-    @ApiModelProperty(value = "نام شهر", dataType = "String", required = true, example = "\"ابهر\"")
+    @Schema(description = "نام شهر", requiredMode = Schema.RequiredMode.REQUIRED, example = "\"ابهر\"")
     private String title;
 
     @Override

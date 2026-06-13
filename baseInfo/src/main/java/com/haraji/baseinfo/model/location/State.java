@@ -2,8 +2,8 @@ package com.haraji.baseinfo.model.location;
 
 import lombok.*;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 
 @Getter
 @Setter

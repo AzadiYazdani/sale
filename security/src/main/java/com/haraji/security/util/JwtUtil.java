@@ -1,16 +1,15 @@
 package com.haraji.security.util;
 
-
 import com.haraji.security.config.SecurityConfig;
 import com.haraji.security.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.spec.SecretKeySpec;
-import jakarta.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotNull;
 import java.security.Key;
 import java.util.*;
 import java.util.function.Function;
@@ -23,8 +22,9 @@ public class JwtUtil {
 
     public JwtUtil(SecurityConfig securityConfig) {
         this.securityConfig = securityConfig;
-        this.hmacKey = new SecretKeySpec(Base64.getDecoder().decode(securityConfig.getJwtSecretKey()),
-                SignatureAlgorithm.HS256.getJcaName());
+        // استفاده از Keys.hmacShaKeyFor برای تولید کلید ایمن‌تر
+        byte[] keyBytes = Base64.getDecoder().decode(securityConfig.getJwtSecretKey());
+        this.hmacKey = Keys.hmacShaKeyFor(keyBytes);
     }
 
     public String parseJwtToken(HttpServletRequest request) {
@@ -43,7 +43,11 @@ public class JwtUtil {
     }
 
     public Boolean validateJwtToken(String token) {
-        return extractExpiration(token).after(new Date());
+        try {
+            return extractExpiration(token).after(new Date());
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public boolean shouldRefreshToken(String token) {
@@ -55,9 +59,9 @@ public class JwtUtil {
 
     public String refreshToken(String oldToken) {
         String username = extractUsername(oldToken);
-        Map<String, Object> claims = extractAllClaims(oldToken);
-
-        return createToken(claims, username);
+        Claims claims = extractAllClaims(oldToken);
+        // ایجاد نقشه جدید از کلایم‌ها برای ساخت توکن جدید
+        return createToken(new HashMap<>(claims), username);
     }
 
     public String extractUsername(String token) {
@@ -74,7 +78,11 @@ public class JwtUtil {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parser().setSigningKey(hmacKey).parseClaimsJws(token).getBody();
+        return Jwts.parser()
+                .verifyWith((javax.crypto.SecretKey) hmacKey) // استفاده از متد verifyWith
+                .build()
+                .parseSignedClaims(token) // استفاده از parseSignedClaims به جای parseClaimsJws
+                .getPayload(); // استفاده از getPayload به جای getBody
     }
 
     private String createToken(Map<String, Object> claims, String subject) {
@@ -86,25 +94,20 @@ public class JwtUtil {
                 .setSubject(subject)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
-                .signWith(SignatureAlgorithm.HS256, hmacKey)
+                .signWith(hmacKey, SignatureAlgorithm.HS256)
                 .compact();
     }
 
     public String createToken(@NotNull String username){
-//        Instant now = Instant.now();
-//        Date expiryDate = Date.from(now.plus(securityConfig.getJwtTimeout(), ChronoUnit.MILLIS));
-
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + securityConfig.getJwtTimeout());
 
         return Jwts.builder()
-//                .claim(securityConfig.getUserNameString(), username)
                 .setSubject(username)
                 .setId(UUID.randomUUID().toString())
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
-                .signWith(SignatureAlgorithm.HS256, hmacKey)
+                .signWith(hmacKey, SignatureAlgorithm.HS256)
                 .compact();
     }
-
 }
