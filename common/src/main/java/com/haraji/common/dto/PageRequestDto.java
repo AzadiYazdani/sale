@@ -1,6 +1,6 @@
 package com.haraji.common.dto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.io.Serializable;
@@ -10,12 +10,13 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(setterPrefix = "set", toBuilder = true, builderMethodName = "newInstance")
+@Schema(description = "مدل درخواست صفحه‌بندی")
 public class PageRequestDto implements Serializable {
 
-    @ApiModelProperty(value = "شماره صفحه", dataType = "int", example = "1")
+    @Schema(description = "شماره صفحه", example = "1")
     private Integer page;
 
-    @ApiModelProperty(value = "شمارگان اقلام هر صفحه", dataType = "int", example = "10")
+    @Schema(description = "شمارگان اقلام هر صفحه", example = "10")
     private Integer size;
 
 }
