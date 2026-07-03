@@ -18,9 +18,6 @@ public class UserResponseDto implements Serializable {
     @Schema(description = "نام کاربری", example = "azadi.yazdani")
     private String username;
 
-    @Schema(description = "ایمیل", example = "azadi.yazdani@yahoo.com")
-    private String email;
-
     @Schema(description = "زمان ساخته شدن", example = "2024-03-20T10:00:00")
     private LocalDateTime createTime;
 
@@ -34,7 +31,6 @@ public class UserResponseDto implements Serializable {
     public String toString() {
         return "UserResponseDto{" +
                 "username='" + username + '\'' +
-                ", email='" + email + '\'' +
                 ", createTime=" + createTime +
                 ", expireTime=" + expireTime +
                 ", person=" + person +

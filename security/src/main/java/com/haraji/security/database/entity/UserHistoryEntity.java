@@ -21,7 +21,6 @@ public class UserHistoryEntity implements Serializable {
 
     private String username;
     private String password;
-    private String email;
 
     @Column (name="create_time")
     private LocalDateTime createTime;

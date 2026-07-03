@@ -10,7 +10,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(setterPrefix = "set", toBuilder = true, builderMethodName = "newInstance")
-@Schema(description = "مدل درخواست ثبت‌نام کاربر")
+@Schema(description = "مدل درخواست ثبت ‌نام کاربر")
 public class UserRequestDto implements Serializable {
 
     @Schema(description = "نام کاربری", requiredMode = Schema.RequiredMode.REQUIRED, example = "azadi.yazdani")

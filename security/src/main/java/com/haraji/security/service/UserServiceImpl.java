@@ -133,6 +133,7 @@ public class UserServiceImpl implements UserService {
 
         UserEntity userEntity = userMapper.toEntity(userRequestDto);
         userEntity.setPerson(personEntity);
+
         userEntity.setRole(RoleEnum.VIEWER);
 
         String hashedPassword = passwordEncoder.encode(userRequestDto.getPassword());

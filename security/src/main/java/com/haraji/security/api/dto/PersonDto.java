@@ -37,7 +37,16 @@ public class PersonDto implements Serializable {
     @Schema(description = "شهر صدور شناسنامه", example = "تهران")
     private String issueCity;
 
-    @Schema(description = "تلفن", example = "09122935797")
+    @Schema(description = "ایمیل", example = "az.ya@yahoo.com")
+    private String email;
+
+    @Schema(description = "موبایل", example = "09122935797")
+    private String mobile;
+
+    @Schema(description = "پیش شماره شهر", example = "021")
+    private String cityCode;
+
+    @Schema(description = "تلفن", example = "77384677")
     private String telephone;
 
     @Schema(description = "نشانی", example = "بالاتر از فلکه چهارم تهرانپارس")
@@ -54,6 +63,9 @@ public class PersonDto implements Serializable {
                 ", birthDate='" + birthDate + '\'' +
                 ", birthCity='" + birthCity + '\'' +
                 ", issueCity='" + issueCity + '\'' +
+                ", email='" + email + '\'' +
+                ", mobile='" + mobile + '\'' +
+                ", cityCode='" + cityCode + '\'' +
                 ", telephone='" + telephone + '\'' +
                 ", address='" + address + '\'' +
                 '}';

@@ -3,6 +3,8 @@ package com.haraji.security.mapper;
 
 import com.haraji.security.api.dto.register.UserRequestDto;
 import com.haraji.security.api.dto.register.UserResponseDto;
+import com.haraji.security.constant.RoleEnum;
+import com.haraji.security.database.entity.RoleEntity;
 import com.haraji.security.database.entity.UserEntity;
 import com.haraji.security.model.User;
 import org.mapstruct.Builder;
@@ -26,4 +28,7 @@ public abstract class UserMapper {
 
     public abstract UserResponseDto toDtoResponse(User userList);
 
+    protected RoleEnum map(RoleEntity roleEntity) {
+        return roleEntity == null ? null : roleEntity.getRole();
+    }
 }

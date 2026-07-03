@@ -1,9 +1,11 @@
 package com.haraji.security.database.entity;
 
+import com.haraji.security.constant.RoleEnum;
 import lombok.*;
 
 import jakarta.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -19,18 +21,9 @@ public class RoleEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String title;
+    private RoleEnum role;
 
+    @OneToMany(mappedBy = "role")
+    private List<UserEntity> users = new ArrayList<>();
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_role",
-            joinColumns = @JoinColumn(name = "role_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id"))
-    private List<UserEntity> user;
-
-    @Override
-    public String toString() {
-        return "title:" + title;
-    }
 }

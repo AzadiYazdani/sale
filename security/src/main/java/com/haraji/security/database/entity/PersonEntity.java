@@ -19,7 +19,7 @@ public class PersonEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     @Column (name="first_name")
     private String firstName;
@@ -44,10 +44,32 @@ public class PersonEntity implements Serializable {
 
     @Column (name="city_of_issue")
     private String issueCity;
-
+    private String email;
+    private String mobile;
+    private String cityCode;
     private String telephone;
-
     private String address;
+    @OneToOne
+    private UserEntity user;
 
-
+    @Override
+    public String toString() {
+        return "PersonEntity{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", fatherName='" + fatherName + '\'' +
+                ", nationalCode='" + nationalCode + '\'' +
+                ", identityNumber='" + identityNumber + '\'' +
+                ", birthDate=" + birthDate +
+                ", birthCity='" + birthCity + '\'' +
+                ", issueCity='" + issueCity + '\'' +
+                ", email='" + email + '\'' +
+                ", mobile='" + mobile + '\'' +
+                ", cityCode='" + cityCode + '\'' +
+                ", telephone='" + telephone + '\'' +
+                ", address='" + address + '\'' +
+                ", user=" + user +
+                '}';
+    }
 }

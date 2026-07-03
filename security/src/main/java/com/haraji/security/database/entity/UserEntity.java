@@ -18,11 +18,8 @@ public class UserEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String username;
     private String password;
-    private String email;
-
-    @Column (name="cell_phone")
-    private String phone;
 
     @Column (name="create_time")
     private LocalDateTime createTime;
@@ -30,8 +27,7 @@ public class UserEntity implements Serializable {
     @Column (name="expire_time")
     private LocalDateTime expireTime;
 
-    @Enumerated(EnumType.ORDINAL)
-    @Column(name="role")
+    @Column(name = "role_id")
     private RoleEnum role;
 
     @OneToOne

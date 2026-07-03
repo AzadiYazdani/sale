@@ -20,6 +20,9 @@ public class Person{
     private LocalDate birthDate;
     private String birthCity;
     private String issueCity;
+    private String email;
+    private String mobile;
+    private String cityCode;
     private String telephone;
     private String address;
 
@@ -34,6 +37,9 @@ public class Person{
                 ", birthDate=" + birthDate +
                 ", birthCity='" + birthCity + '\'' +
                 ", issueCity='" + issueCity + '\'' +
+                ", email='" + email + '\'' +
+                ", mobile='" + mobile + '\'' +
+                ", cityCode='" + cityCode + '\'' +
                 ", telephone='" + telephone + '\'' +
                 ", address='" + address + '\'' +
                 '}';
