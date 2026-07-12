@@ -7,24 +7,25 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 
-@Getter
+@Data
 @ToString
 public class ApiError {
 
-    private final LocalDateTime timestamp;
+    private String errorCode;
     private int status;
 
     private HttpStatus error;
-    private String code;
+
     private final String message;
     private final String localizedMessage;
+    private final LocalDateTime timestamp;
 
 
     public ApiError(BaseException ex) {
         timestamp = LocalDateTime.now();
         message = getMessage(ex.getMessageKey());
         localizedMessage = getLocalizedMessage(ex.getMessageKey());
-        code = ex.getCode();
+        errorCode = ex.getCode();
     }
 
     public ApiError(RuntimeException ex) {
@@ -41,10 +42,6 @@ public class ApiError {
 
     public void setStatus(HttpStatus status) {
         this.status = status.value();
-    }
-
-    public void setError(HttpStatus status) {
-        this.error = status;
     }
 
     public String getMessage(String errorCode) {

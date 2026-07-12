@@ -14,7 +14,7 @@ import java.util.List;
 @Validated
 public interface BusinessTypeService {
 
-    BusinessType getById(@Min(1) long id);
+    BusinessType getById(@Min(1) Integer id);
 
     Page<BusinessType> getAllByPaging(@Valid @NotNull Pageable pageable);
     

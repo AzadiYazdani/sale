@@ -1,6 +1,6 @@
 package com.haraji.security.model;
 
-import com.haraji.security.constant.RoleEnum;
+import com.haraji.security.constant.RoleType;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -17,7 +17,7 @@ public class User {
     private String password;
     private LocalDateTime createTime;
     private LocalDateTime expireTime;
-    private RoleEnum role;
+    private RoleType role;
     private Person person;
 
 }

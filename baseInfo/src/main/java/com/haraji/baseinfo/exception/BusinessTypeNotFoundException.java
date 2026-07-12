@@ -7,7 +7,7 @@ public class BusinessTypeNotFoundException extends BaseException {
         super("business.type.not.found", null, null);
     }
 
-    public BusinessTypeNotFoundException(Long id) {
+    public BusinessTypeNotFoundException(Integer id) {
         super("business.type.not.found", null, String.valueOf(id));
     }
 

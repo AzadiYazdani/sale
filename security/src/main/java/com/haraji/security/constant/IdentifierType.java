@@ -1,6 +1,6 @@
 package com.haraji.security.constant;
 
-public enum LoginType {
+public enum IdentifierType {
 
     EMAIL,
     PHONE,

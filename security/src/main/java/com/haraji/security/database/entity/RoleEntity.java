@@ -1,6 +1,6 @@
 package com.haraji.security.database.entity;
 
-import com.haraji.security.constant.RoleEnum;
+import com.haraji.security.constant.RoleType;
 import lombok.*;
 
 import jakarta.persistence.*;
@@ -21,9 +21,10 @@ public class RoleEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private RoleEnum role;
+    private RoleType role;
 
     @OneToMany(mappedBy = "role")
+    @Builder.Default
     private List<UserEntity> users = new ArrayList<>();
 
 }

@@ -21,11 +21,18 @@ security:
   type: DB
   oauth2:
     token-uri: jdbc:mysql://localhost:3306/sale_db
+  otp:
+    length: 6
+    expiration-minutes: 2
+    resend-seconds: 60
+    max-attempts: 5
+    max-per-day: 20
 
 jwt:
   secret-key: asdfSFS34wfsdfsdfSDSD32dfsddDDerQSNCK34SOWEK5354fdgdf4
-  refresh-threshold-ms: 3600000  # 1 ساعت - زمانی که مانده به انقضا برای تمدید
   expiration-ms: 86400000  # 24 ساعت
+  refresh-threshold-ms: 120000  # 1 ساعت - زمانی که مانده به انقضا برای تمدید
+  refresh-expiration-days: 30
   token-string:
     header: Authorization
     prefix: Bearer

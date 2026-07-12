@@ -56,7 +56,7 @@ public class BusinessTypeController {
     }
 
     @GetMapping(value = "/{businessTypeId}")
-    public ResponseEntity<ResponseDto<BusinessTypeResponseDto>> getById(@PathVariable("businessTypeId") @Valid @Min(1)  long businessTypeId) {
+    public ResponseEntity<ResponseDto<BusinessTypeResponseDto>> getById(@PathVariable("businessTypeId") @Valid @Min(1)  Integer businessTypeId) {
         log.debug("received businessTypeId for retrieving a businessType is {}", businessTypeId);
         BusinessType businessType = businessTypeService.getById(businessTypeId);
         BusinessTypeResponseDto dtoResponse = businessTypeMapper.toDtoResponse(businessType);

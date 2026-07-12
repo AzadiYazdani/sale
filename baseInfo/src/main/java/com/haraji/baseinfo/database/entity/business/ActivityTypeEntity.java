@@ -15,7 +15,7 @@ public class ActivityTypeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Integer id;
 
     private String title;
 

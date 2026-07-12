@@ -1,7 +1,7 @@
 package com.haraji.security.util;
 
 import com.haraji.common.exception.InvalidFormatException;
-import com.haraji.security.constant.LoginType;
+import com.haraji.security.constant.IdentifierType;
 
 import java.util.regex.Pattern;
 
@@ -24,25 +24,25 @@ public class CommonUtil {
         }
     }
 
-    public static LoginType detectLoginType(String identifier) {
+    public static IdentifierType detectLoginType(String identifier) {
         String cleanIdentifier = identifier.trim().toLowerCase();
 
         // اول بررسی می‌کنیم آیا ایمیل معتبر است
         if (EMAIL_PATTERN.matcher(cleanIdentifier).matches()) {
-            return LoginType.EMAIL;
+            return IdentifierType.EMAIL;
         }
 
         // سپس شماره تلفن را بررسی می‌کنیم
         String digitsOnly = cleanIdentifier.replaceAll("[^0-9]", "");
         if (PHONE_PATTERN.matcher(digitsOnly).matches()) {
-            return LoginType.PHONE;
+            return IdentifierType.PHONE;
         }
 
         // اگر هیچکدام نبود، خطا
         throw new InvalidFormatException();
     }
 
-    public static String normalizeIdentifier(String identifier, LoginType type) {
+    public static String normalizeIdentifier(String identifier, IdentifierType type) {
         return switch (type) {
             case EMAIL -> identifier.toLowerCase().trim();
             case PHONE -> {

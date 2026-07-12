@@ -23,8 +23,6 @@ public class ApplicationRunner {
         SpringApplication application = new SpringApplication(ApplicationRunner.class);
         ConfigurableApplicationContext ctx = application.run(args);
         ctx.registerShutdownHook();
-
-        log.info("Application Started on http://localhost:8081/swagger-ui/#/");
     }
 
 }

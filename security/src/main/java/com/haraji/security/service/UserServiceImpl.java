@@ -2,7 +2,7 @@ package com.haraji.security.service;
 
 import com.haraji.security.api.dto.UserEditRequestDto;
 import com.haraji.security.api.dto.register.UserRequestDto;
-import com.haraji.security.constant.RoleEnum;
+import com.haraji.security.constant.RoleType;
 import com.haraji.security.database.entity.PersonEntity;
 import com.haraji.security.database.entity.UserEntity;
 import com.haraji.security.database.repository.PersonRepository;
@@ -69,15 +69,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getByName(String username) {
-        try {
-            Optional<UserEntity> optional = userRepository.findByUsername(username);
-            if (optional.isPresent())
-                return userMapper.toModel(optional.get());
-            throw new UserNotFoundException();
-        } catch (Exception e) {
-            log.info("\nThe exception '{}' was thrown for userService.getAll()", e.getMessage());
-            throw new UserNotFoundException();
-        }
+//        try {
+//            Optional<UserEntity> optional = userRepository.findByUsername(username);
+//            if (optional.isPresent())
+//                return userMapper.toModel(optional.get());
+//            throw new UserNotFoundException();
+//        } catch (Exception e) {
+//            log.info("\nThe exception '{}' was thrown for userService.getAll()", e.getMessage());
+//            throw new UserNotFoundException();
+//        }
+        return null;
     }
 
     @Override
@@ -95,31 +96,35 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User editUser(UserEditRequestDto userEditRequestDto) {
-        try {
-            UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getDetails();
-            if (StringUtils.isNotBlank(userDetails.getUsername())) {
-                Optional<UserEntity> optional = userRepository.findByUsername(userDetails.getUsername());
-                if (optional.isPresent())
-                    return userMapper.toModel(optional.get());
-            }
-            throw new UserNotFoundException();
-        } catch (Exception e) {
-            log.info("\nThe exception '{}' was thrown for userService.getAll()", e.getMessage());
-            throw new UserNotFoundException();
-        }
+//        try {
+//            UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getDetails();
+//            if (StringUtils.isNotBlank(userDetails.getUsername())) {
+//                Optional<UserEntity> optional = userRepository.findByUsername(userDetails.getUsername());
+//                if (optional.isPresent())
+//                    return userMapper.toModel(optional.get());
+//            }
+//            throw new UserNotFoundException();
+//        } catch (Exception e) {
+//            log.info("\nThe exception '{}' was thrown for userService.getAll()", e.getMessage());
+//            throw new UserNotFoundException();
+//        }
+
+
+        return null;
     }
 
     @Override
     public List<User> searchUsername(String title) {
-        try {
-            Optional<List<UserEntity>> userEntities = userRepository.findAllByUsernameContains(title);
-            if (userEntities.isPresent())
-                return userMapper.toModelList(userEntities.get());
-            throw new UserNotFoundException();
-        } catch (Exception e) {
-            log.info("\nThe exception '{}' was thrown for userService.getAll()", e.getMessage());
-            throw new UserNotFoundException();
-        }
+//        try {
+//            Optional<List<UserEntity>> userEntities = userRepository.findAllByUsernameContains(title);
+//            if (userEntities.isPresent())
+//                return userMapper.toModelList(userEntities.get());
+//            throw new UserNotFoundException();
+//        } catch (Exception e) {
+//            log.info("\nThe exception '{}' was thrown for userService.getAll()", e.getMessage());
+//            throw new UserNotFoundException();
+//        }
+        return null;
     }
 
     @Override
@@ -133,19 +138,20 @@ public class UserServiceImpl implements UserService {
 
         UserEntity userEntity = userMapper.toEntity(userRequestDto);
         userEntity.setPerson(personEntity);
-
-        userEntity.setRole(RoleEnum.VIEWER);
-
-        String hashedPassword = passwordEncoder.encode(userRequestDto.getPassword());
-        userEntity.setPassword(hashedPassword);
-        try {
-            userRepository.save(userEntity);
-        } catch (Exception e) {
-            log.info("\nThe exception '{}' was thrown for userService.createUser()", e.getMessage());
-            throw new UserNotCreatedException();
-        }
-        User user = userMapper.toModel(userEntity);
-        return createToken(user);
+//
+//        userEntity.setRole(RoleType.VIEWER);
+//
+//        String hashedPassword = passwordEncoder.encode(userRequestDto.getPassword());
+//        userEntity.setPassword(hashedPassword);
+//        try {
+//            userRepository.save(userEntity);
+//        } catch (Exception e) {
+//            log.info("\nThe exception '{}' was thrown for userService.createUser()", e.getMessage());
+//            throw new UserNotCreatedException();
+//        }
+//        User user = userMapper.toModel(userEntity);
+//        return createToken(user);
+        return null;
     }
 
     @Override
@@ -154,7 +160,8 @@ public class UserServiceImpl implements UserService {
         try {
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userName, password));
             User user = this.getByName(userName);
-            return jwtUtil.generateToken(user);
+//            return jwtUtil.generateToken(user);
+            return null;
         } catch (BadCredentialsException ex) {
             throw new WrongPasswordException();
         }
@@ -168,14 +175,17 @@ public class UserServiceImpl implements UserService {
     }
 
     private void checkUserName(String username) {
-        userRepository.findByUsername(username).ifPresent(user -> {
-            log.error("Username already exists: {}", username);
-            throw new UserNotCreatedException("username.exists", null);
-        });
+//        userRepository.findByUsername(username).ifPresent(user -> {
+//            log.error("Username already exists: {}", username);
+//            throw new UserNotCreatedException("username.exists", null);
+//        });
     }
 
     private String createToken(User user) {
-        return jwtUtil.generateToken(user);
+
+//        return jwtUtil.generateToken(user);
+        return null;
+
     }
 
 }

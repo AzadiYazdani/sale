@@ -1,113 +1,135 @@
 package com.haraji.security.util;
 
-import com.haraji.security.config.SecurityConfig;
-import com.haraji.security.model.User;
+import com.haraji.security.config.JwtProperties;
+import com.haraji.security.database.entity.UserEntity;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Component;
 
-import java.security.Key;
-import java.util.*;
+import javax.crypto.SecretKey;
+import java.util.Base64;
+import java.util.Date;
+import java.util.UUID;
 import java.util.function.Function;
 
 @Component
 public class JwtUtil {
 
-    private final SecurityConfig securityConfig;
-    private final Key hmacKey;
+    private static final String ROLE_CLAIM = "role";
+    private static final String BEARER_PREFIX = "Bearer ";
 
-    public JwtUtil(SecurityConfig securityConfig) {
-        this.securityConfig = securityConfig;
-        // استفاده از Keys.hmacShaKeyFor برای تولید کلید ایمن‌تر
-        byte[] keyBytes = Base64.getDecoder().decode(securityConfig.getJwtSecretKey());
-        this.hmacKey = Keys.hmacShaKeyFor(keyBytes);
+    private final JwtProperties jwtProperties;
+    private final SecretKey secretKey;
+
+    public JwtUtil(JwtProperties jwtProperties) {
+
+        this.jwtProperties = jwtProperties;
+
+        byte[] keyBytes =
+                Base64.getDecoder()
+                        .decode(jwtProperties.getSecretKey());
+
+        this.secretKey = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String parseJwtToken(HttpServletRequest request) {
-        String headerAuth = request.getHeader("Authorization");
+    /**
+     * ساخت Access Token
+     */
+    public String generateAccessToken(UserEntity user) {
 
-        if (headerAuth != null && headerAuth.startsWith("Bearer ")) {
-            return headerAuth.substring(7);
-        }
-        return null;
+        Date now = new Date();
+//        Date expiration = new Date(now.getTime() + jwtProperties.getExpirationMs());
+        Date expiration = new Date(now.getTime());
+
+        return Jwts.builder()
+                .subject(user.getId().toString())
+                .claim(ROLE_CLAIM, user.getRole().name())
+                .id(UUID.randomUUID().toString())
+                .issuedAt(now)
+                .expiration(expiration)
+                .signWith(secretKey)
+                .compact();
     }
 
-    public String generateToken(User user) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("role", user.getRole());
-        return createToken(claims, user.getUsername());
-    }
+    /**
+     * اعتبارسنجی Token
+     */
+    public boolean validateJwtToken(String token) {
 
-    public Boolean validateJwtToken(String token) {
         try {
-            return extractExpiration(token).after(new Date());
-        } catch (Exception e) {
+            extractAllClaims(token);
+            return true;
+        } catch (JwtException | IllegalArgumentException ex) {
             return false;
         }
+
     }
 
-    public boolean shouldRefreshToken(String token) {
-        Date expiration = extractExpiration(token);
-        Date now = new Date();
-        long timeUntilExpiration = expiration.getTime() - now.getTime();
-        return timeUntilExpiration <= securityConfig.getJwtRefreshThresholdMs();
+    /**
+     * استخراج UserId
+     */
+    public Long extractUserId(String token) {
+        return Long.parseLong(extractAllClaims(token).getSubject() );
     }
 
-    public String refreshToken(String oldToken) {
-        String username = extractUsername(oldToken);
-        Claims claims = extractAllClaims(oldToken);
-        // ایجاد نقشه جدید از کلایم‌ها برای ساخت توکن جدید
-        return createToken(new HashMap<>(claims), username);
+    /**
+     * استخراج Role
+     */
+    public String extractRole(String token) {
+        return extractAllClaims(token).get(ROLE_CLAIM, String.class);
     }
 
-    public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject);
-    }
-
+    /**
+     * استخراج تاریخ انقضا
+     */
     public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = extractAllClaims(token);
-        return claimsResolver.apply(claims);
+    /**
+     * استخراج Claim دلخواه
+     */
+    public <T> T extractClaim(String token, Function<Claims, T> resolver) {
+        return resolver.apply(extractAllClaims(token)
+        );
     }
 
+    /**
+     * آیا Token منقضی شده است؟
+     */
+    public boolean isExpired(String token) {
+        return extractExpiration(token).before(new Date());
+    }
+
+    /**
+     * استخراج Claims
+     */
     private Claims extractAllClaims(String token) {
         return Jwts.parser()
-                .verifyWith((javax.crypto.SecretKey) hmacKey) // استفاده از متد verifyWith
+                .verifyWith(secretKey)
                 .build()
-                .parseSignedClaims(token) // استفاده از parseSignedClaims به جای parseClaimsJws
-                .getPayload(); // استفاده از getPayload به جای getBody
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
-    private String createToken(Map<String, Object> claims, String subject) {
-        Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + securityConfig.getJwtTimeout());
+    /**
+     * استخراج Token از Header
+     */
+    public String parseJwtToken(HttpServletRequest request) {
 
-        return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(subject)
-                .setIssuedAt(now)
-                .setExpiration(expiryDate)
-                .signWith(hmacKey, SignatureAlgorithm.HS256)
-                .compact();
+        String header = request.getHeader("Authorization");
+        if (header == null) {
+            return null;
+        }
+
+        if (!header.startsWith(BEARER_PREFIX)) {
+            return null;
+        }
+
+        return header.substring(BEARER_PREFIX.length());
     }
 
-    public String createToken(@NotNull String username){
-        Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + securityConfig.getJwtTimeout());
-
-        return Jwts.builder()
-                .setSubject(username)
-                .setId(UUID.randomUUID().toString())
-                .setIssuedAt(now)
-                .setExpiration(expiryDate)
-                .signWith(hmacKey, SignatureAlgorithm.HS256)
-                .compact();
-    }
 }

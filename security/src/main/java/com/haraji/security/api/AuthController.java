@@ -1,6 +1,6 @@
 package com.haraji.security.api;
 
-import com.haraji.security.api.dto.login.LoginRequestDto;
+import com.haraji.security.api.dto.login.LoginPasswordRequest;
 import com.haraji.security.api.dto.login.LoginResponse;
 import com.haraji.security.api.dto.register.UserRequestDto;
 import com.haraji.security.service.UserService;
@@ -31,11 +31,12 @@ public class AuthController {
     @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "دریافت توکن")
     public ResponseEntity<LoginResponse> login(
-            @RequestBody @NonNull @Parameter(description = "نام کاربری و گذرواژه دامنه برای جستجو در DB", required = true) LoginRequestDto loginRequest) {
+            @RequestBody @NonNull @Parameter(description = "نام کاربری و گذرواژه دامنه برای جستجو در DB", required = true) LoginPasswordRequest loginRequest) {
 
-        log.debug("login request username: {}", loginRequest.getUsername());
-        String jwtToken = userService.login(loginRequest.getUsername(), loginRequest.getPassword());
-        return ResponseEntity.ok(new LoginResponse(jwtToken));
+//        log.debug("login request username: {}", loginRequest.getUsername());
+//        String jwtToken = userService.login(loginRequest.getUsername(), loginRequest.getPassword());
+//        return ResponseEntity.ok(new LoginResponse(jwtToken));
+        return null;
     }
 
     @PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -45,6 +46,7 @@ public class AuthController {
 
         log.debug("received user request for creating a user is {}", userRequestDto);
         String jwtToken = userService.createUser(userRequestDto);
-        return ResponseEntity.ok(new LoginResponse(jwtToken));
+//        return ResponseEntity.ok(new LoginResponse(jwtToken));
+        return null;
     }
 }

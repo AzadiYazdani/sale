@@ -1,6 +1,6 @@
 package com.haraji.security.database.entity;
 
-import com.haraji.security.constant.RoleEnum;
+import com.haraji.security.constant.RoleType;
 import lombok.*;
 
 import jakarta.persistence.*;
@@ -30,7 +30,7 @@ public class UserHistoryEntity implements Serializable {
 
     @Enumerated(EnumType.ORDINAL)
     @Column(name="role")
-    private RoleEnum role;
+    private RoleType role;
 
     @OneToOne
     private PersonEntity person;

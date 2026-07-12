@@ -1,6 +1,6 @@
 package com.haraji.security.constant;
 
-public enum RoleEnum {
+public enum RoleType {
     ADMIN(1),
     REGISTER(2),
     SELLER(3),
@@ -9,7 +9,7 @@ public enum RoleEnum {
 
     private final int value;
 
-    RoleEnum(final int newValue) {
+    RoleType(final int newValue) {
         value = newValue;
     }
 

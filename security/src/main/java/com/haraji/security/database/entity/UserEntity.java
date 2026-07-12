@@ -1,36 +1,56 @@
 package com.haraji.security.database.entity;
 
-import com.haraji.security.constant.RoleEnum;
+import com.haraji.security.constant.RoleType;
 import lombok.*;
 
 import jakarta.persistence.*;
+import lombok.experimental.SuperBuilder;
+
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Entity
-@Table(schema = "sale_db",name = "user")
+@Table(schema = "sale_db", name = "user")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(setterPrefix = "set", toBuilder = true, builderMethodName = "newInstance")
-public class UserEntity implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String username;
-    private String password;
+public class UserEntity extends BaseEntity<Long> implements Serializable {
 
-    @Column (name="create_time")
-    private LocalDateTime createTime;
+    @Column(nullable = false)
+    private String passwordHash;
 
-    @Column (name="expire_time")
-    private LocalDateTime expireTime;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 30)
+    @Builder.Default
+    private RoleType role = RoleType.VIEWER;
 
-    @Column(name = "role_id")
-    private RoleEnum role;
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean enabled = false;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean locked = false;
+
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @Builder.Default
+    private List<UserIdentifierEntity> identifiers = new ArrayList<>();
 
     @OneToOne
     private PersonEntity person;
 
+    public Optional<UserIdentifierEntity> getPrimaryIdentifier() {
+        return identifiers.stream()
+                .filter(UserIdentifierEntity::getPrimaryIdentifier)
+                .findFirst();
+
+    }
 }

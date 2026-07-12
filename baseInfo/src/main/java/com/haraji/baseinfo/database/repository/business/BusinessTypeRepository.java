@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface BusinessTypeRepository extends JpaRepository<BusinessTypeEntity, Long> {
+public interface BusinessTypeRepository extends JpaRepository<BusinessTypeEntity, Integer> {
 
-    Optional<BusinessTypeEntity> findById(Long id);
+    Optional<BusinessTypeEntity> findById(Integer id);
 
     List<BusinessTypeEntity> findAllByTitleContains(String titleValue);
 }

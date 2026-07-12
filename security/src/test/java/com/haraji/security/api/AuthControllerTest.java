@@ -1,7 +1,7 @@
 package com.haraji.security.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.haraji.security.api.dto.login.LoginRequestDto;
+import com.haraji.security.api.dto.login.LoginPasswordRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,8 +45,9 @@ class AuthControllerTest {
         return requestResult.getResponse();
     }
 
-    private LoginRequestDto getAuthRequest() {
-        return LoginRequestDto.builder().username("A.Yazdani").password("TIdaza123").build();
+    private LoginPasswordRequest getAuthRequest() {
+//        return LoginPasswordRequest.builder().username("A.Yazdani").password("TIdaza123").build();
+        return null;
     }
 
     private String asJsonString(final Object obj) {

@@ -2,7 +2,7 @@ package com.haraji.app.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.haraji.app.model.dto.UploadedMultipartFileDto;
-import com.haraji.security.api.dto.login.LoginRequestDto;
+import com.haraji.security.api.dto.login.LoginPasswordRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,8 +69,9 @@ class AuthControllerTest {
         assertEquals(requestResult.getResponse().getStatus(), 200);
     }
 
-    private LoginRequestDto getAuthRequest() {
-        return LoginRequestDto.builder().username("A.Yazdani").password("TIdaza123").build();
+    private LoginPasswordRequest getAuthRequest() {
+//        return LoginPasswordRequest.builder().username("A.Yazdani").password("TIdaza123").build();
+        return null;
     }
 
     private UploadedMultipartFileDto uploadRequest() {

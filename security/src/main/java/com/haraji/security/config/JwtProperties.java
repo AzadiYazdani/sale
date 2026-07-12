@@ -1,25 +1,25 @@
 package com.haraji.security.config;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
-@Configuration
-//@PropertySource("classpath:application.yml")
+
+@ConfigurationProperties(prefix = "jwt")
 @Getter
-public class SecurityConfig {
+@Setter
+public class JwtProperties {
 
-    @Value("${jwt.secret-key}")
-    private String jwtSecretKey;
+    private String secretKey;
 
-    @Value("${jwt.refresh-threshold-ms}")
-    private long jwtRefreshThresholdMs;
+    private long expirationMs;
 
-    @Value("${jwt.expiration-ms}")
-    private long jwtTimeout;
+    private long refreshThresholdMs;
 
-
+    private long refreshExpirationDays;
+    
     @Bean
     public String[] defaultPermit() {
         return new String[]{"/csrf", "/v2/api-docs", "/csrf", "/swagger/**", "/swagger-ui/**", "/swagger**", "/webjars/**", "/swagger-resources/**", "/configuration/security", "/home", "/error", "/actuator", "/actuator/**"};

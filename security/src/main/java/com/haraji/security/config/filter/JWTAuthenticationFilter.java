@@ -6,6 +6,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,45 +17,54 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+@Slf4j
 @Component
+@RequiredArgsConstructor
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
+
     private final CustomUserDetailsService userDetailsService;
 
-    // هدر جدید برای ارسال توکن تمدید شده
-    private static final String REFRESHED_TOKEN_HEADER = "X-Refreshed-Token";
-
-    public JWTAuthenticationFilter(JwtUtil jwtUtil, CustomUserDetailsService userDetailsService) {
-        this.jwtUtil = jwtUtil;
-        this.userDetailsService = userDetailsService;
-    }
-
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain)
             throws ServletException, IOException {
+
         try {
-            String jwt = jwtUtil.parseJwtToken(request);
-            if (jwt != null && jwtUtil.validateJwtToken(jwt)) {
-                String username = jwtUtil.extractUsername(jwt);
-
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
-
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-
-                // بررسی و تمدید توکن در صورت نیاز
-                if (jwtUtil.shouldRefreshToken(jwt)) {
-                    String refreshedToken = jwtUtil.refreshToken(jwt);
-                    response.setHeader(REFRESHED_TOKEN_HEADER, refreshedToken);
-                    logger.debug("JWT token refreshed for user: " + username);
-                }
+            String token = jwtUtil.parseJwtToken(request);
+            if (token == null) {
+                filterChain.doFilter(request, response);
+                return;
             }
-        } catch (Exception e) {
-            logger.error("Cannot set user authentication: {}", e);
+            if (!jwtUtil.validateJwtToken(token)) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+            if (SecurityContextHolder.getContext().getAuthentication() != null) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            Long userId = jwtUtil.extractUserId(token);
+            UserDetails userDetails = userDetailsService.loadUserById(userId);
+
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities()
+                    );
+
+            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        } catch (Exception ex) {
+            log.error("JWT authentication failed.", ex);
+            SecurityContextHolder.clearContext();
         }
         filterChain.doFilter(request, response);
     }
+
 }
