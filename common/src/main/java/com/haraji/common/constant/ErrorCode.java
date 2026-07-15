@@ -3,6 +3,7 @@ package com.haraji.common.constant;
 public enum ErrorCode {
     BAD_REQUEST,
     INVALID_FORMAT,
+    FORBIDDEN,
     USER_NOT_FOUND,
     IDENTIFIER_ALREADY_EXISTS,
     INVALID_PASSWORD,

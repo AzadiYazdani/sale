@@ -1,6 +1,5 @@
 package com.haraji.common.exception;
 
-import com.haraji.common.constant.AppLocale;
 import com.haraji.common.constant.Language;
 import com.haraji.common.dto.ErrorResponse;
 import com.haraji.common.util.MessageArgumentConverter;

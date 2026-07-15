@@ -1,4 +1,4 @@
-package com.haraji.common.exception;
+package com.haraji.common.constant;
 
 import lombok.Getter;
 

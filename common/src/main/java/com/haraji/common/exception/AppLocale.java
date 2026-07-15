@@ -1,4 +1,4 @@
-package com.haraji.common.constant;
+package com.haraji.common.exception;
 
 import java.util.Locale;
 

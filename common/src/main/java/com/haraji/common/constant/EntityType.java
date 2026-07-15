@@ -9,10 +9,11 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum EntityType {
 
+    USER("User", "کاربر"),
     CITY("City", "شهر"),
     STATE("State", "استان"),
     BUSINESS_TYPE("Business Type", "نوع کسب‌وکار"),
-    USER("User", "کاربر");
+    SALE("sale", "حراجی");
 
     private final String englishValue;
     private final String persianValue;
