@@ -3,10 +3,11 @@ package com.haraji.baseinfo.service.business;
 
 import com.haraji.baseinfo.database.entity.business.BusinessTypeEntity;
 import com.haraji.baseinfo.database.repository.business.BusinessTypeRepository;
-import com.haraji.baseinfo.exception.BusinessTypeNotFoundException;
 import com.haraji.baseinfo.mapper.BusinessTypeMapper;
 import com.haraji.baseinfo.model.BusinessType;
+import com.haraji.common.constant.EntityType;
 import com.haraji.common.exception.BadRequestException;
+import com.haraji.common.exception.EntityNotFoundException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -39,11 +40,11 @@ public class BusinessTypeServiceImpl implements BusinessTypeService {
     public BusinessType getById(@Min(1) Integer id) {
         try {
             BusinessTypeEntity businessTypeEntity = businessTypeRepository.findById(id)
-                    .orElseThrow(() -> new BusinessTypeNotFoundException(id));
+                    .orElseThrow(() -> new EntityNotFoundException(EntityType.BUSINESS_TYPE, id));
             return businessTypeMapper.toModel(businessTypeEntity);
         } catch (Exception e) {
             log.info("\nThe exception '{}' was thrown for ActivityTypeService.getById({})", e.getMessage(), id);
-            throw new BusinessTypeNotFoundException(id);
+            throw new EntityNotFoundException(EntityType.BUSINESS_TYPE, id);
         }
     }
 
@@ -53,14 +54,14 @@ public class BusinessTypeServiceImpl implements BusinessTypeService {
             Page<BusinessTypeEntity> activityTypeEntityPage = businessTypeRepository.findAll(pageable);
 
             if (activityTypeEntityPage.isEmpty()) {
-                throw new BusinessTypeNotFoundException();
+                throw new  EntityNotFoundException(EntityType.BUSINESS_TYPE);
             }
             List<BusinessType> businessTypeList = new ArrayList<>();
             activityTypeEntityPage.forEach(businessTypeEntity -> businessTypeList.add(businessTypeMapper.toModel(businessTypeEntity)));
             return new PageImpl<>(businessTypeList);
         } catch (Exception e) {
             log.info("\nThe exception '{}' was thrown for ActivityTypeService.getAllByPaging({}) ", e.getMessage(), pageable);
-            throw new BusinessTypeNotFoundException();
+            throw new EntityNotFoundException(EntityType.BUSINESS_TYPE);
         }
     }
 
@@ -68,12 +69,12 @@ public class BusinessTypeServiceImpl implements BusinessTypeService {
     public List<BusinessType> getAll() {
         try {
             List<BusinessTypeEntity> businessTypeEntityList = businessTypeRepository.findAll();
-            if (businessTypeEntityList != null && !businessTypeEntityList.isEmpty())
+            if (!businessTypeEntityList.isEmpty())
                 return businessTypeMapper.toModelList(businessTypeEntityList);
             return null;
         } catch (Exception e) {
             log.info("\nThe exception '{}' was thrown for BusinessTypeService.getAll()", e.getMessage());
-            throw new BusinessTypeNotFoundException();
+            throw new EntityNotFoundException(EntityType.BUSINESS_TYPE);
         }
     }
 
