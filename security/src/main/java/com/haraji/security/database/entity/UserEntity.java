@@ -1,10 +1,8 @@
 package com.haraji.security.database.entity;
 
 import com.haraji.security.constant.RoleType;
-import lombok.*;
-
 import jakarta.persistence.*;
-import lombok.experimental.SuperBuilder;
+import lombok.*;
 
 import java.io.Serializable;
 import java.util.ArrayList;

@@ -7,6 +7,9 @@ import com.haraji.baseinfo.exception.BusinessTypeNotFoundException;
 import com.haraji.baseinfo.mapper.BusinessTypeMapper;
 import com.haraji.baseinfo.model.BusinessType;
 import com.haraji.common.exception.BadRequestException;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
@@ -15,9 +18,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 

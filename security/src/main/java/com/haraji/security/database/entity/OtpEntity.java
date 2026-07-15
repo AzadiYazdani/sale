@@ -2,7 +2,10 @@ package com.haraji.security.database.entity;
 
 import com.haraji.security.constant.OtpPurpose;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 

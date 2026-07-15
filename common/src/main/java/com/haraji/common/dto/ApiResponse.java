@@ -1,7 +1,6 @@
 package com.haraji.common.dto;
 
 import lombok.*;
-
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;

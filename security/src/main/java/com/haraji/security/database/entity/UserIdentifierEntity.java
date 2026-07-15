@@ -3,7 +3,6 @@ package com.haraji.security.database.entity;
 import com.haraji.security.constant.IdentifierType;
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(schema = "sale_db",

@@ -1,9 +1,9 @@
 package com.haraji.security.database.entity;
 
 import com.haraji.security.constant.RoleType;
+import jakarta.persistence.*;
 import lombok.*;
 
-import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 

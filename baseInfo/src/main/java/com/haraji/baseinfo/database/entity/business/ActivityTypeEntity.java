@@ -1,8 +1,7 @@
 package com.haraji.baseinfo.database.entity.business;
 
-import lombok.*;
-
 import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
 @Table(schema = "sale_db", name = "activity_type")

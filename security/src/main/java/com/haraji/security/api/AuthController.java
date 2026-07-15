@@ -7,7 +7,6 @@ import com.haraji.security.api.dto.token.RefreshTokenRequest;
 import com.haraji.security.api.dto.token.TokenResponse;
 import com.haraji.security.service.LoginService;
 import com.haraji.security.service.RegisterService;
-import com.haraji.security.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

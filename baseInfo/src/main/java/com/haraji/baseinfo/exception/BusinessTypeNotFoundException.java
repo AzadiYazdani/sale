@@ -1,7 +1,7 @@
 package com.haraji.baseinfo.exception;
 
-import com.haraji.common.exception.BaseException;
 import com.haraji.common.constant.ErrorCode;
+import com.haraji.common.exception.BaseException;
 import org.springframework.http.HttpStatus;
 
 public class BusinessTypeNotFoundException extends BaseException {
