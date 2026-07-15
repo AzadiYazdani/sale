@@ -22,7 +22,7 @@ import lombok.experimental.SuperBuilder;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder(setterPrefix = "set", toBuilder = true, builderMethodName = "newInstance")
+@Builder(toBuilder = true, builderMethodName = "newInstance")
 public class UserIdentifierEntity extends BaseEntity<Long> {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

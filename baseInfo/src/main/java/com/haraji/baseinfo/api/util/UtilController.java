@@ -1,10 +1,12 @@
 package com.haraji.baseinfo.api.util;
 
-import com.haraji.common.dto.ResponseDto;
+import com.haraji.common.dto.ApiResponse;
+import com.haraji.common.exception.InvalidFormatException;
 import com.haraji.common.util.DateUtility;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.NotBlank;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,14 +29,15 @@ public class UtilController {
 
     @GetMapping(value = "/date", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "تبدیل زمان")
-    public ResponseEntity<ResponseDto<LocalDate>> getAllStates(
-            @RequestParam @Valid @Parameter(description = "تاریخ", example = "1/1/1358", required = true) String date ) {
+    public ResponseEntity<ApiResponse<LocalDate>> getDate(
+            @RequestParam @NotBlank @Parameter(description = "تاریخ", example = "1358/01/01", required = true)
+            String date) {
+        log.debug("Received date={}", date);
         try {
-            LocalDate localdate = DateUtility.getLocalDateFromString(date);
-            return new ResponseEntity<>(ResponseDto.success(localdate), HttpStatus.OK);
-
-        } catch (Exception e) {
-            return new ResponseEntity<>(ResponseDto.success(null), HttpStatus.BAD_REQUEST);
+            LocalDate response = DateUtility.getLocalDateFromString(date);
+            return ResponseEntity.ok(ApiResponse.success(response));
+        } catch (Exception ex) {
+            throw new InvalidFormatException();
         }
     }
 }

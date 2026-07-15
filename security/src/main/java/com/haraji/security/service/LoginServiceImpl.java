@@ -122,6 +122,17 @@ public class LoginServiceImpl implements LoginService {
         UserEntity user = refreshTokenEntity.getUser();
 
         /*
+         * اگر کاربر غیرفعال یا قفل شده باشد
+         */
+        if (!Boolean.TRUE.equals(user.getEnabled())) {
+            throw new RuntimeException("User is disabled");
+        }
+
+        if (Boolean.TRUE.equals(user.getLocked())) {
+            throw new RuntimeException("User is locked");
+        }
+
+        /*
          * Token Rotation
          *
          * توکن قبلی را باطل می‌کنیم
@@ -140,7 +151,7 @@ public class LoginServiceImpl implements LoginService {
         return TokenResponse.builder()
                 .accessToken(newAccessToken)
                 .refreshToken(newRefreshToken)
-//                .expiresIn(jwtProperties.getExpirationMs())
+                .expiresIn(jwtProperties.getExpirationMs())
                 .build();
     }
 

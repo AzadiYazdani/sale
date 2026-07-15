@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class RegisterServiceImpl implements RegisterService{
+public class RegisterServiceImpl implements RegisterService {
 
     private final UserRepository userRepository;
     private final UserIdentifierRepository identifierRepository;
@@ -27,35 +27,39 @@ public class RegisterServiceImpl implements RegisterService{
     private final OtpService otpService;
 
     @Override
+    @Transactional
     public RegisterResponse register(RegisterRequest request) {
 
         if (identifierRepository.existsByTypeAndValue(
                 request.getIdentifierType(),
                 request.getIdentifier())) {
 
-            throw new DuplicateIdentifierException();
+            throw new DuplicateIdentifierException(request.getIdentifierType());
         }
-        UserEntity user = new UserEntity();
-        user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
-        user.setRole(RoleType.REGISTER);
-        user.setEnabled(false);
-        user.setLocked(false);
-        userRepository.save(user);
-        UserIdentifierEntity identifier = new UserIdentifierEntity();
 
-        identifier.setUser(user);
-        identifier.setType(request.getIdentifierType());
-        identifier.setValue(request.getIdentifier());
-        identifier.setVerified(false);
-        identifier.setPrimaryIdentifier(true);
-        identifier.setEnabled(true);
+        UserEntity user = UserEntity.newInstance()
+                .passwordHash(passwordEncoder.encode(request.getPassword()))
+                .role(RoleType.VIEWER)
+                .enabled(false)
+                .locked(false)
+                .build();
+        user = userRepository.save(user);
 
-        identifierRepository.save(identifier);
+        UserIdentifierEntity identifier = UserIdentifierEntity.newInstance()
+                .user(user)
+                .type(request.getIdentifierType())
+                .value(request.getIdentifier())
+                .verified(false)
+                .primaryIdentifier(true)
+                .enabled(true)
+                .build();
+        identifier = identifierRepository.save(identifier);
+
         otpService.generateOtp(identifier, OtpPurpose.REGISTER);
-        RegisterResponse response = new RegisterResponse();
-        response.setUserId(user.getId());
-        response.setMessage("Verification code has been sent.");
-        return response;
+        return RegisterResponse.newInstance()
+                .userId(user.getId())
+                .message("Verification code has been sent.")
+                .build();
     }
 
     @Override

@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder(setterPrefix = "set", toBuilder = true, builderMethodName = "newInstance")
+@Builder(toBuilder = true, builderMethodName = "newInstance")
 public class RegisterResponse {
 
     private Long userId;

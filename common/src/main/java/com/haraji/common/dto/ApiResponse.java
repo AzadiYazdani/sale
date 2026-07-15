@@ -1,31 +1,55 @@
 package com.haraji.common.dto;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
-@Data
+import org.springframework.http.HttpStatus;
 
+import java.time.LocalDateTime;
+
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ApiResponse<T> {
 
-        private int code;
-        private String message;
-        private T data;
-        private long timestamp;
+    /**
+     * HTTP Status Code
+     */
+    private int status;
 
-        public ApiResponse(int code, String message, T data) {
-            this.code = code;
-            this.message = message;
-            this.data = data;
-            this.timestamp = System.currentTimeMillis();
-        }
+    /**
+     * پیام پاسخ
+     */
+    private String message;
 
-        // متدهای کمکی برای ساخت پاسخ موفق و ناموفق
-        public static <T> ApiResponse<T> success(T data) {
-            return new ApiResponse<>(200, "success", data);
-        }
+    /**
+     * داده اصلی
+     */
+    private T data;
 
-        public static <T> ApiResponse<T> error(int code, String message) {
-            return new ApiResponse<>(code, message, null);
-        }
+    /**
+     * زمان پاسخ
+     */
+    @Builder.Default
+    private LocalDateTime timestamp = LocalDateTime.now();
+
+    public static <T> ApiResponse<T> success(T data) {
+
+        return ApiResponse.<T>builder()
+                .status(HttpStatus.OK.value())
+                .message("success")
+                .data(data)
+                .build();
+    }
+
+    public static <T> ApiResponse<T> success(String message, T data) {
+
+        return ApiResponse.<T>builder()
+                .status(HttpStatus.OK.value())
+                .message(message)
+                .data(data)
+                .build();
+    }
 
 }

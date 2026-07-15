@@ -2,27 +2,23 @@ package com.haraji.security.service;
 
 import com.haraji.security.api.dto.UserEditRequestDto;
 import com.haraji.security.api.dto.register.UserRequestDto;
-import com.haraji.security.constant.RoleType;
 import com.haraji.security.database.entity.PersonEntity;
 import com.haraji.security.database.entity.UserEntity;
 import com.haraji.security.database.repository.PersonRepository;
 import com.haraji.security.database.repository.UserRepository;
 import com.haraji.security.exception.authentication.UserNotCreatedException;
 import com.haraji.security.exception.authentication.UserNotFoundException;
-import com.haraji.security.exception.authentication.WrongPasswordException;
 import com.haraji.security.mapper.PersonMapper;
 import com.haraji.security.mapper.UserMapper;
 import com.haraji.security.model.User;
 import com.haraji.security.util.CommonUtil;
 import com.haraji.security.util.JwtUtil;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,25 +30,13 @@ import java.util.Optional;
 @Service
 @Slf4j
 @Validated
+@AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PersonRepository personRepository;
     private final UserMapper userMapper;
     private final PersonMapper personMapper;
-    private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManager authenticationManager;
-    private final JwtUtil jwtUtil;
-
-    public UserServiceImpl(UserRepository userRepository, PersonRepository personRepository, UserMapper userMapper, PersonMapper personMapper, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
-        this.userRepository = userRepository;
-        this.personRepository = personRepository;
-        this.userMapper = userMapper;
-        this.personMapper = personMapper;
-        this.passwordEncoder = passwordEncoder;
-        this.authenticationManager = authenticationManager;
-        this.jwtUtil = jwtUtil;
-    }
 
     @Override
     public List<User> getAll() {
@@ -114,6 +98,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User editUserByAdmin(Long userId, UserEditRequestDto request) {
+        return null;
+    }
+
+    @Override
     public List<User> searchUsername(String title) {
 //        try {
 //            Optional<List<UserEntity>> userEntities = userRepository.findAllByUsernameContains(title);
@@ -154,18 +143,6 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
-    @Override
-    public String login(String userName, String password) {
-        CommonUtil.validateIdentifier(userName);
-        try {
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userName, password));
-            User user = this.getByName(userName);
-//            return jwtUtil.generateToken(user);
-            return null;
-        } catch (BadCredentialsException ex) {
-            throw new WrongPasswordException();
-        }
-    }
 
     private void checkNationalCode(String nationalCode) {
         personRepository.findByNationalCode(nationalCode).ifPresent(person -> {

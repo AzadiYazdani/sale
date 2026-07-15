@@ -3,20 +3,19 @@ package com.haraji.business.api;
 import com.haraji.business.mapper.SaleMapper;
 import com.haraji.business.model.SaleView;
 import com.haraji.business.service.SaleViewService;
-import com.haraji.common.dto.ResponseDto;
+import com.haraji.common.dto.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+
 import java.util.List;
 
 @RestController
@@ -35,27 +34,38 @@ public class SaleViewController {
     }
 
     @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "یافتن همه حراجی ها بر اساس شناسه شهر و شناسه نوع کسب و کار")
-    public ResponseEntity<ResponseDto<List<SaleResponseDto>>> getAllSales(
-            @RequestParam("city") @Valid @NotNull @Parameter(description = "شناسه شهر مورد نظر", example = "2", required = true) String cityId,
-            @RequestParam("businessType") @Valid @NotNull @Parameter(description = "شناسه کسب و کار مورد نظر", example = "2", required = true) String businessTypeId
-    ) {
-        log.debug("received value for getAllSales is city {} and businessType {}", cityId, businessTypeId);
-        List<SaleView> saleList = saleViewService.getAllSalesByCityAndBusinessType(Integer.parseInt(cityId), Integer.parseInt(businessTypeId));
-        List<SaleResponseDto> saleResponseDtoList = saleMapper.toDtoResponseList(saleList);
-        log.debug("the list of sales for sending is {}", saleResponseDtoList);
-        return new ResponseEntity<>(ResponseDto.success(saleResponseDtoList), HttpStatus.OK);
+    @Operation(summary = "یافتن همه حراجی‌ها بر اساس شناسه شهر و شناسه نوع کسب‌وکار")
+    public ResponseEntity<ApiResponse<List<SaleResponseDto>>> getAllSales(
+
+            @RequestParam("city")
+            @NotNull
+            @Min(1)
+            @Parameter(description = "شناسه شهر مورد نظر", example = "2", required = true) Integer cityId,
+
+            @RequestParam("businessType")
+            @NotNull
+            @Min(1)
+            @Parameter(description = "شناسه نوع کسب‌وکار", example = "2", required = true) Integer businessTypeId) {
+
+        log.debug("received cityId={} and businessTypeId={}", cityId, businessTypeId);
+        List<SaleView> saleList = saleViewService.getAllSalesByCityAndBusinessType(cityId, businessTypeId);
+        List<SaleResponseDto> response = saleMapper.toDtoResponseList(saleList);
+        log.debug("sending {} sales", response.size());
+        return ResponseEntity.ok(ApiResponse.success(response));
     }
 
     @GetMapping(value = "/{saleId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "یافتن یک حراجی با شناسه")
-    public ResponseEntity<ResponseDto<SaleResponseDto>> getById(
-            @PathVariable("saleId") @Valid @Min(1) @Parameter(description = "شناسه حراج مورد نظر", example = "1", required = true) int saleId) {
+    public ResponseEntity<ApiResponse<SaleResponseDto>> getById(
 
-        log.debug("received saleId for retrieving a sale is {}", saleId);
+            @PathVariable("saleId")
+            @Min(1)
+            @Parameter(description = "شناسه حراج مورد نظر",example = "1",required = true) Integer saleId) {
+
+        log.debug("received saleId={} for retrieving sale", saleId);
         SaleView sale = saleViewService.getById(saleId);
-        SaleResponseDto dtoResponse = saleMapper.toDtoResponse(sale);
-        log.debug("the SaleDto for sending is {}", dtoResponse);
-        return new ResponseEntity<>(ResponseDto.success(dtoResponse), HttpStatus.OK);
+        SaleResponseDto response = saleMapper.toDtoResponse(sale);
+        log.debug("sending sale={}", response);
+        return ResponseEntity.ok(ApiResponse.success(response));
     }
 }

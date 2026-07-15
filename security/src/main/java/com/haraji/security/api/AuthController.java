@@ -3,10 +3,16 @@ package com.haraji.security.api;
 import com.haraji.security.api.dto.login.LoginPasswordRequest;
 import com.haraji.security.api.dto.login.LoginResponse;
 import com.haraji.security.api.dto.register.UserRequestDto;
+import com.haraji.security.api.dto.token.RefreshTokenRequest;
+import com.haraji.security.api.dto.token.TokenResponse;
+import com.haraji.security.service.LoginService;
+import com.haraji.security.service.RegisterService;
 import com.haraji.security.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,13 +26,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/authentication")
 @Tag(name = "token operations", description = "عملیات مربوط به احراز هویت و توکن")
 @Slf4j
+@AllArgsConstructor
 public class AuthController {
 
-    private final UserService userService;
-
-    public AuthController(UserService userService) {
-        this.userService = userService;
-    }
+    private final LoginService loginService;
+    private final RegisterService registerService;
 
     @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "دریافت توکن")
@@ -45,8 +49,14 @@ public class AuthController {
             @RequestBody @NonNull @Parameter(description = "ویژگی های ثبت نامی کاربر", required = true) UserRequestDto userRequestDto) {
 
         log.debug("received user request for creating a user is {}", userRequestDto);
-        String jwtToken = userService.createUser(userRequestDto);
+//        String jwtToken = userService.createUser(userRequestDto);
 //        return ResponseEntity.ok(new LoginResponse(jwtToken));
         return null;
+    }
+
+    @PostMapping("/token/refresh")
+    public ResponseEntity<TokenResponse> refreshToken(@RequestBody @Valid RefreshTokenRequest request) {
+        log.debug("Refresh Token received is {}", request);
+        return ResponseEntity.ok(loginService.refreshToken(request));
     }
 }

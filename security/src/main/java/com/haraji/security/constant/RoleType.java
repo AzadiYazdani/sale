@@ -1,5 +1,10 @@
 package com.haraji.security.constant;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum RoleType {
     ADMIN(1),
     REGISTER(2),
@@ -9,9 +14,4 @@ public enum RoleType {
 
     private final int value;
 
-    RoleType(final int newValue) {
-        value = newValue;
-    }
-
-    public int getValue() { return value; }
 }

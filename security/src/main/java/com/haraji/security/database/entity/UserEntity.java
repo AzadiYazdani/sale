@@ -17,7 +17,7 @@ import java.util.Optional;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder(setterPrefix = "set", toBuilder = true, builderMethodName = "newInstance")
+@Builder(toBuilder = true, builderMethodName = "newInstance")
 public class UserEntity extends BaseEntity<Long> implements Serializable {
 
     @Column(nullable = false)

@@ -20,9 +20,10 @@ public interface UserService {
 
     User editUser(UserEditRequestDto userEditRequestDto);
 
+    User editUserByAdmin(Long userId, UserEditRequestDto request);
+
     String createUser(UserRequestDto userRequest);
 
     List<User> searchUsername(String title);
 
-    String login(String userName, String password);
 }

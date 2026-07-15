@@ -1,44 +1,78 @@
 package com.haraji.common.exception;
 
-import jakarta.annotation.Nonnull;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
+import com.haraji.common.constant.AppLocale;
+import com.haraji.common.constant.Language;
+import com.haraji.common.dto.ErrorResponse;
+import com.haraji.common.util.MessageArgumentConverter;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.time.LocalDate;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.time.LocalDateTime;
 
-//@Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
+@RequiredArgsConstructor
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(
-            MethodArgumentNotValidException ex,
-            @Nonnull HttpHeaders headers,
-            org.springframework.http.HttpStatusCode status,
-            @Nonnull WebRequest request) {
+    private final MessageSource messageSource;
 
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDate.now());
-        body.put("status", status.value());
+    @ExceptionHandler(BaseException.class)
+    public ResponseEntity<ErrorResponse> handleBaseException(
+            BaseException ex,
+            HttpServletRequest request) {
 
-        List<String> errors = ex.getBindingResult()
-                .getFieldErrors()
-                .stream()
-                .map(x -> x.getDefaultMessage())
-                .collect(Collectors.toList());
+        ErrorResponse response = ErrorResponse.builder()
+                .status(ex.getStatus().value())
+                .errorCode(ex.getErrorCode().name())
+                .message(
+                        messageSource.getMessage(
+                                ex.getMessageKey(),
+                                MessageArgumentConverter.convert(
+                                        ex.getArgs(),
+                                        Language.ENGLISH
+                                ),
+                                AppLocale.ENGLISH
+                        )
+                )
+                .localizedMessage(
+                        messageSource.getMessage(
+                                ex.getMessageKey(),
+                                MessageArgumentConverter.convert(
+                                        ex.getArgs(),
+                                        Language.PERSIAN
+                                ),
+                                AppLocale.PERSIAN
+                        )
+                )
+                .path(request.getRequestURI())
+                .timestamp(LocalDateTime.now())
+                .build();
 
-        body.put("errors", errors);
-
-        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+        return ResponseEntity
+                .status(ex.getStatus())
+                .body(response);
     }
-}
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleException(
+            Exception ex,
+            HttpServletRequest request) {
+
+        ErrorResponse response = ErrorResponse.builder()
+                .status(500)
+                .errorCode("INTERNAL_SERVER_ERROR")
+                .message(ex.getMessage())
+                .localizedMessage("خطای داخلی سیستم")
+                .path(request.getRequestURI())
+                .timestamp(LocalDateTime.now())
+                .build();
+
+        return ResponseEntity.internalServerError()
+                .body(response);
+    }
+
+}

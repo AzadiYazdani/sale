@@ -1,20 +1,17 @@
 package com.haraji.baseinfo.api.businessType;
 
-
 import com.haraji.baseinfo.mapper.BusinessTypeMapper;
 import com.haraji.baseinfo.model.BusinessType;
 import com.haraji.baseinfo.service.business.BusinessTypeService;
-import com.haraji.common.dto.ResponseDto;
+import com.haraji.common.dto.ApiResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -35,41 +32,37 @@ public class BusinessTypeController {
         this.businessTypeMapper = businessTypeMapper;
     }
 
-    @GetMapping(value = "/all")
-    public ResponseEntity<ResponseDto<BusinessTypeResponseDto>> getAllBusinessTypes() {
-        List<BusinessType> businessType = businessTypeService.getAll();
-        List<BusinessTypeResponseDto> lstDtoResponse = businessTypeMapper.toDtoResponseList(businessType);
-        log.debug("the BusinessTypeDto for sending is {}", lstDtoResponse);
-        return new ResponseEntity<ResponseDto<BusinessTypeResponseDto>>(ResponseDto.success(lstDtoResponse), HttpStatus.OK);
+    @GetMapping("/all")
+    public ResponseEntity<ApiResponse<List<BusinessTypeResponseDto>>> getAllBusinessTypes() {
+        List<BusinessType> businessTypes = businessTypeService.getAll();
+        List<BusinessTypeResponseDto> response = businessTypeMapper.toDtoResponseList(businessTypes);
+        log.debug("Business types: {}", response);
+        return ResponseEntity.ok(ApiResponse.success(response));
     }
 
     @GetMapping("/all/paging")
-    public ResponseEntity<ResponseDto<Page<BusinessTypeResponseDto>>> getBusinessTypesWithPaging(@RequestParam @Valid int pageNo, @RequestParam @Valid int pageSize, @RequestParam(required = false) String sortName, @RequestParam(required = false) String asc) {
-        log.debug("received page number and size for retrieving all businessTypes are {}, {}", pageNo, pageSize);
-        String sortColumn = StringUtils.isNoneBlank(sortName) ? sortName : "title";
-        String direction = (StringUtils.isNoneBlank(asc) && (asc.equalsIgnoreCase("DESC") || asc.equalsIgnoreCase("asc"))) ? asc : "DESC";
-        Sort sort = Sort.by(Sort.Direction.valueOf(direction.toUpperCase()), sortColumn);
-        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
-        Page<BusinessType> businessTypePage = businessTypeService.getAllByPaging(pageable);
-        log.debug("the businessTypePage for sending is {}", businessTypePage);
-        return new ResponseEntity<ResponseDto<Page<BusinessTypeResponseDto>>>(ResponseDto.success(businessTypePage), HttpStatus.OK);
+    public ResponseEntity<ApiResponse<Page<BusinessTypeResponseDto>>> getBusinessTypesWithPaging(
+            @PageableDefault(size = 20, sort = "title", direction = Sort.Direction.DESC) Pageable pageable) {
+
+        Page<BusinessTypeResponseDto> response = businessTypeService.getAllByPaging(pageable).map(businessTypeMapper::toDtoResponse);
+        return ResponseEntity.ok(ApiResponse.success(response));
     }
 
-    @GetMapping(value = "/{businessTypeId}")
-    public ResponseEntity<ResponseDto<BusinessTypeResponseDto>> getById(@PathVariable("businessTypeId") @Valid @Min(1)  Integer businessTypeId) {
-        log.debug("received businessTypeId for retrieving a businessType is {}", businessTypeId);
+    @GetMapping("/{businessTypeId}")
+    public ResponseEntity<ApiResponse<BusinessTypeResponseDto>> getById(@PathVariable @Min(1) Integer businessTypeId) {
+        log.debug("Received businessTypeId={}", businessTypeId);
         BusinessType businessType = businessTypeService.getById(businessTypeId);
-        BusinessTypeResponseDto dtoResponse = businessTypeMapper.toDtoResponse(businessType);
-        log.debug("the BusinessTypeDto for sending is {}", dtoResponse);
-        return new ResponseEntity<ResponseDto<BusinessTypeResponseDto>>(ResponseDto.success(dtoResponse), HttpStatus.OK);
+        BusinessTypeResponseDto response = businessTypeMapper.toDtoResponse(businessType);
+        log.debug("BusinessType response={}", response);
+        return ResponseEntity.ok(ApiResponse.success(response));
     }
 
     @GetMapping("")
-    public ResponseEntity<ResponseDto<List<BusinessTypeResponseDto>>> search(@RequestParam("title") @Valid @NotNull String title) {
+    public ResponseEntity<ApiResponse<List<BusinessTypeResponseDto>>> search(@RequestParam("title") @Valid @NotNull String title) {
         log.debug("received value for searching name is {}", title);
         List<BusinessType> businessTypeList = businessTypeService.searchTitle(title);
-        List<BusinessTypeResponseDto> businessTypeResponseDtoList = businessTypeMapper.toDtoResponseList(businessTypeList);
-        log.debug("the list of businessType for sending is {}", businessTypeResponseDtoList);
-        return new ResponseEntity<ResponseDto<List<BusinessTypeResponseDto>>>(ResponseDto.success(businessTypeResponseDtoList), HttpStatus.OK);
+        List<BusinessTypeResponseDto> response = businessTypeMapper.toDtoResponseList(businessTypeList);
+        log.debug("the list of businessType for sending is {}", response);
+        return ResponseEntity.ok(ApiResponse.success(response));
     }
 }
