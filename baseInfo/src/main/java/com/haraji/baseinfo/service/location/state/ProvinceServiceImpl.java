@@ -2,7 +2,7 @@ package com.haraji.baseinfo.service.location.state;
 
 import com.haraji.baseinfo.database.entity.location.CityEntity;
 import com.haraji.baseinfo.database.entity.location.ProvinceEntity;
-import com.haraji.baseinfo.database.repository.location.StateRepository;
+import com.haraji.baseinfo.database.repository.location.ProvinceRepository;
 import com.haraji.baseinfo.mapper.location.CityMapper;
 import com.haraji.baseinfo.mapper.location.ProvinceMapper;
 import com.haraji.baseinfo.model.location.City;
@@ -28,12 +28,12 @@ import java.util.List;
 @Validated
 public class ProvinceServiceImpl implements ProvinceService {
 
-    private final StateRepository stateRepository;
+    private final ProvinceRepository provinceRepository;
     private final ProvinceMapper provinceMapper;
     private final CityMapper cityMapper;
 
-    public ProvinceServiceImpl(StateRepository stateRepository, ProvinceMapper provinceMapper, CityMapper cityMapper) {
-        this.stateRepository = stateRepository;
+    public ProvinceServiceImpl(ProvinceRepository provinceRepository, ProvinceMapper provinceMapper, CityMapper cityMapper) {
+        this.provinceRepository = provinceRepository;
         this.provinceMapper = provinceMapper;
         this.cityMapper = cityMapper;
     }
@@ -41,7 +41,7 @@ public class ProvinceServiceImpl implements ProvinceService {
     @Override
     public Province getById(@Min(1) int id) {
         try {
-            ProvinceEntity provinceEntity = stateRepository.findById(id)
+            ProvinceEntity provinceEntity = provinceRepository.findById(id)
                     .orElseThrow(() -> new EntityNotFoundException(EntityType.STATE, id));
             return provinceMapper.toModel(provinceEntity);
         } catch (Exception e) {
@@ -53,7 +53,7 @@ public class ProvinceServiceImpl implements ProvinceService {
     @Override
     public List<Province> getAll() {
         try {
-            List<ProvinceEntity> provinceEntityList = stateRepository.findAll();
+            List<ProvinceEntity> provinceEntityList = provinceRepository.findAll();
             if (provinceEntityList != null && !provinceEntityList.isEmpty())
                 return provinceMapper.toModelList(provinceEntityList);
             return null;
@@ -66,7 +66,7 @@ public class ProvinceServiceImpl implements ProvinceService {
     @Override
     public Page<Province> getAllByPaging(@Valid @NotNull Pageable pageable) {
         try {
-            Page<ProvinceEntity> stateEntityPage = stateRepository.findAll(pageable);
+            Page<ProvinceEntity> stateEntityPage = provinceRepository.findAll(pageable);
 
             if (stateEntityPage.isEmpty()) {
                 throw new EntityNotFoundException(EntityType.STATE);
@@ -83,7 +83,7 @@ public class ProvinceServiceImpl implements ProvinceService {
     @Override
     public List<City> getAllCitiesById(@Min(1) int stateId) {
         try {
-            ProvinceEntity provinceEntity = stateRepository.findById(stateId)
+            ProvinceEntity provinceEntity = provinceRepository.findById(stateId)
                     .orElseThrow(() -> new EntityNotFoundException(EntityType.STATE, stateId));
             List<CityEntity> cityEntities = provinceEntity.getCities();
 
@@ -99,7 +99,7 @@ public class ProvinceServiceImpl implements ProvinceService {
         if (StringUtils.isBlank(titleValue))
             throw new BadRequestException();
 
-        List<ProvinceEntity> provinceEntityList = stateRepository.findAllByTitleContains(titleValue);
+        List<ProvinceEntity> provinceEntityList = provinceRepository.findAllByNameContains(titleValue);
         return provinceMapper.toModelList(provinceEntityList);
     }
 }

@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface StateRepository extends PagingAndSortingRepository<ProvinceEntity, Integer> {
+public interface ProvinceRepository extends PagingAndSortingRepository<ProvinceEntity, Integer> {
 
     Optional<ProvinceEntity> findById(int id);
 
-    List<ProvinceEntity> findAllByTitleContains(String titleValue);
+    List<ProvinceEntity> findAllByNameContains(String value);
 
     List<ProvinceEntity> findAll();
 }
