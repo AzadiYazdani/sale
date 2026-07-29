@@ -18,17 +18,17 @@ public class City {
 
     @NotNull
     @Min(1)
-    private int stateId;
+    private int provinceId;
 
     @NotBlank
-    private String title;
+    private String name;
 
     @Override
     public String toString() {
         return "City{" +
                 "id=" + id +
-                ", stateId=" + stateId +
-                ", title='" + title + '\'' +
+                ", provinceId=" + provinceId +
+                ", name='" + name + '\'' +
                 '}';
     }
 }

@@ -15,17 +15,17 @@ public class CityResponseDto {
     private int id;
 
     @Schema(description = "شناسه استان", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
-    private int stateId;
+    private int provinceId;
 
     @Schema(description = "نام شهر", requiredMode = Schema.RequiredMode.REQUIRED, example = "\"ابهر\"")
-    private String title;
+    private String name;
 
     @Override
     public String toString() {
         return "CityResponseDto{" +
                 "id=" + id +
-                ", stateId=" + stateId +
-                ", title='" + title + '\'' +
+                ", provinceId=" + provinceId +
+                ", name='" + name + '\'' +
                 '}';
     }
 }

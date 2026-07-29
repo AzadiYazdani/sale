@@ -1,12 +1,12 @@
 package com.haraji.baseinfo.service.location.state;
 
 import com.haraji.baseinfo.database.entity.location.CityEntity;
-import com.haraji.baseinfo.database.entity.location.StateEntity;
+import com.haraji.baseinfo.database.entity.location.ProvinceEntity;
 import com.haraji.baseinfo.database.repository.location.StateRepository;
 import com.haraji.baseinfo.mapper.location.CityMapper;
-import com.haraji.baseinfo.mapper.location.StateMapper;
+import com.haraji.baseinfo.mapper.location.ProvinceMapper;
 import com.haraji.baseinfo.model.location.City;
-import com.haraji.baseinfo.model.location.State;
+import com.haraji.baseinfo.model.location.Province;
 import com.haraji.common.constant.EntityType;
 import com.haraji.common.exception.BadRequestException;
 import com.haraji.common.exception.EntityNotFoundException;
@@ -26,24 +26,24 @@ import java.util.List;
 @Service
 @Slf4j
 @Validated
-public class StateServiceImpl implements StateService {
+public class ProvinceServiceImpl implements ProvinceService {
 
     private final StateRepository stateRepository;
-    private final StateMapper stateMapper;
+    private final ProvinceMapper provinceMapper;
     private final CityMapper cityMapper;
 
-    public StateServiceImpl(StateRepository stateRepository, StateMapper stateMapper, CityMapper cityMapper) {
+    public ProvinceServiceImpl(StateRepository stateRepository, ProvinceMapper provinceMapper, CityMapper cityMapper) {
         this.stateRepository = stateRepository;
-        this.stateMapper = stateMapper;
+        this.provinceMapper = provinceMapper;
         this.cityMapper = cityMapper;
     }
 
     @Override
-    public State getById(@Min(1) int id) {
+    public Province getById(@Min(1) int id) {
         try {
-            StateEntity stateEntity = stateRepository.findById(id)
+            ProvinceEntity provinceEntity = stateRepository.findById(id)
                     .orElseThrow(() -> new EntityNotFoundException(EntityType.STATE, id));
-            return stateMapper.toModel(stateEntity);
+            return provinceMapper.toModel(provinceEntity);
         } catch (Exception e) {
             log.info("\nThe exception '{}' was thrown for StateService.getById({})", e.getMessage(), id);
             throw new EntityNotFoundException(EntityType.STATE, id);
@@ -51,11 +51,11 @@ public class StateServiceImpl implements StateService {
     }
 
     @Override
-    public List<State> getAll() {
+    public List<Province> getAll() {
         try {
-            List<StateEntity> stateEntityList = stateRepository.findAll();
-            if (stateEntityList != null && !stateEntityList.isEmpty())
-                return stateMapper.toModelList(stateEntityList);
+            List<ProvinceEntity> provinceEntityList = stateRepository.findAll();
+            if (provinceEntityList != null && !provinceEntityList.isEmpty())
+                return provinceMapper.toModelList(provinceEntityList);
             return null;
         } catch (Exception e) {
             log.info("\nThe exception '{}' was thrown for StateService.getAll()", e.getMessage());
@@ -64,16 +64,16 @@ public class StateServiceImpl implements StateService {
     }
 
     @Override
-    public Page<State> getAllByPaging(@Valid @NotNull Pageable pageable) {
+    public Page<Province> getAllByPaging(@Valid @NotNull Pageable pageable) {
         try {
-            Page<StateEntity> stateEntityPage = stateRepository.findAll(pageable);
+            Page<ProvinceEntity> stateEntityPage = stateRepository.findAll(pageable);
 
             if (stateEntityPage.isEmpty()) {
                 throw new EntityNotFoundException(EntityType.STATE);
             }
-            List<StateEntity> entities = stateEntityPage.getContent();
-            List<State> stateList = stateMapper.toModelList(entities);
-            return new PageImpl<>(stateList);
+            List<ProvinceEntity> entities = stateEntityPage.getContent();
+            List<Province> provinceList = provinceMapper.toModelList(entities);
+            return new PageImpl<>(provinceList);
         } catch (Exception e) {
             log.info("\nThe exception '{}' was thrown for StateService.getAllByPaging({}) ", e.getMessage(), pageable);
             throw new EntityNotFoundException(EntityType.STATE);
@@ -83,9 +83,9 @@ public class StateServiceImpl implements StateService {
     @Override
     public List<City> getAllCitiesById(@Min(1) int stateId) {
         try {
-            StateEntity stateEntity = stateRepository.findById(stateId)
+            ProvinceEntity provinceEntity = stateRepository.findById(stateId)
                     .orElseThrow(() -> new EntityNotFoundException(EntityType.STATE, stateId));
-            List<CityEntity> cityEntities = stateEntity.getCities();
+            List<CityEntity> cityEntities = provinceEntity.getCities();
 
             return cityMapper.toModelList(cityEntities);
         } catch (Exception e) {
@@ -95,11 +95,11 @@ public class StateServiceImpl implements StateService {
     }
 
     @Override
-    public List<State> searchTitle(@NotNull String titleValue) {
+    public List<Province> searchTitle(@NotNull String titleValue) {
         if (StringUtils.isBlank(titleValue))
             throw new BadRequestException();
 
-        List<StateEntity> stateEntityList = stateRepository.findAllByTitleContains(titleValue);
-        return stateMapper.toModelList(stateEntityList);
+        List<ProvinceEntity> provinceEntityList = stateRepository.findAllByTitleContains(titleValue);
+        return provinceMapper.toModelList(provinceEntityList);
     }
 }

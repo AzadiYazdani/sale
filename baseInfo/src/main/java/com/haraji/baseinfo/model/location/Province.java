@@ -10,19 +10,19 @@ import lombok.*;
 @NoArgsConstructor
 @Builder(setterPrefix = "set", toBuilder = true, builderMethodName = "newInstance")
 @Valid
-public class State {
+public class Province {
 
     private Long id;
 
     @NotBlank
-    private String title;
+    private String name;
 
 
     @Override
     public String toString() {
-        return "state{" +
+        return "province{" +
                 "id=" + id +
-                ", title='" + title + '\'' +
+                ", title='" + name + '\'' +
                 '}';
     }
 }

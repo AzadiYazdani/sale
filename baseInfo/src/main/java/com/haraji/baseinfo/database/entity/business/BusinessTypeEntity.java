@@ -17,6 +17,9 @@ public class BusinessTypeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(name = "parent_Id")
+    private Integer parentId;
+
     private String title;
 
 }

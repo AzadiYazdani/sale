@@ -6,22 +6,21 @@ import lombok.*;
 import java.util.List;
 
 @Entity
-@Table(schema = "sale_db",name = "state")
+@Table(schema = "sale_db",name = "province")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(setterPrefix = "set", toBuilder = true, builderMethodName = "newInstance")
-public class StateEntity {
+public class ProvinceEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @JoinColumn(name = "title")
-    private String title;
+    @JoinColumn(name = "name")
+    private String name;
 
-    @OneToMany(mappedBy = "state", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "province", fetch = FetchType.LAZY)
     private List<CityEntity> cities;
 
 }

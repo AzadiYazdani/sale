@@ -2,7 +2,7 @@ package com.haraji.baseinfo.service.location.state;
 
 
 import com.haraji.baseinfo.model.location.City;
-import com.haraji.baseinfo.model.location.State;
+import com.haraji.baseinfo.model.location.Province;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -13,16 +13,16 @@ import org.springframework.validation.annotation.Validated;
 import java.util.List;
 
 @Validated
-public interface StateService {
+public interface ProvinceService {
 
-    State getById(@Min(1) int id);
+    Province getById(@Min(1) int id);
 
-    List<State> getAll();
+    List<Province> getAll();
 
-    Page<State> getAllByPaging(@Valid @NotNull Pageable pageable);
+    Page<Province> getAllByPaging(@Valid @NotNull Pageable pageable);
 
     List<City> getAllCitiesById(@Min(1) int stateId);
 
-    List<State> searchTitle(@NotNull String title);
+    List<Province> searchTitle(@NotNull String title);
 
 }

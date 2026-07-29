@@ -21,8 +21,8 @@ public class CityEntity implements Serializable {
 
 
     @ManyToOne
-    @JoinColumn(name = "fk_state")
-    private StateEntity state;
+    @JoinColumn(name = "fk_province")
+    private ProvinceEntity province;
 
-    private String title;
+    private String name;
 }

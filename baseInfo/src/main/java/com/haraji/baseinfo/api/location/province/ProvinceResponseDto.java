@@ -1,4 +1,4 @@
-package com.haraji.baseinfo.api.location.state;
+package com.haraji.baseinfo.api.location.province;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
@@ -11,19 +11,19 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Builder(setterPrefix = "set", toBuilder = true, builderMethodName = "newInstance")
 @Schema(description = "مدل پاسخ اطلاعات استان")
-public class StateResponseDto implements Serializable {
+public class ProvinceResponseDto implements Serializable {
 
     @Schema(description = "شناسه استان", example = "1")
     private int id;
 
     @Schema(description = "نام استان", example = "\"آذربایجان شرقی\"")
-    private String title;
+    private String name;
 
     @Override
     public String toString() {
-        return "StateResponseDto{" +
+        return "ProvinceResponseDto{" +
                 "id=" + id +
-                ", title='" + title + '\'' +
+                ", name='" + name + '\'' +
                 '}';
     }
 }

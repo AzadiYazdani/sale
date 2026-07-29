@@ -14,7 +14,7 @@ import java.util.List;
 @Mapper(componentModel = "spring", builder = @Builder(disableBuilder = true))
 public interface CityMapper {
 
-    @Mapping(target = "stateId", source = "entity.state.id")
+    @Mapping(target = "provinceId", source = "entity.province.id")
     City toModel(CityEntity entity);
 
       List<City> toModelList(List<CityEntity> cityEntityList);
