@@ -1,4 +1,4 @@
-package com.haraji.baseinfo.service.location.state;
+package com.haraji.baseinfo.service.location.province;
 
 import com.haraji.baseinfo.database.entity.location.CityEntity;
 import com.haraji.baseinfo.database.entity.location.ProvinceEntity;
@@ -42,11 +42,11 @@ public class ProvinceServiceImpl implements ProvinceService {
     public Province getById(@Min(1) Long id) {
         try {
             ProvinceEntity provinceEntity = provinceRepository.findById(id)
-                    .orElseThrow(() -> new EntityNotFoundException(EntityType.STATE, id));
+                    .orElseThrow(() -> new EntityNotFoundException(EntityType.PROVINCE, id));
             return provinceMapper.toModel(provinceEntity);
         } catch (Exception e) {
-            log.info("\nThe exception '{}' was thrown for StateService.getById({})", e.getMessage(), id);
-            throw new EntityNotFoundException(EntityType.STATE, id);
+            log.info("\nThe exception '{}' was thrown for ProvinceService.getById({})", e.getMessage(), id);
+            throw new EntityNotFoundException(EntityType.PROVINCE, id);
         }
     }
 
@@ -58,25 +58,25 @@ public class ProvinceServiceImpl implements ProvinceService {
                 return provinceMapper.toModelList(provinceEntityList);
             return null;
         } catch (Exception e) {
-            log.info("\nThe exception '{}' was thrown for StateService.getAll()", e.getMessage());
-            throw new EntityNotFoundException(EntityType.STATE);
+            log.info("\nThe exception '{}' was thrown for ProvinceService.getAll()", e.getMessage());
+            throw new EntityNotFoundException(EntityType.PROVINCE);
         }
     }
 
     @Override
     public Page<Province> getAllByPaging(@Valid @NotNull Pageable pageable) {
         try {
-            Page<ProvinceEntity> stateEntityPage = provinceRepository.findAll(pageable);
+            Page<ProvinceEntity> provinceEntityPage = provinceRepository.findAll(pageable);
 
-            if (stateEntityPage.isEmpty()) {
-                throw new EntityNotFoundException(EntityType.STATE);
+            if (provinceEntityPage.isEmpty()) {
+                throw new EntityNotFoundException(EntityType.PROVINCE);
             }
-            List<ProvinceEntity> entities = stateEntityPage.getContent();
+            List<ProvinceEntity> entities = provinceEntityPage.getContent();
             List<Province> provinceList = provinceMapper.toModelList(entities);
             return new PageImpl<>(provinceList);
         } catch (Exception e) {
-            log.info("\nThe exception '{}' was thrown for StateService.getAllByPaging({}) ", e.getMessage(), pageable);
-            throw new EntityNotFoundException(EntityType.STATE);
+            log.info("\nThe exception '{}' was thrown for ProvinceService.getAllByPaging({}) ", e.getMessage(), pageable);
+            throw new EntityNotFoundException(EntityType.PROVINCE);
         }
     }
 
@@ -84,13 +84,13 @@ public class ProvinceServiceImpl implements ProvinceService {
     public List<City> getAllCitiesById(@Min(1) Long provinceId) {
         try {
             ProvinceEntity provinceEntity = provinceRepository.findById(provinceId)
-                    .orElseThrow(() -> new EntityNotFoundException(EntityType.STATE, provinceId));
+                    .orElseThrow(() -> new EntityNotFoundException(EntityType.PROVINCE, provinceId));
             List<CityEntity> cityEntities = provinceEntity.getCities();
 
             return cityMapper.toModelList(cityEntities);
         } catch (Exception e) {
-            log.info("\nThe exception '{}' was thrown for StateService.getAllCitiesById({})", e.getMessage(), provinceId);
-            throw new EntityNotFoundException(EntityType.STATE, provinceId);
+            log.info("\nThe exception '{}' was thrown for ProvinceService.getAllCitiesById({})", e.getMessage(), provinceId);
+            throw new EntityNotFoundException(EntityType.PROVINCE, provinceId);
         }
     }
 

@@ -9,7 +9,7 @@ public enum EntityType {
 
     USER("User", "کاربر"),
     CITY("City", "شهر"),
-    STATE("State", "استان"),
+    PROVINCE("province", "استان"),
     BUSINESS_TYPE("Business Type", "نوع کسب‌وکار"),
     SALE("sale", "حراجی");
 

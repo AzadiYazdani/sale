@@ -34,9 +34,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getAll() {
         try {
-            List<UserEntity> stateEntityList = userRepository.findAll();
-            if (!stateEntityList.isEmpty())
-                return userMapper.toModelList(stateEntityList);
+            List<UserEntity> provinceEntityList = userRepository.findAll();
+            if (!provinceEntityList.isEmpty())
+                return userMapper.toModelList(provinceEntityList);
             return null;
         } catch (Exception e) {
             log.info("\nThe exception '{}' was thrown for userService.getAll()", e.getMessage());

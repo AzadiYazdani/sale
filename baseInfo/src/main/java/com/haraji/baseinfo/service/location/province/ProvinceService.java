@@ -1,4 +1,4 @@
-package com.haraji.baseinfo.service.location.state;
+package com.haraji.baseinfo.service.location.province;
 
 
 import com.haraji.baseinfo.model.location.City;

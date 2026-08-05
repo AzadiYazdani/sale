@@ -8,7 +8,7 @@ public abstract class StructMapper<T, V, R> {
 
     public abstract T toModel(V entity);
 
-    public abstract List<T> toModelList(List<V> stateEntityList);
+    public abstract List<T> toModelList(List<V> provinceEntityList);
 
     public abstract R toDtoResponse(T entity);
 

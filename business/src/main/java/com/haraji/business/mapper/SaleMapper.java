@@ -14,7 +14,7 @@ public abstract class SaleMapper extends StructMapper<SaleView, SaleViewEntity, 
 
 //    public abstract SaleView toModel(SaleViewEntity entity);
 //
-//    public abstract List<SaleView> toModelList(List<SaleViewEntity> stateEntityList);
+//    public abstract List<SaleView> toModelList(List<SaleViewEntity> provinceEntityList);
 //
 //    public abstract SaleViewResponseDto toDtoResponse(SaleView entity);
 //

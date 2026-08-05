@@ -6,7 +6,7 @@ import com.haraji.baseinfo.mapper.location.CityMapper;
 import com.haraji.baseinfo.mapper.location.ProvinceMapper;
 import com.haraji.baseinfo.model.location.City;
 import com.haraji.baseinfo.model.location.Province;
-import com.haraji.baseinfo.service.location.state.ProvinceService;
+import com.haraji.baseinfo.service.location.province.ProvinceService;
 import com.haraji.common.dto.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
