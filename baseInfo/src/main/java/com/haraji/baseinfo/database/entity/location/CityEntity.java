@@ -8,13 +8,7 @@ import java.io.Serializable;
 @Entity
 @Table(
         schema = "sale_db",
-        name = "city",
-        uniqueConstraints = {
-                @UniqueConstraint(
-                        name = "uk_city_province_name",
-                        columnNames = {"fk_province", "name"}
-                )
-        }
+        name = "city"
 )
 @Getter
 @Setter
@@ -30,7 +24,7 @@ public class CityEntity implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(
-            name = "fk_province",
+            name = "province_id",
             nullable = false
     )
     private ProvinceEntity province;
