@@ -14,11 +14,11 @@ import lombok.*;
 @Valid
 public class City {
 
-    private int id;
+    private Long id;
 
     @NotNull
     @Min(1)
-    private int provinceId;
+    private Long provinceId;
 
     @NotBlank
     private String name;

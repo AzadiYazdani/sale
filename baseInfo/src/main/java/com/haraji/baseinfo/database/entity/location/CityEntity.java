@@ -5,9 +5,17 @@ import lombok.*;
 
 import java.io.Serializable;
 
-
 @Entity
-@Table(schema = "sale_db", name = "city")
+@Table(
+        schema = "sale_db",
+        name = "city",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_city_province_name",
+                        columnNames = {"fk_province", "name"}
+                )
+        }
+)
 @Getter
 @Setter
 @AllArgsConstructor
@@ -17,12 +25,17 @@ public class CityEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
 
-    @ManyToOne
-    @JoinColumn(name = "fk_province")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(
+            name = "fk_province",
+            nullable = false
+    )
     private ProvinceEntity province;
 
+
+    @Column(nullable = false, length = 100)
     private String name;
 }

@@ -56,7 +56,7 @@ public class SaleViewController {
     @GetMapping(value = "/{saleId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "یافتن یک حراجی با شناسه")
     public ResponseEntity<ApiResponse<SaleResponseDto>> getById(
-            @PathVariable("saleId") @Min(1) @Parameter(description = "شناسه حراج مورد نظر", example = "1", required = true) Integer saleId) {
+            @PathVariable("saleId") @Min(1) @Parameter(description = "شناسه حراج مورد نظر", example = "1", required = true) Long saleId) {
 
         log.debug("received saleId={} for retrieving sale", saleId);
         SaleView sale = saleViewService.getById(saleId);

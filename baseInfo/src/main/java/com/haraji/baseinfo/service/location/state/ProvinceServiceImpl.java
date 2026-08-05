@@ -39,7 +39,7 @@ public class ProvinceServiceImpl implements ProvinceService {
     }
 
     @Override
-    public Province getById(@Min(1) int id) {
+    public Province getById(@Min(1) Long id) {
         try {
             ProvinceEntity provinceEntity = provinceRepository.findById(id)
                     .orElseThrow(() -> new EntityNotFoundException(EntityType.STATE, id));
@@ -81,16 +81,16 @@ public class ProvinceServiceImpl implements ProvinceService {
     }
 
     @Override
-    public List<City> getAllCitiesById(@Min(1) int stateId) {
+    public List<City> getAllCitiesById(@Min(1) Long provinceId) {
         try {
-            ProvinceEntity provinceEntity = provinceRepository.findById(stateId)
-                    .orElseThrow(() -> new EntityNotFoundException(EntityType.STATE, stateId));
+            ProvinceEntity provinceEntity = provinceRepository.findById(provinceId)
+                    .orElseThrow(() -> new EntityNotFoundException(EntityType.STATE, provinceId));
             List<CityEntity> cityEntities = provinceEntity.getCities();
 
             return cityMapper.toModelList(cityEntities);
         } catch (Exception e) {
-            log.info("\nThe exception '{}' was thrown for StateService.getAllCitiesById({})", e.getMessage(), stateId);
-            throw new EntityNotFoundException(EntityType.STATE, stateId);
+            log.info("\nThe exception '{}' was thrown for StateService.getAllCitiesById({})", e.getMessage(), provinceId);
+            throw new EntityNotFoundException(EntityType.STATE, provinceId);
         }
     }
 

@@ -82,7 +82,7 @@ public class LocationController {
     @GetMapping(value = "/{provinceId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "یافتن یک استان با شناسه")
     public ResponseEntity<ApiResponse<ProvinceResponseDto>> getById(
-            @PathVariable @Min(1) @Parameter(description = "شناسه استان مورد نظر", example = "1", required = true) int provinceId) {
+            @PathVariable @Min(1) @Parameter(description = "شناسه استان مورد نظر", example = "1", required = true) Long provinceId) {
 
         log.debug("Received provinceId={}", provinceId);
         Province province = provinceService.getById(provinceId);
@@ -94,7 +94,7 @@ public class LocationController {
     @GetMapping(value = "/{provinceId}/cities", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "یافتن همه شهرهای یک استان")
     public ResponseEntity<ApiResponse<List<CityResponseDto>>> getAllCities(
-            @PathVariable @Min(1) @Parameter(description = "شناسه استان مورد نظر", example = "1", required = true) int provinceId) {
+            @PathVariable @Min(1) @Parameter(description = "شناسه استان مورد نظر", example = "1", required = true) Long provinceId) {
 
         log.debug("Received provinceId={}", provinceId);
         List<City> cities = provinceService.getAllCitiesById(provinceId);

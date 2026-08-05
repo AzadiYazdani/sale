@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ProvinceRepository extends PagingAndSortingRepository<ProvinceEntity, Integer> {
+public interface ProvinceRepository extends PagingAndSortingRepository<ProvinceEntity, Long> {
 
-    Optional<ProvinceEntity> findById(int id);
+    Optional<ProvinceEntity> findById(Long id);
 
     List<ProvinceEntity> findAllByNameContains(String value);
 

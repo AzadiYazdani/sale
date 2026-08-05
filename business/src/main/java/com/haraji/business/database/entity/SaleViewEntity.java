@@ -20,9 +20,9 @@ public class SaleViewEntity {
 
     @Id
     @Column()
-    private long saleId;
+    private Long saleId;
 
-    private int businessId;
+    private Long businessId;
 
     private String business_title_per;
 

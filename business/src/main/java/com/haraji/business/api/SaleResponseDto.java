@@ -13,10 +13,10 @@ import org.joda.time.DateTime;
 public class SaleResponseDto {
 
     @Schema(description = "شناسه حراجی", example = "1")
-    private long id;
+    private Long id;
 
     @Schema(description = "شناسه کسب و کار", example = "1")
-    private int id_business;
+    private Long id_business;
 
     @Schema(description = "نام فارسی کسب و کار", example = "\"فروشگاه لوازم خانگی خانه سبز\"")
     private String business_title_per;
@@ -46,7 +46,7 @@ public class SaleResponseDto {
     private DateTime end_Date;
 
     @Schema(description = "طول حراجی", example = "5")
-    private int duration;
+    private Long duration;
 
     @Schema(description = "واحد زمانی طول حراجی (مثلا 1 برای روز، 2 برای هفته)", example = "2")
     private int time_unit;

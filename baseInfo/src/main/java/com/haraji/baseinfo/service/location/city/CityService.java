@@ -10,7 +10,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface CityService {
 
-    City getById(@Min(1) int id);
+    City getById(@Min(1) Long id);
 
     Page<City> getAllByPaging(@Valid @NotNull Pageable pageable);
 

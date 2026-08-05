@@ -49,7 +49,7 @@ public class BusinessTypeController {
     }
 
     @GetMapping("/{businessTypeId}")
-    public ResponseEntity<ApiResponse<BusinessTypeResponseDto>> getById(@PathVariable @Min(1) Integer businessTypeId) {
+    public ResponseEntity<ApiResponse<BusinessTypeResponseDto>> getById(@PathVariable @Min(1) Long businessTypeId) {
         log.debug("Received businessTypeId={}", businessTypeId);
         BusinessType businessType = businessTypeService.getById(businessTypeId);
         BusinessTypeResponseDto response = businessTypeMapper.toDtoResponse(businessType);

@@ -15,13 +15,13 @@ import java.util.List;
 @Validated
 public interface ProvinceService {
 
-    Province getById(@Min(1) int id);
+    Province getById(@Min(1) Long id);
 
     List<Province> getAll();
 
     Page<Province> getAllByPaging(@Valid @NotNull Pageable pageable);
 
-    List<City> getAllCitiesById(@Min(1) int stateId);
+    List<City> getAllCitiesById(@Min(1) Long provinceId);
 
     List<Province> searchTitle(@NotNull String title);
 

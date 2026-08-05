@@ -17,6 +17,6 @@ class CityRepositoryTest {
 
     @Test
     void findById() {
-        cityRepository.findById(1);
+        cityRepository.findById(1L);
     }
 }

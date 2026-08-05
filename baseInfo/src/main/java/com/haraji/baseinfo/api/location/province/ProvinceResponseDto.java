@@ -14,7 +14,7 @@ import java.io.Serializable;
 public class ProvinceResponseDto implements Serializable {
 
     @Schema(description = "شناسه استان", example = "1")
-    private int id;
+    private Long id;
 
     @Schema(description = "نام استان", example = "\"آذربایجان شرقی\"")
     private String name;

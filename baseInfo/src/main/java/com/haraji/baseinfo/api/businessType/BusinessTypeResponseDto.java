@@ -12,10 +12,10 @@ import lombok.*;
 public class BusinessTypeResponseDto {
 
     @Schema(description = "شناسه کسب و کار", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
-    private int id;
+    private Long id;
 
     @Schema(description = "زیرمجموعه", requiredMode = Schema.RequiredMode.REQUIRED, example = "\"پوشاک\"")
-    private int parentId;
+    private Long parentId;
 
     @Schema(description = "نوع کسب و کار", requiredMode = Schema.RequiredMode.REQUIRED, example = "\"پوشاک زنانه\"")
     private String title;

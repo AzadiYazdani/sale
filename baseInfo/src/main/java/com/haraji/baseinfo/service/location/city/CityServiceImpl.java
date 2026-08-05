@@ -30,7 +30,7 @@ public class CityServiceImpl implements CityService {
     private final CityMapper cityMapper;
 
     @Override
-    public City getById(@Min(1) int id) {
+    public City getById(@Min(1) Long id) {
         try {
             CityEntity cityEntity = cityRepository.findById(id)
                     .orElseThrow(() -> new EntityNotFoundException(EntityType.CITY, id));

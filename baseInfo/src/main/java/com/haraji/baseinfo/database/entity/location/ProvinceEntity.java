@@ -15,7 +15,7 @@ import java.util.List;
 public class ProvinceEntity {
 
     @Id
-    private int id;
+    private Long id;
 
     @JoinColumn(name = "name")
     private String name;

@@ -18,6 +18,6 @@ class CityServiceTest {
 
     @Test
     public void getById() {
-        cityService.getById(1);
+        cityService.getById(1L);
     }
 }

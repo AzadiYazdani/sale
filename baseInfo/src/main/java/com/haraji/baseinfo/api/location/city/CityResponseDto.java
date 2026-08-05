@@ -12,10 +12,10 @@ import lombok.*;
 public class CityResponseDto {
 
     @Schema(description = "شناسه شهر", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
-    private int id;
+    private Long id;
 
     @Schema(description = "شناسه استان", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
-    private int provinceId;
+    private Long provinceId;
 
     @Schema(description = "نام شهر", requiredMode = Schema.RequiredMode.REQUIRED, example = "\"ابهر\"")
     private String name;

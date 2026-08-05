@@ -25,7 +25,7 @@ public class SaleViewServiceImpl implements SaleViewService {
     }
 
     @Override
-    public SaleView getById(long id) {
+    public SaleView getById(Long id) {
         Optional<SaleViewEntity> entity = saleViewRepository.findBySaleId(id);
         if (entity.isPresent())
             return saleMapper.toModel(entity.get());

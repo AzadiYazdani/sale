@@ -37,7 +37,7 @@ public class BusinessTypeServiceImpl implements BusinessTypeService {
 
 
     @Override
-    public BusinessType getById(@Min(1) Integer id) {
+    public BusinessType getById(@Min(1) Long id) {
         try {
             BusinessTypeEntity businessTypeEntity = businessTypeRepository.findById(id)
                     .orElseThrow(() -> new EntityNotFoundException(EntityType.BUSINESS_TYPE, id));

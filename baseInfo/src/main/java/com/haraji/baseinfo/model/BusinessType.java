@@ -12,9 +12,9 @@ import lombok.*;
 @Builder(setterPrefix = "set", toBuilder = true, builderMethodName = "newInstance")
 @Valid
 public class BusinessType {
-    private int id;
+    private Long id;
 
-    private int parentId;
+    private Long parentId;
 
     @NotBlank
     private String title;

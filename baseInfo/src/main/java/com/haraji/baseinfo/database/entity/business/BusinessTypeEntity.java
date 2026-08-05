@@ -15,10 +15,10 @@ public class BusinessTypeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(name = "parent_Id")
-    private Integer parentId;
+    private Long parentId;
 
     private String title;
 
