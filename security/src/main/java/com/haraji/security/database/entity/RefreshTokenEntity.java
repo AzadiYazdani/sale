@@ -9,7 +9,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "refresh_token",
+@Table(name = "sec_refresh_token",
         indexes = {@Index(name = "idx_refresh_token", columnList = "token")})
 @Getter
 @Setter

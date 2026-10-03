@@ -6,7 +6,7 @@ import lombok.*;
 import java.util.List;
 
 @Entity
-@Table(schema = "sale_db",name = "province")
+@Table(schema = "sale_db",name = "sec_province")
 @Getter
 @Setter
 @AllArgsConstructor

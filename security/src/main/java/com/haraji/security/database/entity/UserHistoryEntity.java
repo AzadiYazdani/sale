@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(schema = "sale_db",name = "user_history")
+@Table(schema = "sale_db",name = "sec_user_history")
 @Getter
 @Setter
 @AllArgsConstructor

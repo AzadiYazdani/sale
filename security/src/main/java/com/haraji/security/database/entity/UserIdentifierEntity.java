@@ -6,7 +6,7 @@ import lombok.*;
 
 @Entity
 @Table(schema = "sale_db",
-        name = "user_identifier",
+        name = "sec_user_identifier",
         uniqueConstraints = {
                 @UniqueConstraint(
                         name = "uk_identifier",

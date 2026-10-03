@@ -8,7 +8,7 @@ import java.io.Serializable;
 @Entity
 @Table(
         schema = "sale_db",
-        name = "city"
+        name = "sec_city"
 )
 @Getter
 @Setter

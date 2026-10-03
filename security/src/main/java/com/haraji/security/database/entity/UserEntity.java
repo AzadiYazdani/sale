@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Entity
-@Table(schema = "sale_db", name = "user")
+@Table(schema = "sale_db", name = "sec_user")
 @Getter
 @Setter
 @AllArgsConstructor

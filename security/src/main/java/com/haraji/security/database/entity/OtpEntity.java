@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(schema = "sale_db",
-        name = "otp",
+        name = "sec_otp",
         indexes = {
                 @Index(name = "idx_otp_code", columnList = "code"),
                 @Index(name = "idx_otp_expire", columnList = "expire_at")
