@@ -17,21 +17,15 @@ import java.util.UUID;
 public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
-
     private final JwtProperties jwtProperties;
 
     @Override
     public String createRefreshToken(UserEntity user) {
-
         String token = UUID.randomUUID().toString();
         RefreshTokenEntity entity = new RefreshTokenEntity();
         entity.setUser(user);
         entity.setToken(token);
-        entity.setExpireAt(
-                LocalDateTime.now()
-                        .plusDays( jwtProperties.getRefreshExpirationDays())
-        );
-
+        entity.setExpireAt(LocalDateTime.now().plusDays(jwtProperties.getRefreshExpirationDays()));
         entity.setRevoked(false);
         entity.setDeviceId("UNKNOWN");
         refreshTokenRepository.save(entity);
@@ -40,45 +34,49 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     @Override
     public RefreshTokenEntity validateRefreshToken(String token) {
-
-        RefreshTokenEntity refreshToken =
-                refreshTokenRepository
-                        .findByToken(token)
-                        .orElseThrow(() ->
-                                new RuntimeException("Refresh token not found"));
-
-
-        if (refreshToken.getRevoked()) {
-            throw new RuntimeException("Refresh token revoked");
+        if (token == null || token.isBlank()) {
+            throw new IllegalArgumentException("Refresh Token الزامی است.");
         }
 
-        if (refreshToken.getExpireAt().isBefore(LocalDateTime.now())) {
-            throw new RuntimeException("Refresh token expired");
+        RefreshTokenEntity refreshToken = refreshTokenRepository.findByTokenForUpdate(token)
+                .orElseThrow(() -> new IllegalArgumentException("Refresh Token معتبر نیست."));
+
+        if (Boolean.TRUE.equals(refreshToken.getRevoked())) {
+            throw new IllegalArgumentException("Refresh Token باطل شده است.");
         }
 
-        if (refreshToken.getUser().getLocked()) {
-            throw new RuntimeException("User locked");
+        if (refreshToken.getExpireAt() == null || !refreshToken.getExpireAt().isAfter(LocalDateTime.now())) {
+            throw new IllegalArgumentException("Refresh Token منقضی شده است.");
+        }
+
+        UserEntity user = refreshToken.getUser();
+
+        if (user == null || !Boolean.TRUE.equals(user.getEnabled())) {
+            throw new IllegalStateException("حساب کاربری فعال نیست.");
+        }
+
+        if (Boolean.TRUE.equals(user.getLocked())) {
+            throw new IllegalStateException("حساب کاربری قفل شده است.");
         }
 
         return refreshToken;
     }
 
     @Override
-    @Transactional
     public void revoke(String token) {
-        RefreshTokenEntity refreshToken =validateRefreshToken(token);
-        refreshToken.setRevoked(true);
-        refreshTokenRepository.save(refreshToken);
+        if (token == null || token.isBlank()) {
+            return;
+        }
+
+        refreshTokenRepository.findByTokenForUpdate(token).ifPresent(refreshToken -> {
+            if (!Boolean.TRUE.equals(refreshToken.getRevoked())) {
+                refreshToken.setRevoked(true);
+            }
+        });
     }
 
     @Override
     public void revokeAll(Long userId) {
-        refreshTokenRepository
-                .findAllByUserId(userId)
-                .forEach(token -> {
-                    token.setRevoked(true);
-                    refreshTokenRepository.save(token);
-                });
-
+        refreshTokenRepository.findAllByUserId(userId).forEach(token -> token.setRevoked(true));
     }
 }

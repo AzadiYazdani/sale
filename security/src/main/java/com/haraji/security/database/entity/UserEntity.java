@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -42,7 +43,7 @@ public class UserEntity extends BaseEntity<Long> implements Serializable {
     @Builder.Default
     private List<UserIdentifierEntity> identifiers = new ArrayList<>();
 
-    @OneToOne
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private PersonEntity person;
 
     public Optional<UserIdentifierEntity> getPrimaryIdentifier() {

@@ -1,9 +1,9 @@
 package com.haraji.security.service;
 
-import com.haraji.security.api.dto.otp.VerifyOtpRequest;
-import com.haraji.security.api.dto.otp.VerifyOtpResponse;
-import com.haraji.security.api.dto.register.RegisterRequest;
-import com.haraji.security.api.dto.register.RegisterResponse;
+import com.haraji.security.dto.otp.VerifyOtpRequest;
+import com.haraji.security.dto.otp.VerifyOtpResponse;
+import com.haraji.security.dto.register.RegisterRequest;
+import com.haraji.security.dto.register.RegisterResponse;
 
 public interface RegisterService {
 

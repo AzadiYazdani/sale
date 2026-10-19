@@ -1,161 +1,172 @@
+
 package com.haraji.security.service;
 
-import com.haraji.security.api.dto.UserEditRequestDto;
-import com.haraji.security.api.dto.register.UserRequestDto;
+import com.haraji.common.util.DateUtility;
 import com.haraji.security.database.entity.PersonEntity;
 import com.haraji.security.database.entity.UserEntity;
+import com.haraji.security.database.entity.UserIdentifierEntity;
 import com.haraji.security.database.repository.PersonRepository;
+import com.haraji.security.database.repository.UserIdentifierRepository;
 import com.haraji.security.database.repository.UserRepository;
-import com.haraji.security.exception.authentication.UserNotCreatedException;
-import com.haraji.security.exception.authentication.UserNotFoundException;
-import com.haraji.security.mapper.PersonMapper;
+import com.haraji.security.dto.user.UserEditRequest;
+import com.haraji.security.dto.user.UserResponse;
 import com.haraji.security.mapper.UserMapper;
-import com.haraji.security.model.User;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.util.StringUtils;
 
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
+import java.util.Objects;
 
 @Service
-@Slf4j
-@Validated
-@AllArgsConstructor
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PersonRepository personRepository;
+    private final UserIdentifierRepository userIdentifierRepository;
     private final UserMapper userMapper;
-    private final PersonMapper personMapper;
 
     @Override
-    public List<User> getAll() {
-        try {
-            List<UserEntity> provinceEntityList = userRepository.findAll();
-            if (!provinceEntityList.isEmpty())
-                return userMapper.toModelList(provinceEntityList);
-            return null;
-        } catch (Exception e) {
-            log.info("\nThe exception '{}' was thrown for userService.getAll()", e.getMessage());
-            throw new UserNotFoundException();
+    public Page<UserResponse> getAllByPaging(Pageable pageable) {
+        return userRepository.findAll(pageable).map(userMapper::toUserResponse);
+    }
+
+    @Override
+    public UserResponse getById(Long id) {
+        return userMapper.toUserResponse(findUserById(id));
+    }
+
+    @Override
+    public UserResponse getCurrentUser() {
+        return userMapper.toUserResponse(findCurrentUser());
+    }
+
+    @Override
+    public List<UserResponse> searchUsername(String username) {
+        if (!StringUtils.hasText(username)) {
+            throw new IllegalArgumentException("عبارت جست‌وجو الزامی است.");
+        }
+
+        Map<Long, UserEntity> users = new LinkedHashMap<>();
+
+        for (UserIdentifierEntity identifier : userIdentifierRepository.findAllByValueContainingIgnoreCaseAndEnabledTrue(username.trim())) {
+            UserEntity user = identifier.getUser();
+            if (user != null) {
+                users.putIfAbsent(user.getId(), user);
+            }
+        }
+
+        return userMapper.toUserResponseList(List.copyOf(users.values()));
+    }
+
+    @Override
+    @Transactional
+    public UserResponse editUser(UserEditRequest request) {
+        return updateUser(findCurrentUser(), request);
+    }
+
+    @Override
+    @Transactional
+    public UserResponse editUserByAdmin(Long userId, UserEditRequest request) {
+        return updateUser(findUserById(userId), request);
+    }
+
+    private UserEntity findUserById(Long userId) {
+        return userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("کاربر موردنظر یافت نشد."));
+    }
+
+    private UserEntity findCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !(authentication.getPrincipal() instanceof SecurityUser securityUser)) {
+            throw new AccessDeniedException("کاربر احراز هویت نشده است.");
+        }
+
+        return findUserById(securityUser.getUser().getId());
+    }
+
+    private UserResponse updateUser(UserEntity user, UserEditRequest request) {
+        PersonEntity person = user.getPerson();
+
+        if (person == null) {
+            person = PersonEntity.newInstance().setUser(user).build();
+            user.setPerson(person);
+        }
+
+        validateUniqueFields(request, person);
+
+        if (request.getEmail() != null) {
+            person.setEmail(request.getEmail().trim());
+        }
+        if (request.getTelephone() != null) {
+            person.setTelephone(request.getTelephone().trim());
+        }
+        if (request.getAddress() != null) {
+            person.setAddress(request.getAddress().trim());
+        }
+        if (request.getFirstName() != null) {
+            person.setFirstName(request.getFirstName().trim());
+        }
+        if (request.getLastName() != null) {
+            person.setLastName(request.getLastName().trim());
+        }
+        if (request.getFatherName() != null) {
+            person.setFatherName(request.getFatherName().trim());
+        }
+        if (request.getNationalCode() != null) {
+            person.setNationalCode(request.getNationalCode().trim());
+        }
+        if (request.getIdentityNumber() != null) {
+            person.setIdentityNumber(request.getIdentityNumber().trim());
+        }
+        if (StringUtils.hasText(request.getBirthDate())) {
+            person.setBirthDate(DateUtility.getLocalDateFromString(request.getBirthDate().trim()));
+        }
+        if (request.getBirthCity() != null) {
+            person.setBirthCity(request.getBirthCity().trim());
+        }
+
+        personRepository.save(person);
+        userRepository.save(user);
+
+        return userMapper.toUserResponse(user);
+    }
+
+    private void validateUniqueFields(UserEditRequest request, PersonEntity currentPerson) {
+        Long currentPersonId = currentPerson.getId();
+
+        if (StringUtils.hasText(request.getNationalCode())) {
+            personRepository.findByNationalCode(request.getNationalCode().trim())
+                    .filter(person -> !Objects.equals(person.getId(), currentPersonId))
+                    .ifPresent(person -> {
+                        throw new IllegalArgumentException("این کد ملی قبلاً ثبت شده است.");
+                    });
+        }
+
+        if (StringUtils.hasText(request.getEmail())) {
+            personRepository.findByEmail(request.getEmail().trim())
+                    .filter(person -> !Objects.equals(person.getId(), currentPersonId))
+                    .ifPresent(person -> {
+                        throw new IllegalArgumentException("این ایمیل قبلاً برای شخص دیگری ثبت شده است.");
+                    });
+        }
+
+        if (StringUtils.hasText(request.getTelephone())) {
+            personRepository.findByMobile(request.getTelephone().trim())
+                    .filter(person -> !Objects.equals(person.getId(), currentPersonId))
+                    .ifPresent(person -> {
+                        throw new IllegalArgumentException("این شماره موبایل قبلاً برای شخص دیگری ثبت شده است.");
+                    });
         }
     }
-
-    @Override
-    public User getByName(String username) {
-//        try {
-//            Optional<UserEntity> optional = userRepository.findByUsername(username);
-//            if (optional.isPresent())
-//                return userMapper.toModel(optional.get());
-//            throw new UserNotFoundException();
-//        } catch (Exception e) {
-//            log.info("\nThe exception '{}' was thrown for userService.getAll()", e.getMessage());
-//            throw new UserNotFoundException();
-//        }
-        return null;
-    }
-
-    @Override
-    public User getById(Long id) {
-        try {
-            Optional<UserEntity> optional = userRepository.findById(id);
-            if (optional.isPresent())
-                return userMapper.toModel(optional.get());
-            throw new UserNotFoundException();
-        } catch (Exception e) {
-            log.info("\nThe exception '{}' was thrown for userService.getAll()", e.getMessage());
-            throw new UserNotFoundException();
-        }
-    }
-
-    @Override
-    public User editUser(UserEditRequestDto userEditRequestDto) {
-//        try {
-//            UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getDetails();
-//            if (StringUtils.isNotBlank(userDetails.getUsername())) {
-//                Optional<UserEntity> optional = userRepository.findByUsername(userDetails.getUsername());
-//                if (optional.isPresent())
-//                    return userMapper.toModel(optional.get());
-//            }
-//            throw new UserNotFoundException();
-//        } catch (Exception e) {
-//            log.info("\nThe exception '{}' was thrown for userService.getAll()", e.getMessage());
-//            throw new UserNotFoundException();
-//        }
-
-
-        return null;
-    }
-
-    @Override
-    public User editUserByAdmin(Long userId, UserEditRequestDto request) {
-        return null;
-    }
-
-    @Override
-    public List<User> searchUsername(String title) {
-//        try {
-//            Optional<List<UserEntity>> userEntities = userRepository.findAllByUsernameContains(title);
-//            if (userEntities.isPresent())
-//                return userMapper.toModelList(userEntities.get());
-//            throw new UserNotFoundException();
-//        } catch (Exception e) {
-//            log.info("\nThe exception '{}' was thrown for userService.getAll()", e.getMessage());
-//            throw new UserNotFoundException();
-//        }
-        return null;
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public String createUser(UserRequestDto userRequestDto) {
-
-        checkUserName(userRequestDto.getUsername());
-        checkNationalCode(userRequestDto.getNationalCode());
-        PersonEntity personEntity = personMapper.toEntity(userRequestDto);
-        personRepository.save(personEntity);
-
-        UserEntity userEntity = userMapper.toEntity(userRequestDto);
-        userEntity.setPerson(personEntity);
-//
-//        userEntity.setRole(RoleType.VIEWER);
-//
-//        String hashedPassword = passwordEncoder.encode(userRequestDto.getPassword());
-//        userEntity.setPassword(hashedPassword);
-//        try {
-//            userRepository.save(userEntity);
-//        } catch (Exception e) {
-//            log.info("\nThe exception '{}' was thrown for userService.createUser()", e.getMessage());
-//            throw new UserNotCreatedException();
-//        }
-//        User user = userMapper.toModel(userEntity);
-//        return createToken(user);
-        return null;
-    }
-
-
-    private void checkNationalCode(String nationalCode) {
-        personRepository.findByNationalCode(nationalCode).ifPresent(person -> {
-            log.error("NationalCode already exists: {}", nationalCode);
-            throw new UserNotCreatedException("national.code.exists", null);
-        });
-    }
-
-    private void checkUserName(String username) {
-//        userRepository.findByUsername(username).ifPresent(user -> {
-//            log.error("Username already exists: {}", username);
-//            throw new UserNotCreatedException("username.exists", null);
-//        });
-    }
-
-    private String createToken(User user) {
-
-//        return jwtUtil.generateToken(user);
-        return null;
-
-    }
-
 }

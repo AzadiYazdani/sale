@@ -50,7 +50,12 @@ public class WebSecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(defaultPermit).permitAll()
-                        .requestMatchers("/authentication/**", "/location/**", "/sale/**",  "/businesstype/**" ).permitAll()
+                        .requestMatchers(
+                                "/auth/**",
+                                "/location/**",
+                                "/sale/**",
+                                "/businesstype/**"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
 

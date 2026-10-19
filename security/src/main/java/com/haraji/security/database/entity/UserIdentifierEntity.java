@@ -7,15 +7,8 @@ import lombok.*;
 @Entity
 @Table(schema = "sale_db",
         name = "sec_user_identifier",
-        uniqueConstraints = {
-                @UniqueConstraint(
-                        name = "uk_identifier",
-                        columnNames = {"type", "value"}
-                )
-        },
-        indexes = {
-                @Index(name = "idx_identifier_value", columnList = "value")
-        }
+        uniqueConstraints = {@UniqueConstraint(name = "uk_identifier", columnNames = {"type", "value"})},
+        indexes = { @Index(name = "idx_identifier_value", columnList = "value")}
 )
 @Getter
 @Setter

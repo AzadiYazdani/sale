@@ -1,7 +1,7 @@
 package com.haraji.security.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.haraji.security.api.dto.login.LoginPasswordRequest;
+import com.haraji.security.dto.login.LoginPasswordRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

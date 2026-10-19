@@ -1,3 +1,4 @@
+
 package com.haraji.security.database.entity;
 
 import jakarta.persistence.*;
@@ -6,14 +7,12 @@ import lombok.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-
 @Entity
 @Table(schema = "sale_db", name = "sec_person")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Embeddable
 @Builder(setterPrefix = "set", toBuilder = true, builderMethodName = "newInstance")
 public class PersonEntity implements Serializable {
 
@@ -21,35 +20,38 @@ public class PersonEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column (name="first_name")
+    @Column(name = "first_name")
     private String firstName;
 
-    @Column (name="last_name")
+    @Column(name = "last_name")
     private String lastName;
 
-    @Column (name="father_name")
+    @Column(name = "father_name")
     private String fatherName;
 
-    @Column (name="national_code")
+    @Column(name = "national_code")
     private String nationalCode;
 
-    @Column (name="identity_number")
+    @Column(name = "identity_number")
     private String identityNumber;
 
-    @Column (name="date_of_birth")
+    @Column(name = "date_of_birth")
     private LocalDate birthDate;
 
-    @Column (name="city_of_birth")
+    @Column(name = "city_of_birth")
     private String birthCity;
 
-    @Column (name="city_of_issue")
+    @Column(name = "city_of_issue")
     private String issueCity;
+
     private String email;
     private String mobile;
     private String cityCode;
     private String telephone;
     private String address;
-    @OneToOne
+
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
     private UserEntity user;
 
     @Override
@@ -69,7 +71,7 @@ public class PersonEntity implements Serializable {
                 ", cityCode='" + cityCode + '\'' +
                 ", telephone='" + telephone + '\'' +
                 ", address='" + address + '\'' +
-                ", user=" + user +
+                ", userId=" + (user != null ? user.getId() : null) +
                 '}';
     }
 }

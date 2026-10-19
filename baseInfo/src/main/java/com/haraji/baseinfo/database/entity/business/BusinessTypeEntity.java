@@ -5,7 +5,7 @@ import lombok.*;
 
 
 @Entity
-@Table(schema = "sale_db", name = "business_type")
+//@Table(schema = "sale_db", name = "business_type")
 @Getter
 @Setter
 @AllArgsConstructor

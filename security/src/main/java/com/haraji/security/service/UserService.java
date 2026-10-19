@@ -1,8 +1,11 @@
 package com.haraji.security.service;
 
-import com.haraji.security.api.dto.UserEditRequestDto;
-import com.haraji.security.api.dto.register.UserRequestDto;
-import com.haraji.security.model.User;
+import com.haraji.security.dto.user.UserEditRequest;
+import com.haraji.security.dto.user.UserResponse;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
@@ -10,18 +13,15 @@ import java.util.List;
 @Validated
 public interface UserService {
 
-    List<User> getAll();
+    Page<UserResponse> getAllByPaging(Pageable pageable);
 
-    User getByName(String username);
+    UserResponse getById(@Min(1) Long id);
 
-    User getById(Long id);
+    UserResponse getCurrentUser();
 
-    User editUser(UserEditRequestDto userEditRequestDto);
+    UserResponse editUser(@Valid UserEditRequest request);
 
-    User editUserByAdmin(Long userId, UserEditRequestDto request);
+    UserResponse editUserByAdmin(@Min(1) Long userId, @Valid UserEditRequest request);
 
-    String createUser(UserRequestDto userRequest);
-
-    List<User> searchUsername(String title);
-
+    List<UserResponse> searchUsername(String username);
 }

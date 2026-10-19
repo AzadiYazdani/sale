@@ -11,17 +11,13 @@ import java.util.Optional;
 @Repository
 public interface UserIdentifierRepository  extends JpaRepository<UserIdentifierEntity, Long> {
 
-    Optional<UserIdentifierEntity> findByTypeAndValue(
-            IdentifierType type,
-            String value);
+    Optional<UserIdentifierEntity> findByTypeAndValue(IdentifierType type,String value);
 
-    Optional<UserIdentifierEntity> findByTypeAndValueAndEnabledTrue(
-            IdentifierType type,
-            String value);
+    List<UserIdentifierEntity> findAllByValueContainingIgnoreCaseAndEnabledTrue(String value);
 
-    boolean existsByTypeAndValue(
-            IdentifierType type,
-            String value);
+    Optional<UserIdentifierEntity> findByTypeAndValueAndEnabledTrue( IdentifierType type,String value);
+
+    boolean existsByTypeAndValue(IdentifierType type,String value);
 
     List<UserIdentifierEntity> findAllByUserId(Long userId);
 

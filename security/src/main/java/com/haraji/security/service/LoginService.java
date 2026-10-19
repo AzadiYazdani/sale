@@ -1,16 +1,16 @@
 package com.haraji.security.service;
 
-import com.haraji.security.api.dto.login.LoginPasswordRequest;
-import com.haraji.security.api.dto.otp.OtpRequest;
-import com.haraji.security.api.dto.otp.VerifyOtpRequest;
-import com.haraji.security.api.dto.token.RefreshTokenRequest;
-import com.haraji.security.api.dto.token.TokenResponse;
+import com.haraji.security.dto.login.LoginPasswordRequest;
+import com.haraji.security.dto.otp.OtpRequest;
+import com.haraji.security.dto.otp.VerifyOtpRequest;
+import com.haraji.security.dto.token.RefreshTokenRequest;
+import com.haraji.security.dto.token.TokenResponse;
 
 public interface LoginService {
 
-    TokenResponse login(LoginPasswordRequest request);
+    TokenResponse loginPassword(LoginPasswordRequest request);
 
-    void requestLoginOtp(OtpRequest request);
+    void loginOtp(OtpRequest request);
 
     TokenResponse verifyLoginOtp(VerifyOtpRequest request );
 

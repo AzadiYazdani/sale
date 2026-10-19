@@ -2,90 +2,126 @@ package com.haraji.security.util;
 
 import com.haraji.common.exception.InvalidFormatException;
 import com.haraji.security.constant.IdentifierType;
+import jakarta.annotation.Nonnull;
 
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 public class CommonUtil {
 
     private static final Pattern EMAIL_PATTERN =
-            Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
-    private static final Pattern PHONE_PATTERN =
-            Pattern.compile("^[0-9]{10,15}$");
-
-
-    public static void validateIdentifier(String identifier) {
-        if (identifier == null || identifier.trim().isEmpty()) {
-            throw new InvalidFormatException();
-        }
-
-        // محدودیت طول برای جلوگیری از حملات
-        if (identifier.length() > 100) {
-            throw new InvalidFormatException();
-        }
-    }
+            Pattern.compile("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$");
 
     public static IdentifierType detectLoginType(String identifier) {
-        String cleanIdentifier = identifier.trim().toLowerCase();
+        if (identifier == null || identifier.isBlank()) {
+            throw new InvalidFormatException();
+        }
 
-        // اول بررسی می‌کنیم آیا ایمیل معتبر است
-        if (EMAIL_PATTERN.matcher(cleanIdentifier).matches()) {
+        String value = identifier.trim();
+
+        try {
+            normalizeEmail(value);
             return IdentifierType.EMAIL;
+        } catch (IllegalArgumentException ignored) {
+            // شناسه ایمیل معتبر نیست؛ شماره تلفن را بررسی می‌کنیم.
         }
 
-        // سپس شماره تلفن را بررسی می‌کنیم
-        String digitsOnly = cleanIdentifier.replaceAll("[^0-9]", "");
-        if (PHONE_PATTERN.matcher(digitsOnly).matches()) {
+        try {
+            normalizePhoneNumber(value);
             return IdentifierType.PHONE;
+        } catch (IllegalArgumentException ignored) {
+            throw new InvalidFormatException();
         }
-
-        // اگر هیچکدام نبود، خطا
-        throw new InvalidFormatException();
     }
 
-    public static String normalizeIdentifier(String identifier, IdentifierType type) {
+    public static String normalizeIdentifier(
+            String rawValue,
+            IdentifierType type) {
+
+        if (type == null) {
+            throw new IllegalArgumentException("نوع شناسه الزامی است.");
+        }
+
+        if (rawValue == null || rawValue.isBlank()) {
+            throw new IllegalArgumentException("مقدار شناسه الزامی است.");
+        }
+
+        String value = rawValue.trim();
+
         return switch (type) {
-            case EMAIL -> identifier.toLowerCase().trim();
-            case PHONE -> {
-                // حذف همه غیر اعداد
-                String digits = identifier.replaceAll("[^0-9]", "");
-                // حذف صفرهای اول در صورت نیاز
-                yield normalizePhoneNumber(digits);
-            }
+            case EMAIL -> normalizeEmail(value);
+            case PHONE -> normalizePhoneNumber(value);
         };
     }
 
-    private static String normalizePhoneNumber(String digits) {
-        // حذف همه غیر اعداد قبلاً انجام شده، پس digits فقط عدد است.
+    private static String normalizeEmail(String email) {
+        String value = email.trim().toLowerCase(Locale.ROOT);
 
-        // اگر شماره با پیش‌شماره کشوری ایران شروع شده (مثلاً 98 یا +98) آن را حذف کنیم.
-        // همچنین اگر با صفر شروع شده، صفر را حذف کنیم.
-
-        // فرض کنیم می‌خواهیم شماره‌های ایرانی را به صورت 10 رقمی (بدون صفر اول) ذخیره کنیم.
-        // یعنی: 9123456789
-
-        // اگر شماره با '98' شروع شود (کد کشور ایران) و طول آن 12 رقم باشد، دو رقم اول را حذف می‌کنیم.
-        if (digits.startsWith("98") && digits.length() == 12) {
-            digits = digits.substring(2);
+        if (value.length() > 254
+                || !EMAIL_PATTERN.matcher(value).matches()) {
+            throw new IllegalArgumentException("قالب ایمیل معتبر نیست.");
         }
-        // اگر شماره با '0' شروع شود و طول آن 11 رقم باشد، صفر اول را حذف می‌کنیم.
-        else if (digits.startsWith("0") && digits.length() == 11) {
-            digits = digits.substring(1);
-        }
-        // در غیر این صورت، همان رقم‌ها را نگه می‌داریم.
 
-        // اطمینان حاصل کنیم که شماره نهایی فقط رقم است و طول مناسبی دارد.
-        // می‌توانیم بررسی کنیم که آیا شماره 10 رقم است (برای ایران) یا خیر.
-        // اگر نه، ممکن است شماره متعلق به کشور دیگری باشد، که در این صورت شاید بخواهیم همان را ذخیره کنیم.
-
-        return digits;
+        return value;
     }
 
-    private String maskIdentifier(String identifier) {
-        // ماسک کردن برای لاگ‌ها
-        if (identifier == null) return "null";
-        if (identifier.length() <= 3) return "***";
+    private static String normalizePhoneNumber(String phone) {
+        String value = getString(phone);
 
-        return identifier.substring(0, 3) + "***" +
-                identifier.substring(identifier.length() - 2);
+        String digits;
+
+        if (value.startsWith("+98")) {
+            digits = value.substring(3);
+        } else if (value.startsWith("0098")) {
+            digits = value.substring(4);
+        } else if (value.startsWith("98") && value.length() == 12) {
+            digits = value.substring(2);
+        } else if (value.startsWith("09") && value.length() == 11) {
+            digits = value.substring(1);
+        } else {
+            digits = value;
+        }
+
+        if (!digits.matches("^9[0-9]{9}$")) {
+            throw new IllegalArgumentException("شماره موبایل ایران معتبر نیست.");
+        }
+
+        return "+98" + digits;
+    }
+
+    @Nonnull
+    private static String getString(String phone) {
+        StringBuilder converted = new StringBuilder();
+
+        for (char ch : phone.toCharArray()) {
+            if (ch >= '\u06F0' && ch <= '\u06F9') {
+                converted.append((char) ('0' + ch - '\u06F0'));
+            } else if (ch >= '\u0660' && ch <= '\u0669') {
+                converted.append((char) ('0' + ch - '\u0660'));
+            } else {
+                converted.append(ch);
+            }
+        }
+
+        String value = converted.toString().replaceAll("[\\s().-]", "");
+
+        if (!value.matches("^\\+?[0-9]+$")) {
+            throw new IllegalArgumentException("قالب شماره موبایل معتبر نیست.");
+        }
+        return value;
+    }
+
+    public String maskIdentifier(String identifier) {
+        if (identifier == null) {
+            return "null";
+        }
+
+        if (identifier.length() <= 3) {
+            return "***";
+        }
+
+        return identifier.substring(0, 3)
+                + "***"
+                + identifier.substring(identifier.length() - 2);
     }
 }

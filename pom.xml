@@ -45,6 +45,11 @@
                 <artifactId>spring-security-core</artifactId>
             </dependency>
 
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-mail</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
 
             <!--JWT...-->
             <dependency>
@@ -133,6 +138,12 @@
                 <version>${spring-boot.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-aop</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
+
             <!--Test...-->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -211,6 +222,12 @@
                 <groupId>org.springdoc</groupId>
                 <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
                 <version>2.5.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.ibm.icu</groupId>
+                <artifactId>icu4j</artifactId>
+                <version>75.1</version>
             </dependency>
 
         </dependencies>

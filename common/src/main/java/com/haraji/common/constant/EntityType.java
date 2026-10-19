@@ -10,7 +10,8 @@ public enum EntityType {
     USER("User", "کاربر"),
     CITY("City", "شهر"),
     PROVINCE("province", "استان"),
-    BUSINESS_TYPE("Business Type", "نوع کسب‌وکار"),
+    ACTIVITY_TYPE("activity Type", "نوع کسب‌وکار"),
+    BUSINESS_UNION("businessUnion union", "اتحادیه صنفی"),
     SALE("sale", "حراجی");
 
     private final String englishValue;

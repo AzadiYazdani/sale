@@ -16,9 +16,15 @@ public interface OtpRepository extends JpaRepository<OtpEntity,Long> {
             OtpPurpose purpose
     );
 
-    Optional<OtpEntity> findTopByIdentifierIdAndPurposeAndUsedFalseOrderByCreatedDateDesc(
+    Optional<OtpEntity> findTopByIdentifierIdAndPurposeOrderByIdDesc(
             Long identifierId,
             OtpPurpose purpose
+    );
+
+    long countByIdentifierIdAndCreatedDateGreaterThanEqualAndCreatedDateLessThan(
+            Long identifierId,
+            LocalDateTime start,
+            LocalDateTime end
     );
 
     void deleteByExpireAtBefore(LocalDateTime time);
