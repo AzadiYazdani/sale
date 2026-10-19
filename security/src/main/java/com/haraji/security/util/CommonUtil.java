@@ -94,10 +94,10 @@ public class CommonUtil {
         StringBuilder converted = new StringBuilder();
 
         for (char ch : phone.toCharArray()) {
-            if (ch >= '\u06F0' && ch <= '\u06F9') {
-                converted.append((char) ('0' + ch - '\u06F0'));
-            } else if (ch >= '\u0660' && ch <= '\u0669') {
-                converted.append((char) ('0' + ch - '\u0660'));
+            if (ch >= '۰' && ch <= '۹') {
+                converted.append((char) ('0' + ch - '۰'));
+            } else if (ch >= '٠' && ch <= '٩') {
+                converted.append((char) ('0' + ch - '٠'));
             } else {
                 converted.append(ch);
             }

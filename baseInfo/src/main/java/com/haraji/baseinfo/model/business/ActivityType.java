@@ -1,7 +1,6 @@
 package com.haraji.baseinfo.model.business;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 // نوع فعالیت کسب و کار

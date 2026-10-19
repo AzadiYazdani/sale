@@ -66,7 +66,7 @@ class AuthControllerTest {
 
         String result = requestResult.getResponse().getContentAsString();
         System.out.println(result);
-        assertEquals(requestResult.getResponse().getStatus(), 200);
+        assertEquals(200, requestResult.getResponse().getStatus());
     }
 
     private LoginPasswordRequest getAuthRequest() {

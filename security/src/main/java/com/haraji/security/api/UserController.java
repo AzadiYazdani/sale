@@ -29,7 +29,7 @@ import java.util.List;
 @RequestMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "User operations", description = "عملیات مربوط به کاربران")
 @Validated
-@MethodLogging(level = LogLevel.DEBUG, logArguments = false, logResult = false)
+@MethodLogging(level = LogLevel.DEBUG, logResult = false)
 @RequiredArgsConstructor
 public class UserController {
 
