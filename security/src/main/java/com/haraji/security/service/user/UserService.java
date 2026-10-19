@@ -1,4 +1,4 @@
-package com.haraji.security.service;
+package com.haraji.security.service.user;
 
 import com.haraji.security.dto.user.UserEditRequest;
 import com.haraji.security.dto.user.UserResponse;

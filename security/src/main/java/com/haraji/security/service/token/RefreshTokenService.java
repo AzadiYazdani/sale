@@ -1,4 +1,4 @@
-package com.haraji.security.service;
+package com.haraji.security.service.token;
 
 import com.haraji.security.database.entity.RefreshTokenEntity;
 import com.haraji.security.database.entity.UserEntity;

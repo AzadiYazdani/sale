@@ -1,4 +1,4 @@
-package com.haraji.security.service;
+package com.haraji.security.service.otp;
 
 import com.haraji.security.config.OtpChannelProperties;
 import com.haraji.security.constant.IdentifierType;

@@ -1,5 +1,5 @@
 
-package com.haraji.security.service;
+package com.haraji.security.service.user;
 
 import com.haraji.common.util.DateUtility;
 import com.haraji.security.database.entity.PersonEntity;

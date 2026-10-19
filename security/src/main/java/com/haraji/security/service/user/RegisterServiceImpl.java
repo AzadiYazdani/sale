@@ -1,4 +1,4 @@
-package com.haraji.security.service;
+package com.haraji.security.service.user;
 
 
 import com.haraji.security.config.OtpChannelProperties;
@@ -14,6 +14,7 @@ import com.haraji.security.dto.otp.VerifyOtpResponse;
 import com.haraji.security.dto.register.RegisterRequest;
 import com.haraji.security.dto.register.RegisterResponse;
 import com.haraji.security.exception.authentication.DuplicateIdentifierException;
+import com.haraji.security.service.otp.OtpService;
 import com.haraji.security.util.CommonUtil;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;

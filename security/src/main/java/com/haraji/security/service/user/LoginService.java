@@ -1,4 +1,4 @@
-package com.haraji.security.service;
+package com.haraji.security.service.user;
 
 import com.haraji.security.dto.login.LoginPasswordRequest;
 import com.haraji.security.dto.otp.OtpRequest;

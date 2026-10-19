@@ -1,4 +1,4 @@
-package com.haraji.security.service;
+package com.haraji.security.service.user;
 
 
 import com.haraji.security.database.entity.UserEntity;

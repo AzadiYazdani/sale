@@ -1,4 +1,4 @@
-package com.haraji.security.service;
+package com.haraji.security.service.user;
 
 import com.haraji.security.config.OtpChannelProperties;
 import com.haraji.security.constant.IdentifierType;
@@ -14,6 +14,8 @@ import com.haraji.security.database.entity.UserEntity;
 import com.haraji.security.database.entity.UserIdentifierEntity;
 import com.haraji.security.database.repository.UserIdentifierRepository;
 import com.haraji.security.exception.authentication.InvalidPasswordException;
+import com.haraji.security.service.otp.OtpService;
+import com.haraji.security.service.token.RefreshTokenService;
 import com.haraji.security.util.CommonUtil;
 import com.haraji.security.util.JwtUtil;
 import lombok.RequiredArgsConstructor;

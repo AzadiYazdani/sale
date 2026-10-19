@@ -5,7 +5,7 @@ import com.haraji.common.logging.LogLevel;
 import com.haraji.common.logging.MethodLogging;
 import com.haraji.security.dto.user.UserEditRequest;
 import com.haraji.security.dto.user.UserResponse;
-import com.haraji.security.service.UserService;
+import com.haraji.security.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

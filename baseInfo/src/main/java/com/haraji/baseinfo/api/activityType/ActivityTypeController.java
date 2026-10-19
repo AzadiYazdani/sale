@@ -5,9 +5,10 @@ import com.haraji.common.dto.ApiResponse;
 import com.haraji.common.logging.LogLevel;
 import com.haraji.common.logging.MethodLogging;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -20,49 +21,36 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/activitytype")
-@Slf4j
 @Validated
+@RequiredArgsConstructor
 @MethodLogging(level = LogLevel.INFO)
+@Tag(name = "Activity Type", description = "مدیریت انواع فعالیت")
 public class ActivityTypeController {
 
     private final ActivityTypeService activityTypeService;
 
-    public ActivityTypeController(ActivityTypeService activityTypeService) {
-        this.activityTypeService = activityTypeService;
-    }
-
     @GetMapping
     @Operation(summary = "دریافت تمام انواع فعالیت")
     public ResponseEntity<ApiResponse<List<ActivityTypeResponse>>> getAll() {
-        log.debug("ActivityTypeController.getAll received");
-        List<ActivityTypeResponse> response = activityTypeService.getAll();
-        log.debug("ActivityTypeController.getAll response: {}", response);
-        return ResponseEntity.ok(ApiResponse.success(response));
+        return ResponseEntity.ok(ApiResponse.success(activityTypeService.getAll()));
     }
 
     @GetMapping("/paging")
-    public ResponseEntity<ApiResponse<Page<ActivityTypeResponse>>> getActivityTypesWithPaging(
-            @PageableDefault(size = 20, sort = "title", direction = Sort.Direction.DESC)  Pageable pageable) {
-        log.debug("ActivityTypeController.getActivityTypesWithPaging received");
-        Page<ActivityTypeResponse> response = activityTypeService.getAllByPaging(pageable);
-        log.debug("ActivityTypeController.getActivityTypesWithPaging response={}", response);
-        return ResponseEntity.ok(ApiResponse.success(response));
+    @Operation(summary = "دریافت انواع فعالیت به صورت صفحه‌بندی‌شده")
+    public ResponseEntity<ApiResponse<Page<ActivityTypeResponse>>> getAllByPaging(
+            @PageableDefault(size = 20, sort = "title", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(ApiResponse.success(activityTypeService.getAllByPaging(pageable)));
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "دریافت نوع فعالیت بر اساس شناسه")
     public ResponseEntity<ApiResponse<ActivityTypeResponse>> getById(@PathVariable @Min(1) Long id) {
-        log.debug("ActivityTypeController.getById: businessTypeId={}", id);
-        ActivityTypeResponse response = activityTypeService.getById(id);
-        log.debug("ActivityTypeController.getById: response={}", response);
-        return ResponseEntity.ok(ApiResponse.success(response));
+        return ResponseEntity.ok(ApiResponse.success(activityTypeService.getById(id)));
     }
 
     @GetMapping("/search")
+    @Operation(summary = "جست‌وجوی انواع فعالیت بر اساس عنوان")
     public ResponseEntity<ApiResponse<List<ActivityTypeResponse>>> search(@RequestParam("title") @NotBlank String title) {
-        log.debug("ActivityTypeController.search: title={}", title);
-        List<ActivityTypeResponse> response = activityTypeService.searchTitle(title);
-        log.debug("ActivityTypeController.search: response={}", response);
-        return ResponseEntity.ok(ApiResponse.success(response));
+        return ResponseEntity.ok(ApiResponse.success(activityTypeService.searchTitle(title)));
     }
 }

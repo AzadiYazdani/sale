@@ -1,6 +1,6 @@
 package com.haraji.security.config.filter;
 
-import com.haraji.security.service.CustomUserDetailsService;
+import com.haraji.security.service.user.CustomUserDetailsService;
 import com.haraji.security.util.JwtUtil;
 import jakarta.annotation.Nonnull;
 import jakarta.servlet.FilterChain;
