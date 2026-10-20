@@ -3,7 +3,6 @@ package com.haraji.baseinfo.mapper.location;
 
 import com.haraji.baseinfo.api.location.ProvinceResponse;
 import com.haraji.baseinfo.database.entity.location.ProvinceEntity;
-import com.haraji.baseinfo.model.location.Province;
 import org.mapstruct.Builder;
 import org.mapstruct.Mapper;
 

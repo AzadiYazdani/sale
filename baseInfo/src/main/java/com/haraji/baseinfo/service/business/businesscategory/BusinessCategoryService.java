@@ -1,5 +1,6 @@
-package com.haraji.baseinfo.service.business;
+package com.haraji.baseinfo.service.business.businesscategory;
 
+import com.haraji.baseinfo.api.businessCategory.BusinessCategoryRequest;
 import com.haraji.baseinfo.api.businessCategory.BusinessCategoryResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +17,10 @@ public interface BusinessCategoryService {
     List<BusinessCategoryResponse> getByParentId(Long parentId);
 
     List<BusinessCategoryResponse> searchTitle(String title);
-    
-    
+
+    BusinessCategoryResponse create(BusinessCategoryRequest request);
+
+    BusinessCategoryResponse update(Long id, BusinessCategoryRequest request);
+
+    void delete(Long id);
 }

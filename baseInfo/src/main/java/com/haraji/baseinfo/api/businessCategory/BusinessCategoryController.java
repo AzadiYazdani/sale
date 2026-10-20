@@ -1,11 +1,13 @@
+
 package com.haraji.baseinfo.api.businessCategory;
 
-import com.haraji.baseinfo.service.business.BusinessCategoryService;
+import com.haraji.baseinfo.service.business.businesscategory.BusinessCategoryService;
 import com.haraji.common.dto.ApiResponse;
 import com.haraji.common.logging.LogLevel;
 import com.haraji.common.logging.MethodLogging;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,5 +61,27 @@ public class BusinessCategoryController {
     @Operation(summary = "جست‌وجوی رسته بر اساس عنوان")
     public ResponseEntity<ApiResponse<List<BusinessCategoryResponse>>> search(@RequestParam("title") @NotBlank String title) {
         return ResponseEntity.ok(ApiResponse.success(businessCategoryService.searchTitle(title)));
+    }
+
+    @PostMapping("/add")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "ثبت رسته جدید")
+    public ResponseEntity<ApiResponse<BusinessCategoryResponse>> create(@Valid @RequestBody BusinessCategoryRequest request) {
+        return ResponseEntity.ok(ApiResponse.success(businessCategoryService.create(request)));
+    }
+
+    @PutMapping("/update/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "ویرایش رسته")
+    public ResponseEntity<ApiResponse<BusinessCategoryResponse>> update(@PathVariable @Min(1) Long id, @Valid @RequestBody BusinessCategoryRequest request) {
+        return ResponseEntity.ok(ApiResponse.success(businessCategoryService.update(id, request)));
+    }
+
+    @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "حذف رسته")
+    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable @Min(1) Long id) {
+        businessCategoryService.delete(id);
+        return ResponseEntity.ok(ApiResponse.success(null));
     }
 }
