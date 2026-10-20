@@ -1,11 +1,8 @@
 package com.haraji.baseinfo.service.location.province;
 
-
-import com.haraji.baseinfo.model.location.City;
-import com.haraji.baseinfo.model.location.Province;
-import jakarta.validation.Valid;
+import com.haraji.baseinfo.api.location.ProvinceResponse;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
@@ -15,14 +12,11 @@ import java.util.List;
 @Validated
 public interface ProvinceService {
 
-    Province getById(@Min(1) Long id);
+    List<ProvinceResponse> getAll();
 
-    List<Province> getAll();
+    Page<ProvinceResponse> getAllByPaging(Pageable pageable);
 
-    Page<Province> getAllByPaging(@Valid @NotNull Pageable pageable);
+    List<ProvinceResponse> searchTitle(@NotBlank String name);
 
-    List<City> getAllCitiesById(@Min(1) Long provinceId);
-
-    List<Province> searchTitle(@NotNull String title);
-
+    ProvinceResponse getById(@Min(1) Long provinceId);
 }

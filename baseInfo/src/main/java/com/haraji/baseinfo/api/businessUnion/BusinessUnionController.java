@@ -2,10 +2,13 @@ package com.haraji.baseinfo.api.businessUnion;
 
 import com.haraji.baseinfo.service.business.BusinessUnionService;
 import com.haraji.common.dto.ApiResponse;
+import com.haraji.common.logging.LogLevel;
+import com.haraji.common.logging.MethodLogging;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -18,48 +21,50 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/businessunion")
-@Slf4j
 @Validated
+@RequiredArgsConstructor
+@MethodLogging(level = LogLevel.INFO)
+@Tag(name = "Business Union", description = "مدیریت اتحادیه‌های صنفی")
 public class BusinessUnionController {
 
     private final BusinessUnionService businessUnionService;
 
-    public BusinessUnionController(BusinessUnionService businessUnionService) {
-        this.businessUnionService = businessUnionService;
-    }
-
-
     @GetMapping
-    @Operation(summary = "دریافت تمام اتحادیه های صنفی")
+    @Operation(summary = "دریافت تمام اتحادیه‌های صنفی")
     public ResponseEntity<ApiResponse<List<BusinessUnionResponse>>> getAll() {
-        List<BusinessUnionResponse> response = businessUnionService.getAll();
-        log.debug("Business types: {}", response);
-        return ResponseEntity.ok(ApiResponse.success(response));
+        return ResponseEntity.ok(ApiResponse.success(businessUnionService.getAll()));
     }
 
     @GetMapping("/paging")
-    public ResponseEntity<ApiResponse<Page<BusinessUnionResponse>>> getActivityTypesWithPaging(
-            @PageableDefault(size = 20, sort = "title", direction = Sort.Direction.DESC)  Pageable pageable) {
-
-        Page<BusinessUnionResponse> response = businessUnionService.getAllByPaging(pageable);
-        return ResponseEntity.ok(ApiResponse.success(response));
+    @Operation(summary = "دریافت اتحادیه‌های صنفی به صورت صفحه‌بندی‌شده")
+    public ResponseEntity<ApiResponse<Page<BusinessUnionResponse>>> getAllByPaging(
+            @PageableDefault(size = 20, sort = "title", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(ApiResponse.success(businessUnionService.getAllByPaging(pageable)));
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "دریافت اتحادیه صنفی بر اساس شناسه")
     public ResponseEntity<ApiResponse<BusinessUnionResponse>> getById(@PathVariable @Min(1) Long id) {
-        log.debug("Received businessTypeId={}", id);
-        BusinessUnionResponse response = businessUnionService.getById(id);
-        log.debug("ActivityType response={}", response);
-        return ResponseEntity.ok(ApiResponse.success(response));
+        return ResponseEntity.ok(ApiResponse.success(businessUnionService.getById(id)));
+    }
+
+    @GetMapping("/city/{cityId}")
+    @Operation(summary = "دریافت اتحادیه‌های صنفی یک شهر")
+    public ResponseEntity<ApiResponse<List<BusinessUnionResponse>>> getByCityId(@PathVariable @Min(1) Long cityId) {
+        return ResponseEntity.ok(ApiResponse.success(businessUnionService.getByCityId(cityId)));
+    }
+
+    @GetMapping("/city/{cityId}/paging")
+    @Operation(summary = "دریافت اتحادیه‌های صنفی یک شهر به صورت صفحه‌بندی‌شده")
+    public ResponseEntity<ApiResponse<Page<BusinessUnionResponse>>> getByCityIdPaging(
+            @PathVariable @Min(1) Long cityId,
+            @PageableDefault(size = 20, sort = "title", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(ApiResponse.success(businessUnionService.getByCityIdPaging(cityId, pageable)));
     }
 
     @GetMapping("/search")
     @Operation(summary = "جست‌وجوی اتحادیه صنفی بر اساس عنوان")
     public ResponseEntity<ApiResponse<List<BusinessUnionResponse>>> search(@RequestParam("title") @NotBlank String title) {
-        log.debug("Received title for searching: {}", title);
-        List<BusinessUnionResponse> response = businessUnionService.searchTitle(title);
-        log.debug("Activity types returned: {}", response);
-        return ResponseEntity.ok(ApiResponse.success(response));
+        return ResponseEntity.ok(ApiResponse.success(businessUnionService.searchTitle(title)));
     }
 }

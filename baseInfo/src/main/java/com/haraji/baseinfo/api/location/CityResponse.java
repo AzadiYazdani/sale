@@ -1,4 +1,4 @@
-package com.haraji.baseinfo.api.location.city;
+package com.haraji.baseinfo.api.location;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
@@ -9,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder(setterPrefix = "set", toBuilder = true, builderMethodName = "newInstance")
 @Schema(description = "مدل پاسخ اطلاعات شهر")
-public class CityResponseDto {
+public class CityResponse {
 
     @Schema(description = "شناسه شهر", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
     private Long id;

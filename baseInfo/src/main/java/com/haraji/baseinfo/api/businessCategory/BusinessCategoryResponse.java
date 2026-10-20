@@ -1,4 +1,4 @@
-package com.haraji.baseinfo.api.businessType;
+package com.haraji.baseinfo.api.businessCategory;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
@@ -9,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder(setterPrefix = "set", toBuilder = true, builderMethodName = "newInstance")
 @Schema(description = "مدل پاسخ نوع کسب و کار")
-public class BusinessTypeResponse {
+public class BusinessCategoryResponse {
 
     @Schema(description = "شناسه کسب و کار", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
     private Long id;

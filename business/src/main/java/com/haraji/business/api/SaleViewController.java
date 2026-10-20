@@ -41,7 +41,7 @@ public class SaleViewController {
             @Min(1)
             @Parameter(description = "شناسه شهر مورد نظر", example = "2", required = true) Integer cityId,
 
-            @RequestParam("businessType")
+            @RequestParam("businessCategory")
             @NotNull
             @Min(1)
             @Parameter(description = "شناسه نوع کسب‌وکار", example = "2", required = true) Integer businessTypeId) {

@@ -1,7 +1,7 @@
 package com.haraji.baseinfo.mapper.location;
 
 
-import com.haraji.baseinfo.api.location.province.ProvinceResponseDto;
+import com.haraji.baseinfo.api.location.ProvinceResponse;
 import com.haraji.baseinfo.database.entity.location.ProvinceEntity;
 import com.haraji.baseinfo.model.location.Province;
 import org.mapstruct.Builder;
@@ -14,12 +14,7 @@ import java.util.List;
 public interface ProvinceMapper {
 
 
-    Province toModel(ProvinceEntity entity);
+    List<ProvinceResponse> toResponseList(List<ProvinceEntity> entities);
 
-    List<Province> toModelList(List<ProvinceEntity> provinceEntityList);
-
-    ProvinceResponseDto toDtoResponse(Province entity);
-
-    List<ProvinceResponseDto> toDtoResponseList(List<Province> provinceList);
-
+    ProvinceResponse toResponse(ProvinceEntity entity);
 }
