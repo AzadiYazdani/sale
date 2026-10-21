@@ -40,9 +40,7 @@ public class OtpServiceImpl implements OtpService {
 
         // محدودیت فاصله زمانی درخواست مجدد
         Optional<OtpEntity> lastOtp =
-                otpRepository.findTopByIdentifierIdAndPurposeOrderByIdDesc(
-                        identifier.getId(), purpose
-                );
+                otpRepository.findTopByIdentifierIdAndPurposeOrderByIdDesc(identifier.getId(), purpose);
 
         if (lastOtp.isPresent() && lastOtp.get().getCreatedDate() != null) {
             LocalDateTime nextAllowedTime = lastOtp.get()

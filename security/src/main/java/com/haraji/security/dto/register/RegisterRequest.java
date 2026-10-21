@@ -16,7 +16,7 @@ public class RegisterRequest {
 
     @Schema(
             description = "نوع نام کاربری؛ ایمیل یا موبایل",
-            example = "user@example.com",
+            example = "EMAIL",
             requiredMode = Schema.RequiredMode.REQUIRED
     )
     @NotNull
@@ -27,8 +27,7 @@ public class RegisterRequest {
             example = "user@example.com",
             requiredMode = Schema.RequiredMode.REQUIRED
     )
-    @NotBlank
-    @Email
+
     @Size(max = 254)
     private String identifier;
 

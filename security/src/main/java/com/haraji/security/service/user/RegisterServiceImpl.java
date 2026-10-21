@@ -2,6 +2,7 @@ package com.haraji.security.service.user;
 
 
 import com.haraji.security.config.OtpChannelProperties;
+import com.haraji.security.config.RegistrationProperties;
 import com.haraji.security.constant.IdentifierType;
 import com.haraji.security.constant.OtpPurpose;
 import com.haraji.security.constant.RoleType;
@@ -29,15 +30,20 @@ public class RegisterServiceImpl implements RegisterService {
     private final UserIdentifierRepository userIdentifierRepository;
     private final PasswordEncoder passwordEncoder;
     private final OtpService otpService;
+    private final RegistrationProperties registrationProperties;
     private final OtpChannelProperties otpChannelProperties;
 
     @Override
     @Transactional
     public RegisterResponse register(RegisterRequest request) {
-        IdentifierType type = request.getIdentifierType();
+        boolean otpEnabled = registrationProperties.isOtpEnabled();
+
+        IdentifierType type = otpEnabled ? request.getIdentifierType() : IdentifierType.USERNAME;
         String value = CommonUtil.normalizeIdentifier(request.getIdentifier(), type);
 
-        validateChannelEnabled(type);
+        if (otpEnabled) {
+            validateChannelEnabled(type);
+        }
 
         if (userIdentifierRepository.existsByTypeAndValue(type, value)) {
             throw new DuplicateIdentifierException(type);
@@ -46,9 +52,8 @@ public class RegisterServiceImpl implements RegisterService {
         UserEntity user = new UserEntity();
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         user.setRole(RoleType.VIEWER);
-        user.setEnabled(false);
+        user.setEnabled(!otpEnabled);
         user.setLocked(false);
-
         user = userRepository.save(user);
 
         UserIdentifierEntity identifier = new UserIdentifierEntity();
@@ -58,13 +63,15 @@ public class RegisterServiceImpl implements RegisterService {
         identifier.setVerified(false);
         identifier.setPrimaryIdentifier(true);
         identifier.setEnabled(true);
-
         identifier = userIdentifierRepository.save(identifier);
-        otpService.generateOtp(identifier, OtpPurpose.REGISTER);
+
+        if (otpEnabled) {
+            otpService.generateOtp(identifier, OtpPurpose.REGISTER);
+        }
 
         return RegisterResponse.newInstance()
                 .userId(user.getId())
-                .message("کد تأیید برای شناسه ثبت‌شده ارسال شد.")
+                .message(otpEnabled ? "کد تأیید برای شناسه ثبت‌شده ارسال شد." : "ثبت‌نام با موفقیت انجام شد.")
                 .build();
     }
 

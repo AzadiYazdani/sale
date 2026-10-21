@@ -34,10 +34,8 @@ public class CommonUtil {
         }
     }
 
-    public static String normalizeIdentifier(
-            String rawValue,
-            IdentifierType type) {
 
+    public static String normalizeIdentifier(String rawValue, IdentifierType type) {
         if (type == null) {
             throw new IllegalArgumentException("نوع شناسه الزامی است.");
         }
@@ -49,16 +47,24 @@ public class CommonUtil {
         String value = rawValue.trim();
 
         return switch (type) {
+            case USERNAME -> normalizeUsername(value);
             case EMAIL -> normalizeEmail(value);
             case PHONE -> normalizePhoneNumber(value);
         };
     }
 
+    private static String normalizeUsername(String username) {
+        if (username.length() > 100) {
+            throw new IllegalArgumentException("نام کاربری نمی‌تواند بیشتر از ۱۰۰ کاراکتر باشد.");
+        }
+
+        return username;
+    }
+
     private static String normalizeEmail(String email) {
         String value = email.trim().toLowerCase(Locale.ROOT);
 
-        if (value.length() > 254
-                || !EMAIL_PATTERN.matcher(value).matches()) {
+        if (value.length() > 254 || !EMAIL_PATTERN.matcher(value).matches()) {
             throw new IllegalArgumentException("قالب ایمیل معتبر نیست.");
         }
 
@@ -66,7 +72,11 @@ public class CommonUtil {
     }
 
     private static String normalizePhoneNumber(String phone) {
-        String value = getString(phone);
+        String value = phone.trim()
+                .replace(" ", "")
+                .replace("-", "")
+                .replace("(", "")
+                .replace(")", "");
 
         String digits;
 

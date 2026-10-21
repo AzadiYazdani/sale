@@ -44,7 +44,6 @@ public class AuthController {
             @ApiResponse(responseCode = "409", description = "ایمیل قبلاً ثبت شده است")
     })
     public ResponseEntity<RegisterResponse> register(@Valid @RequestBody RegisterRequest request) {
-
         return ResponseEntity.status(HttpStatus.CREATED).body(registerService.register(request));
     }
 

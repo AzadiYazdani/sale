@@ -34,6 +34,15 @@ security:
   type: DB
   oauth2:
     token-uri: jdbc:mysql://localhost:3306/sale_db
+
+  registration:
+#    mode: OTP
+    mode: NO_OTP
+    allowed-identifier-modes:
+      - EMAIL
+      - PHONE
+      - EMAIL_AND_PHONE
+
   otp:
     length: 6
     expiration-minutes: 2

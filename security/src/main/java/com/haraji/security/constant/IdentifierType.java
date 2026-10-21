@@ -6,7 +6,9 @@ public enum IdentifierType {
 
     EMAIL("Email", "ایمیل"),
 
-    PHONE("Phone Number", "شماره موبایل");
+    PHONE("Phone Number", "شماره موبایل"),
+
+    USERNAME("Username", "نام کاربری");
 
     private final String englishValue;
     private final String persianValue;
