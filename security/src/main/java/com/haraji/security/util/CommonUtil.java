@@ -12,29 +12,6 @@ public class CommonUtil {
     private static final Pattern EMAIL_PATTERN =
             Pattern.compile("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$");
 
-    public static IdentifierType detectLoginType(String identifier) {
-        if (identifier == null || identifier.isBlank()) {
-            throw new InvalidFormatException();
-        }
-
-        String value = identifier.trim();
-
-        try {
-            normalizeEmail(value);
-            return IdentifierType.EMAIL;
-        } catch (IllegalArgumentException ignored) {
-            // شناسه ایمیل معتبر نیست؛ شماره تلفن را بررسی می‌کنیم.
-        }
-
-        try {
-            normalizePhoneNumber(value);
-            return IdentifierType.PHONE;
-        } catch (IllegalArgumentException ignored) {
-            throw new InvalidFormatException();
-        }
-    }
-
-
     public static String normalizeIdentifier(String rawValue, IdentifierType type) {
         if (type == null) {
             throw new IllegalArgumentException("نوع شناسه الزامی است.");
