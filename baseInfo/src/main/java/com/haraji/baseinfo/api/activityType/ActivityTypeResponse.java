@@ -1,5 +1,6 @@
 package com.haraji.baseinfo.api.activityType;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import lombok.*;
 
@@ -10,9 +11,13 @@ import lombok.*;
 @NoArgsConstructor
 @Builder(setterPrefix = "set", toBuilder = true, builderMethodName = "newInstance")
 @Valid
+@Schema(description = "مدل پاسخ نوع فعالیت کسب و کار (رسته شغلی)")
 public class ActivityTypeResponse {
+
+    @Schema(description = "شناسه نوع فعالیت کسب و کار", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
     private Long id;
 
+    @Schema(description = "نوع فعالیت کسب و کار", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
     private String title;
 
     private String description;

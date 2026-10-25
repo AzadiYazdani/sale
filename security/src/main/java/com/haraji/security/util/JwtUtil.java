@@ -72,13 +72,6 @@ public class JwtUtil {
     }
 
     /**
-     * استخراج Role
-     */
-    public String extractRole(String token) {
-        return extractAllClaims(token).get(ROLE_CLAIM, String.class);
-    }
-
-    /**
      * استخراج تاریخ انقضا
      */
     public Date extractExpiration(String token) {
@@ -91,13 +84,6 @@ public class JwtUtil {
     public <T> T extractClaim(String token, Function<Claims, T> resolver) {
         return resolver.apply(extractAllClaims(token)
         );
-    }
-
-    /**
-     * آیا Token منقضی شده است؟
-     */
-    public boolean isExpired(String token) {
-        return extractExpiration(token).before(new Date());
     }
 
     /**

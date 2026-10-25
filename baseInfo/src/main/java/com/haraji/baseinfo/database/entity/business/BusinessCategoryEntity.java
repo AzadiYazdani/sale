@@ -22,6 +22,4 @@ public class BusinessCategoryEntity {
 
     private String title;
 
-    private String description;
-
 }
