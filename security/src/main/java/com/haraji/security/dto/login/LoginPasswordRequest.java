@@ -10,18 +10,18 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Schema(description = "درخواست ورود با رمز عبور")
+@Schema(description = "درخواست ورود با گذرواژه")
 public class LoginPasswordRequest {
 
     @NotNull
-    @Schema(description = "نوع شناسه", example = "EMAIL")
+    @Schema(description = "نوع شناسه", example = "USERNAME")
     private IdentifierType identifierType;
 
     @NotBlank
-    @Schema(description = "ایمیل یا شماره تلفن", example = "user@example.com")
+    @Schema(description = "نام کاربری", example = "azadi.yazdani")
     private String identifier;
 
     @NotBlank
-    @Schema(description = "رمز عبور")
+    @Schema(description = "گذرواژه", example = "example@123")
     private String password;
 }

@@ -13,12 +13,7 @@ import java.util.List;
 @Mapper(componentModel = "spring", builder = @Builder(disableBuilder = true))
 public interface UserMapper {
 
-    @Mapping(target = "id", source = "id")
     @Mapping(target = "identifier", expression = "java(getPrimaryIdentifier(entity))")
-    @Mapping(target = "role", source = "role")
-    @Mapping(target = "enabled", source = "enabled")
-    @Mapping(target = "createTime", source = "createdDate")
-    @Mapping(target = "person", source = "person")
     UserResponse toUserResponse(UserEntity entity);
 
     List<UserResponse> toUserResponseList(List<UserEntity> entities);

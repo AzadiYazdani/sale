@@ -9,9 +9,9 @@ public class InvalidPasswordException extends BaseException {
     public InvalidPasswordException() {
 
         super(
-                ErrorCode.INVALID_PASSWORD,
-                HttpStatus.BAD_REQUEST,
-                "password.invalid"
+                ErrorCode.INVALID_CREDENTIALS,
+                HttpStatus.NOT_FOUND,
+                "invalid.credential"
         );
 
     }

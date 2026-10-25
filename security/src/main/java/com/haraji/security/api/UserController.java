@@ -36,7 +36,7 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping(params = "!username")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "یافتن همه کاربران به صورت صفحه‌بندی‌شده")
     public ResponseEntity<ApiResponse<Page<UserResponse>>> getAllUsers(@PageableDefault(size = 20, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<UserResponse> response = userService.getAllByPaging(pageable);
@@ -44,7 +44,7 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "یافتن کاربر با شناسه")
     public ResponseEntity<ApiResponse<UserResponse>> getById(@PathVariable("userId") @Min(1) @Parameter(description = "شناسه کاربر", example = "1", required = true) Long userId) {
         UserResponse response = userService.getById(userId);
@@ -52,7 +52,7 @@ public class UserController {
     }
 
     @GetMapping(params = "username")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "جست‌وجوی کاربران با بخشی از شناسه ورود")
     public ResponseEntity<ApiResponse<List<UserResponse>>> searchUsername(@RequestParam("username") @NotBlank @Parameter(description = "بخشی از شناسه ورود", example = "ali", required = true) String username) {
         List<UserResponse> response = userService.searchUsername(username);
@@ -60,7 +60,7 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    @PreAuthorize("hasAnyAuthority('VIEWER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('VIEWER', 'ADMIN')")
     @Operation(summary = "دریافت پروفایل کاربر جاری")
     public ResponseEntity<ApiResponse<UserResponse>> getCurrentUser() {
         UserResponse response = userService.getCurrentUser();
@@ -68,7 +68,7 @@ public class UserController {
     }
 
     @PutMapping("/me")
-    @PreAuthorize("hasAnyAuthority('VIEWER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('VIEWER', 'ADMIN')")
     @Operation(summary = "تکمیل یا ویرایش پروفایل کاربر جاری")
     public ResponseEntity<ApiResponse<UserResponse>> editUser(@RequestBody @Valid UserEditRequest request) {
         UserResponse response = userService.editUser(request);
@@ -76,7 +76,7 @@ public class UserController {
     }
 
     @PutMapping("/{userId}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "ویرایش پروفایل کاربر توسط مدیر")
     public ResponseEntity<ApiResponse<UserResponse>> editByAdmin(@PathVariable("userId") @Min(1) @Parameter(description = "شناسه کاربر", example = "1", required = true) Long userId, @RequestBody @Valid UserEditRequest request) {
         UserResponse response = userService.editUserByAdmin(userId, request);

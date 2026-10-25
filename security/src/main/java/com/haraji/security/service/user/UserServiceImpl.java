@@ -10,6 +10,7 @@ import com.haraji.security.database.repository.UserIdentifierRepository;
 import com.haraji.security.database.repository.UserRepository;
 import com.haraji.security.dto.user.UserEditRequest;
 import com.haraji.security.dto.user.UserResponse;
+import com.haraji.security.exception.authentication.UserNotFoundException;
 import com.haraji.security.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -82,7 +83,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private UserEntity findUserById(Long userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("کاربر موردنظر یافت نشد."));
+        return userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
     }
 
     private UserEntity findCurrentUser() {

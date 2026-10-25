@@ -20,9 +20,11 @@ public class JwtUtil {
 
     private static final String ROLE_CLAIM = "role";
     private static final String BEARER_PREFIX = "Bearer ";
+    private final JwtProperties jwtProperties;
     private final SecretKey secretKey;
 
     public JwtUtil(JwtProperties jwtProperties) {
+        this.jwtProperties = jwtProperties;
         byte[] keyBytes =
                 Base64.getDecoder()
                         .decode(jwtProperties.getSecretKey());
@@ -36,8 +38,7 @@ public class JwtUtil {
     public String generateAccessToken(UserEntity user) {
 
         Date now = new Date();
-//        Date expiration = new Date(now.getTime() + jwtProperties.getExpirationMs());
-        Date expiration = new Date(now.getTime());
+        Date expiration = new Date(now.getTime() + jwtProperties.getExpirationMs());
 
         return Jwts.builder()
                 .subject(user.getId().toString())

@@ -36,7 +36,7 @@ public class AuthController {
     @PostMapping("/register")
     @Operation(
             summary = "ثبت‌نام کاربر",
-            description = "ثبت‌نام با ایمیل یا شماره تلفن و رمز عبور و ارسال کد تأیید از کانال فعال"
+            description = "ثبت‌نام با ایمیل یا شماره تلفن و گذرواژه و ارسال کد تأیید از کانال فعال"
     )
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "ثبت‌نام اولیه انجام شد"),
@@ -58,7 +58,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    @Operation(summary = "ورود با رمز عبور",description = "احراز هویت کاربر با ایمیل و رمز عبور")
+    @Operation(summary = "ورود با گذرواژه",description = "احراز هویت کاربر با نام کاربری و گذرواژه")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "ورود موفق"),
             @ApiResponse(responseCode = "400", description = "اطلاعات ورود نامعتبر است"),
             @ApiResponse(responseCode = "401", description = "احراز هویت ناموفق است")

@@ -32,7 +32,7 @@ public class RegisterRequest {
 
 
     @Schema(
-            description = "رمز عبور کاربر",
+            description = "گذرواژه کاربر",
             example = "Example@123",
             requiredMode = Schema.RequiredMode.REQUIRED,
             minLength = 8, maxLength = 72

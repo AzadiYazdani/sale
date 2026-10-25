@@ -15,14 +15,4 @@ public class UserNotFoundException extends BaseException {
         );
 
     }
-
-    public UserNotFoundException(String identifier) {
-        super(
-                ErrorCode.USER_NOT_FOUND,
-                HttpStatus.NOT_FOUND,
-                "user.not.found",
-                identifier
-        );
-    }
-
 }

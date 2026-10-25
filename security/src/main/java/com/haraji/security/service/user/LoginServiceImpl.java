@@ -1,6 +1,7 @@
 package com.haraji.security.service.user;
 
 import com.haraji.security.config.OtpChannelProperties;
+import com.haraji.security.config.RegistrationProperties;
 import com.haraji.security.constant.IdentifierType;
 import com.haraji.security.dto.login.LoginPasswordRequest;
 import com.haraji.security.dto.otp.OtpRequest;
@@ -14,6 +15,11 @@ import com.haraji.security.database.entity.UserEntity;
 import com.haraji.security.database.entity.UserIdentifierEntity;
 import com.haraji.security.database.repository.UserIdentifierRepository;
 import com.haraji.security.exception.authentication.InvalidPasswordException;
+import com.haraji.security.exception.authentication.UserDisabledException;
+import com.haraji.security.exception.authentication.UserIdentifierNotVerifiedException;
+import com.haraji.security.exception.authentication.UserLockedException;
+import com.haraji.security.exception.otp.OtpEmailChannelDisabledException;
+import com.haraji.security.exception.otp.OtpPhoneChannelDisabledException;
 import com.haraji.security.service.otp.OtpService;
 import com.haraji.security.service.token.RefreshTokenService;
 import com.haraji.security.util.CommonUtil;
@@ -35,6 +41,7 @@ public class LoginServiceImpl implements LoginService {
     private final JwtUtil jwtUtil;
     private final JwtProperties jwtProperties;
     private final OtpChannelProperties otpChannelProperties;
+    private final RegistrationProperties registrationProperties;
 
 
     @Override
@@ -129,33 +136,33 @@ public class LoginServiceImpl implements LoginService {
         String value = CommonUtil.normalizeIdentifier(rawValue, type);
         return userIdentifierRepository
                 .findByTypeAndValueAndEnabledTrue(type, value)
-                .orElseThrow(() ->
-                        new IllegalArgumentException("شناسه یا رمز عبور نادرست است.")
+                .orElseThrow(InvalidPasswordException::new
                 );
     }
 
     private void validateUserForLogin(UserIdentifierEntity identifier, UserEntity user) {
+        boolean otpEnabled = registrationProperties.isOtpEnabled();
 
-        if (!Boolean.TRUE.equals(identifier.getVerified())) {
-            throw new IllegalStateException("ابتدا باید شناسهٔ خود را تأیید کنید.");
+        if (otpEnabled && !Boolean.TRUE.equals(identifier.getVerified())) {
+            throw new UserIdentifierNotVerifiedException();
         }
 
         if (!Boolean.TRUE.equals(user.getEnabled())) {
-            throw new IllegalStateException("حساب کاربری فعال نیست.");
+            throw new UserDisabledException();
         }
 
         if (Boolean.TRUE.equals(user.getLocked())) {
-            throw new IllegalStateException("حساب کاربری قفل شده است.");
+            throw new UserLockedException();
         }
     }
 
     private void validateOtpChannelEnabled(IdentifierType type) {
         if (type == IdentifierType.EMAIL && !otpChannelProperties.getEmail().isEnabled()) {
-            throw new IllegalStateException("ارسال کد از طریق ایمیل غیرفعال است.");
+            throw new OtpEmailChannelDisabledException();
         }
 
         if (type == IdentifierType.PHONE && !otpChannelProperties.getPhone().isEnabled()) {
-            throw new IllegalStateException("ارسال کد از طریق پیامک غیرفعال است.");
+            throw new OtpPhoneChannelDisabledException();
         }
     }
 }

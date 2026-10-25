@@ -41,7 +41,7 @@ public class EmailService {
         return switch (purpose) {
             case REGISTER -> "کد تأیید ثبت‌نام";
             case LOGIN -> "کد ورود به حساب کاربری";
-            case RESET_PASSWORD -> "کد بازیابی رمز عبور";
+            case RESET_PASSWORD -> "کد بازیابی گذرواژه";
             case CHANGE_EMAIL -> "کد تأیید تغییر ایمیل";
             case CHANGE_PHONE -> "کد تأیید تغییر شماره تلفن";
         };
