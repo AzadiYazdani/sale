@@ -20,6 +20,12 @@ public class BusinessUnionRequest {
     @Size(max = 200, message = "عنوان اتحادیه نباید بیشتر از ۲۰۰ کاراکتر باشد.")
     private String title;
 
-    @Size(max = 1000, message = "توضیحات اتحادیه نباید بیشتر از ۱۰۰۰ کاراکتر باشد.")
-    private String description;
+    @Size(max = 100, message = "نام رییس اتحادیه نباید بیشتر از ۱۰۰ کاراکتر باشد.")
+    private String boss;
+
+    @Size(max = 100, message = "نشانی اتحادیه نباید بیشتر از ۱۰۰ کاراکتر باشد.")
+    private String address;
+
+    @Size(max = 50, message = "شماره تلفن اتحادیه نباید بیشتر از ۱۰۰ کاراکتر باشد.")
+    private String telephone;
 }

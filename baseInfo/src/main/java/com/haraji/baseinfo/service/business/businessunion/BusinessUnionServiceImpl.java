@@ -63,7 +63,9 @@ public class BusinessUnionServiceImpl implements BusinessUnionService {
         BusinessUnionEntity entity = new BusinessUnionEntity();
         entity.setCityId(request.getCityId());
         entity.setTitle(request.getTitle().trim());
-        entity.setDescription(request.getDescription());
+        entity.setBoss(request.getBoss());
+        entity.setAddress(request.getAddress());
+        entity.setTelephone(request.getTelephone());
         return toResponse(businessUnionRepository.save(entity));
     }
 
@@ -73,7 +75,9 @@ public class BusinessUnionServiceImpl implements BusinessUnionService {
         BusinessUnionEntity entity = findById(id);
         entity.setCityId(request.getCityId());
         entity.setTitle(request.getTitle().trim());
-        entity.setDescription(request.getDescription());
+        entity.setBoss(request.getBoss());
+        entity.setAddress(request.getAddress());
+        entity.setTelephone(request.getTelephone());
         return toResponse(businessUnionRepository.save(entity));
     }
 
@@ -93,7 +97,9 @@ public class BusinessUnionServiceImpl implements BusinessUnionService {
                 .setId(entity.getId())
                 .setCityId(entity.getCityId())
                 .setTitle(entity.getTitle())
-                .setDescription(entity.getDescription())
+                .setBoss(entity.getBoss())
+                .setAddress(entity.getAddress())
+                .setTelephone(entity.getTelephone())
                 .build();
     }
 }

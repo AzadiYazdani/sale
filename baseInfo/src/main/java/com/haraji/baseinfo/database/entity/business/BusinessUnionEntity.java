@@ -22,6 +22,10 @@ public class BusinessUnionEntity {
 
     private String title;
 
-    private String description;
+    private String boss;
+
+    private String address;
+
+    private String telephone;
 
 }

@@ -17,15 +17,21 @@ public class BusinessUnionResponse {
 
     private String title;
 
-    private String description;
+    private String boss;
+
+    private String address;
+
+    private String telephone;
 
     @Override
     public String toString() {
-        return "BusinessUnion{" +
+        return "BusinessUnionResponse{" +
                 "id=" + id +
                 ", cityId=" + cityId +
                 ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
+                ", boss='" + boss + '\'' +
+                ", address='" + address + '\'' +
+                ", telephone='" + telephone + '\'' +
                 '}';
     }
 }

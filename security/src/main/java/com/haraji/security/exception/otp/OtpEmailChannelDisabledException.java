@@ -9,7 +9,7 @@ public class OtpEmailChannelDisabledException extends BaseException {
     public OtpEmailChannelDisabledException() {
         super(
                 ErrorCode.OTP_EMAIL_CHANNEL_DISABLED,
-                HttpStatus.SERVICE_UNAVAILABLE,
+                HttpStatus.BAD_REQUEST,
                 "otp.email.channel.disabled"
         );
     }

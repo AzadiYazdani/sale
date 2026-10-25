@@ -9,7 +9,7 @@ public class OtpPhoneChannelDisabledException extends BaseException {
     public OtpPhoneChannelDisabledException() {
         super(
                 ErrorCode.OTP_PHONE_CHANNEL_DISABLED,
-                HttpStatus.SERVICE_UNAVAILABLE,
+                HttpStatus.BAD_REQUEST,
                 "otp.phone.channel.disabled"
         );
     }
