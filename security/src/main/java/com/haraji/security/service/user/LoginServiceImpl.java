@@ -46,7 +46,8 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public TokenResponse loginPassword(LoginPasswordRequest request) {
-
+        if (request.getIdentifierType() == null)
+            request.setIdentifierType(IdentifierType.USERNAME);
         UserIdentifierEntity identifier = getIdentifier(request.getIdentifierType(), request.getIdentifier());
         if (!passwordEncoder.matches(request.getPassword(), identifier.getUser().getPasswordHash())) {
             throw new InvalidPasswordException();
@@ -127,7 +128,7 @@ public class LoginServiceImpl implements LoginService {
         return TokenResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
-                .expiresIn(jwtProperties.getExpirationMs()/1000)
+                .expiresIn(jwtProperties.getExpirationMs() / 1000)
                 .build();
     }
 

@@ -14,12 +14,10 @@ import java.util.List;
 public interface BusinessCategoryMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "description", ignore = true)
     @Mapping(target = "parentId", source = "businessCategoryId")
     BusinessCategoryEntity toEntity(BusinessCategoryRequest request);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "description", ignore = true)
     @Mapping(target = "parentId", source = "businessCategoryId")
     void updateEntity(BusinessCategoryRequest request, @MappingTarget BusinessCategoryEntity entity);
 

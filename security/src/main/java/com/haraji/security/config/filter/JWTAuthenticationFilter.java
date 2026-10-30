@@ -1,3 +1,4 @@
+
 package com.haraji.security.config.filter;
 
 import com.haraji.security.service.user.CustomUserDetailsService;
@@ -24,7 +25,6 @@ import java.io.IOException;
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
-
     private final CustomUserDetailsService userDetailsService;
 
     @Override
@@ -35,37 +35,38 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
         try {
             String token = jwtUtil.parseJwtToken(request);
-            if (token == null) {
-                filterChain.doFilter(request, response);
-                return;
-            }
-            if (!jwtUtil.validateJwtToken(token)) {
-                filterChain.doFilter(request, response);
-                return;
-            }
-            if (SecurityContextHolder.getContext().getAuthentication() != null) {
-                filterChain.doFilter(request, response);
-                return;
-            }
 
-            Long userId = jwtUtil.extractUserId(token);
-            UserDetails userDetails = userDetailsService.loadUserById(userId);
+            if (token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                if (jwtUtil.validateJwtToken(token)) {
+                    Long userId = jwtUtil.extractUserId(token);
+                    UserDetails userDetails = userDetailsService.loadUserById(userId);
 
-            UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(
-                            userDetails,
-                            null,
-                            userDetails.getAuthorities()
+                    UsernamePasswordAuthenticationToken authentication =
+                            new UsernamePasswordAuthenticationToken(
+                                    userDetails,
+                                    null,
+                                    userDetails.getAuthorities()
+                            );
+
+                    authentication.setDetails(
+                            new WebAuthenticationDetailsSource().buildDetails(request)
                     );
 
-            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                    log.info("Authenticated user: {}", userDetails.getUsername());
+                    log.info("User authorities: {}", userDetails.getAuthorities());
+                    log.info("Authentication: {}", SecurityContextHolder.getContext().getAuthentication());
 
+                    log.info("Authenticated user: {}, authorities: {}",
+                            userDetails.getUsername(),
+                            userDetails.getAuthorities());
+                }
+            }
         } catch (Exception ex) {
-            log.error("JWT authentication failed.", ex);
+            log.error("JWT authentication failed for request: {} {}", request.getMethod(), request.getRequestURI(), ex);
             SecurityContextHolder.clearContext();
         }
+
         filterChain.doFilter(request, response);
     }
-
 }

@@ -1,3 +1,4 @@
+
 package com.haraji.security.config;
 
 import com.haraji.security.config.filter.JWTAuthenticationFilter;
@@ -6,7 +7,9 @@ import com.haraji.security.exception.authentication.JwtAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -24,32 +27,37 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
-    private final String[] defaultPermit =
-            { "/swagger-ui/**",
+    private static final String[] DEFAULT_PERMIT = {
+            "/swagger-ui/**",
             "/v3/api-docs/**",
-            "/swagger-ui.html"};
+            "/swagger-ui.html",
+            "/favicon.ico",
+            "/assets/**",
+            "/css/**",
+            "/js/**",
+            "/images/**",
+            "/webjars/**"
+    };
+
     private final JWTAuthenticationFilter jwtAuthenticationFilter;
     private final JwtAuthenticationEntryPoint authenticationEntryPoint;
     private final JwtAccessDeniedHandler accessDeniedHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(AbstractHttpConfigurer::disable)
-
+                .cors(Customizer.withDefaults())
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(authenticationEntryPoint)
                         .accessDeniedHandler(accessDeniedHandler)
                 )
-
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(defaultPermit).permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers(DEFAULT_PERMIT).permitAll()
                         .requestMatchers(
                                 "/auth/**",
                                 "/location/**",
@@ -58,9 +66,10 @@ public class WebSecurityConfig {
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
-
-                .addFilterBefore(jwtAuthenticationFilter,
-                        UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(
+                        jwtAuthenticationFilter,
+                        UsernamePasswordAuthenticationFilter.class
+                );
 
         return http.build();
     }

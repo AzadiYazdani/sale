@@ -31,13 +31,13 @@ public class UserEditRequest implements Serializable {
     @Schema(description = "نام پدر", example = "حسن")
     private String fatherName;
 
-    @Schema(description = "کد ملی", example = "0451238680")
+    @Schema(description = "کد ملی", example = "0451231234")
     private String nationalCode;
 
     @Schema(description = "شماره شناسنامه", example = "1123")
     private String identityNumber;
 
-    @Schema(description = "تاریخ تولد", example = "1/1/1358")
+    @Schema(description = "تاریخ تولد", example = "1/1/1378")
     private String birthDate;
 
     @Schema(description = "شهر تولد", example = "تهران")

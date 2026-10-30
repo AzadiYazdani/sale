@@ -61,7 +61,6 @@ public class JwtUtil {
         } catch (JwtException | IllegalArgumentException ex) {
             return false;
         }
-
     }
 
     /**
@@ -69,13 +68,6 @@ public class JwtUtil {
      */
     public Long extractUserId(String token) {
         return Long.parseLong(extractAllClaims(token).getSubject() );
-    }
-
-    /**
-     * استخراج تاریخ انقضا
-     */
-    public Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
     }
 
     /**

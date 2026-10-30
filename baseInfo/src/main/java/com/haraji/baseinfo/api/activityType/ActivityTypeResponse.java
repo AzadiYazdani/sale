@@ -11,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder(setterPrefix = "set", toBuilder = true, builderMethodName = "newInstance")
 @Valid
-@Schema(description = "مدل پاسخ نوع فعالیت کسب و کار (رسته شغلی)")
+@Schema(description = "مدل پاسخ نوع فعالیت کسب و کار")
 public class ActivityTypeResponse {
 
     @Schema(description = "شناسه نوع فعالیت کسب و کار", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
