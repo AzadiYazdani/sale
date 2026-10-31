@@ -71,14 +71,6 @@ public class JwtUtil {
     }
 
     /**
-     * استخراج Claim دلخواه
-     */
-    public <T> T extractClaim(String token, Function<Claims, T> resolver) {
-        return resolver.apply(extractAllClaims(token)
-        );
-    }
-
-    /**
      * استخراج Claims
      */
     private Claims extractAllClaims(String token) {

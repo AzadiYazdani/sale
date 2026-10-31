@@ -3,49 +3,17 @@ package com.haraji.common.util;
 import com.haraji.common.exception.InvalidFormatException;
 
 import java.time.*;
-import java.util.Date;
 
-public class DateUtility {
-    public static ZoneId defaultZone = ZoneId.of("Iran");
+public class DateUtil {
 
-    public static LocalDateTime now() {
-        return now(defaultZone);
-    }
+    public static String convertToJalaliDateTime(LocalDateTime dateTime) {
+        if (dateTime == null) return null;
 
-    public static LocalDateTime now(ZoneId zoneId) {
-        return ZonedDateTime.now(zoneId).toLocalDateTime();
-    }
+        JalaliCalendar.YearMonthDate jalaliDate = convertToJalaliYearMonthDate(dateTime.toLocalDate());
 
-    public static LocalDateTime convertToLocalDateTime(Long epochMilliseconds) {
-        return convertToLocalDateTime(epochMilliseconds, defaultZone);
-    }
-
-    public static LocalDateTime convertToLocalDateTime(Long epochMilliseconds, ZoneId zoneId) {
-        return epochMilliseconds == null ? null : Instant.ofEpochMilli(epochMilliseconds).atZone(zoneId).toLocalDateTime();
-    }
-
-    public static Long convertToEpochMilliseconds(LocalDateTime localDateTime) {
-        return convertToEpochMilliseconds(localDateTime, defaultZone);
-    }
-
-    public static Long convertToEpochMilliseconds(LocalDateTime localDateTime, ZoneId zoneId) {
-        return localDateTime == null ? null : localDateTime.atZone(zoneId).toInstant().toEpochMilli();
-    }
-
-    public static Date convertToDate(LocalDateTime localDateTime) {
-        return convertToDate(localDateTime, defaultZone);
-    }
-
-    public static Date convertToDate(LocalDateTime localDateTime, ZoneId zoneId) {
-        return localDateTime == null ? null : Date.from(localDateTime.atZone(zoneId).toInstant());
-    }
-
-    public static LocalDateTime convertToLocalDateTime(Date date) {
-        return convertToLocalDateTime(date, defaultZone);
-    }
-
-    public static LocalDateTime convertToLocalDateTime(Date date, ZoneId zoneId) {
-        return date == null ? null : date.toInstant().atZone(zoneId).toLocalDateTime();
+        return String.format("%04d/%02d/%02d %02d:%02d:%02d",
+                jalaliDate.getYear(), jalaliDate.getMonth(), jalaliDate.getDay(),
+                dateTime.getHour(), dateTime.getMinute(), dateTime.getSecond());
     }
 
     public static JalaliCalendar.YearMonthDate convertToJalaliYearMonthDate(LocalDate localDate) {
@@ -55,20 +23,6 @@ public class DateUtility {
         JalaliCalendar.YearMonthDate jalaliDate = JalaliCalendar.gregorianToJalali(yearMonthDate);
         jalaliDate.setMonth(jalaliDate.getMonth() + 1);
         return jalaliDate;
-    }
-
-    public static JalaliCalendar.YearMonthDate convertToGregorianYearMonthDate(LocalDate localDate) {
-        if (localDate == null)
-            return null;
-
-        return new JalaliCalendar.YearMonthDate(localDate.getYear(), localDate.getMonthValue(), localDate.getDayOfMonth());
-    }
-
-    public static Integer getJalaliYear(LocalDate localDate) {
-        if (localDate == null) {
-            return null;
-        }
-        return convertToJalaliYearMonthDate(localDate).getYear();
     }
 
     public static LocalDate getLocalDateFromString(String jalaliDate) throws InvalidFormatException {
@@ -100,4 +54,5 @@ public class DateUtility {
         JalaliCalendar.YearMonthDate gregorianDate = JalaliCalendar.jalaliToGregorian(jalaliDate);
         return LocalDate.of(gregorianDate.getYear(), gregorianDate.getMonth() + 1, gregorianDate.getDay());
     }
+
 }

@@ -2,7 +2,7 @@ package com.haraji.baseinfo.api.util;
 
 import com.haraji.common.dto.ApiResponse;
 import com.haraji.common.exception.InvalidFormatException;
-import com.haraji.common.util.DateUtility;
+import com.haraji.common.util.DateUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,7 +32,7 @@ public class UtilController {
             String date) {
         log.debug("Received date={}", date);
         try {
-            LocalDate response = DateUtility.getLocalDateFromString(date);
+            LocalDate response = DateUtil.getLocalDateFromString(date);
             return ResponseEntity.ok(ApiResponse.success(response));
         } catch (Exception ex) {
             throw new InvalidFormatException();

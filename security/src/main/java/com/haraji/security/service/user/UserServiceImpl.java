@@ -1,13 +1,12 @@
 
 package com.haraji.security.service.user;
 
-import com.haraji.common.util.DateUtility;
+import com.haraji.common.util.DateUtil;
 import com.haraji.security.database.entity.PersonEntity;
 import com.haraji.security.database.entity.UserEntity;
-import com.haraji.security.database.entity.UserIdentifierEntity;
 import com.haraji.security.database.repository.PersonRepository;
-import com.haraji.security.database.repository.UserIdentifierRepository;
 import com.haraji.security.database.repository.UserRepository;
+import com.haraji.security.dto.user.AdminUserResponse;
 import com.haraji.security.dto.user.UserEditRequest;
 import com.haraji.security.dto.user.UserResponse;
 import com.haraji.security.exception.authentication.UserNotFoundException;
@@ -22,9 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 @Service
@@ -34,17 +30,26 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PersonRepository personRepository;
-    private final UserIdentifierRepository userIdentifierRepository;
     private final UserMapper userMapper;
 
     @Override
-    public Page<UserResponse> getAllByPaging(Pageable pageable) {
-        return userRepository.findAll(pageable).map(userMapper::toUserResponse);
+    public Page<AdminUserResponse> getAllByPaging(Pageable pageable) {
+        return userRepository.findAll(pageable).map(userMapper::toAdminUserResponse);
     }
 
     @Override
-    public UserResponse getById(Long id) {
-        return userMapper.toUserResponse(findUserById(id));
+    public AdminUserResponse getById(Long id) {
+        return userMapper.toAdminUserResponse(findUserById(id));
+    }
+
+    @Override
+    public Page<AdminUserResponse> searchUsername(String username, Pageable pageable) {
+        if (!StringUtils.hasText(username)) {
+            throw new IllegalArgumentException("عبارت جست‌وجو الزامی است.");
+        }
+
+        return userRepository.searchByIdentifier(username.trim(), pageable)
+                .map(userMapper::toAdminUserResponse);
     }
 
     @Override
@@ -53,33 +58,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserResponse> searchUsername(String username) {
-        if (!StringUtils.hasText(username)) {
-            throw new IllegalArgumentException("عبارت جست‌وجو الزامی است.");
-        }
-
-        Map<Long, UserEntity> users = new LinkedHashMap<>();
-
-        for (UserIdentifierEntity identifier : userIdentifierRepository.findAllByValueContainingIgnoreCaseAndEnabledTrue(username.trim())) {
-            UserEntity user = identifier.getUser();
-            if (user != null) {
-                users.putIfAbsent(user.getId(), user);
-            }
-        }
-
-        return userMapper.toUserResponseList(List.copyOf(users.values()));
-    }
-
-    @Override
     @Transactional
     public UserResponse editUser(UserEditRequest request) {
-        return updateUser(findCurrentUser(), request);
+        return userMapper.toUserResponse(updateUser(findCurrentUser(), request));
     }
 
     @Override
     @Transactional
-    public UserResponse editUserByAdmin(Long userId, UserEditRequest request) {
-        return updateUser(findUserById(userId), request);
+    public AdminUserResponse editUserByAdmin(Long userId, UserEditRequest request) {
+        return userMapper.toAdminUserResponse(updateUser(findUserById(userId), request));
     }
 
     private UserEntity findUserById(Long userId) {
@@ -96,7 +83,7 @@ public class UserServiceImpl implements UserService {
         return findUserById(securityUser.getUser().getId());
     }
 
-    private UserResponse updateUser(UserEntity user, UserEditRequest request) {
+    private UserEntity updateUser(UserEntity user, UserEditRequest request) {
         PersonEntity person = user.getPerson();
 
         if (person == null) {
@@ -109,8 +96,8 @@ public class UserServiceImpl implements UserService {
         if (request.getEmail() != null) {
             person.setEmail(request.getEmail().trim());
         }
-        if (request.getTelephone() != null) {
-            person.setTelephone(request.getTelephone().trim());
+        if (request.getMobile() != null) {
+            person.setTelephone(request.getMobile().trim());
         }
         if (request.getAddress() != null) {
             person.setAddress(request.getAddress().trim());
@@ -131,16 +118,15 @@ public class UserServiceImpl implements UserService {
             person.setIdentityNumber(request.getIdentityNumber().trim());
         }
         if (StringUtils.hasText(request.getBirthDate())) {
-            person.setBirthDate(DateUtility.getLocalDateFromString(request.getBirthDate().trim()));
+            person.setBirthDate(DateUtil.getLocalDateFromString(request.getBirthDate().trim()));
         }
         if (request.getBirthCity() != null) {
             person.setBirthCity(request.getBirthCity().trim());
         }
 
         personRepository.save(person);
-        userRepository.save(user);
 
-        return userMapper.toUserResponse(user);
+        return userRepository.save(user);
     }
 
     private void validateUniqueFields(UserEditRequest request, PersonEntity currentPerson) {
@@ -162,11 +148,11 @@ public class UserServiceImpl implements UserService {
                     });
         }
 
-        if (StringUtils.hasText(request.getTelephone())) {
-            personRepository.findByMobile(request.getTelephone().trim())
+        if (StringUtils.hasText(request.getMobile())) {
+            personRepository.findByMobile(request.getMobile().trim())
                     .filter(person -> !Objects.equals(person.getId(), currentPersonId))
                     .ifPresent(person -> {
-                        throw new IllegalArgumentException("این شماره موبایل قبلاً برای شخص دیگری ثبت شده است.");
+                        throw new IllegalArgumentException("این شماره همراه قبلاً برای شخص دیگری ثبت شده است.");
                     });
         }
     }

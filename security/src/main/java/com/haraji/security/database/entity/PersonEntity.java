@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 
 @Entity
-@Table(schema = "sale_db", name = "sec_person")
+@Table(name = "sec_person")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -46,7 +46,10 @@ public class PersonEntity implements Serializable {
 
     private String email;
     private String mobile;
+
+    @Column(name = "city_code")
     private String cityCode;
+
     private String telephone;
     private String address;
 
@@ -60,17 +63,6 @@ public class PersonEntity implements Serializable {
                 "id=" + id +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
-                ", fatherName='" + fatherName + '\'' +
-                ", nationalCode='" + nationalCode + '\'' +
-                ", identityNumber='" + identityNumber + '\'' +
-                ", birthDate=" + birthDate +
-                ", birthCity='" + birthCity + '\'' +
-                ", issueCity='" + issueCity + '\'' +
-                ", email='" + email + '\'' +
-                ", mobile='" + mobile + '\'' +
-                ", cityCode='" + cityCode + '\'' +
-                ", telephone='" + telephone + '\'' +
-                ", address='" + address + '\'' +
                 ", userId=" + (user != null ? user.getId() : null) +
                 '}';
     }

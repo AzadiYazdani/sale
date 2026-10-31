@@ -22,13 +22,13 @@ public class PersonDto implements Serializable {
     @Schema(description = "نام پدر", example = "حسن")
     private String fatherName;
 
-    @Schema(description = "کد ملی", example = "0451238680")
+    @Schema(description = "کد ملی", example = "0451231234")
     private String nationalCode;
 
     @Schema(description = "شماره شناسنامه", example = "1123")
     private String identityNumber;
 
-    @Schema(description = "تاریخ تولد", example = "1/1/1358")
+    @Schema(description = "تاریخ تولد", example = "1/1/1378")
     private String birthDate;
 
     @Schema(description = "شهر تولد", example = "تهران")
@@ -46,28 +46,10 @@ public class PersonDto implements Serializable {
     @Schema(description = "پیش شماره شهر", example = "021")
     private String cityCode;
 
-    @Schema(description = "تلفن", example = "77384677")
+    @Schema(description = "تلفن", example = "77567891")
     private String telephone;
 
     @Schema(description = "نشانی", example = "بالاتر از فلکه چهارم تهرانپارس")
     private String address;
 
-    @Override
-    public String toString() {
-        return "PersonDto{" +
-                "firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", fatherName='" + fatherName + '\'' +
-                ", nationalCode='" + nationalCode + '\'' +
-                ", identityNumber='" + identityNumber + '\'' +
-                ", birthDate='" + birthDate + '\'' +
-                ", birthCity='" + birthCity + '\'' +
-                ", issueCity='" + issueCity + '\'' +
-                ", email='" + email + '\'' +
-                ", mobile='" + mobile + '\'' +
-                ", cityCode='" + cityCode + '\'' +
-                ", telephone='" + telephone + '\'' +
-                ", address='" + address + '\'' +
-                '}';
-    }
 }

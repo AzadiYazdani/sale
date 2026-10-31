@@ -1,3 +1,4 @@
+
 package com.haraji.security.dto.user;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -13,11 +14,11 @@ import java.io.Serializable;
 @Schema(description = "مدل درخواست ویرایش اطلاعات کاربر")
 public class UserEditRequest implements Serializable {
 
-    @Schema(description = "ایمیل", requiredMode = Schema.RequiredMode.REQUIRED, example = "azadi.yazdani@yahoo.com")
+    @Schema(description = "ایمیل", example = "azadi.yazdani@yahoo.com")
     private String email;
 
-    @Schema(description = "تلفن", example = "09122935797")
-    private String telephone;
+    @Schema(description = "تلفن همراه", example = "09121234567")
+    private String mobile;
 
     @Schema(description = "نشانی", example = "بالاتر از فلکه چهارم تهرانپارس")
     private String address;
@@ -37,7 +38,7 @@ public class UserEditRequest implements Serializable {
     @Schema(description = "شماره شناسنامه", example = "1123")
     private String identityNumber;
 
-    @Schema(description = "تاریخ تولد", example = "1/1/1378")
+    @Schema(description = "تاریخ تولد شمسی", example = "1378/01/01")
     private String birthDate;
 
     @Schema(description = "شهر تولد", example = "تهران")
@@ -45,16 +46,13 @@ public class UserEditRequest implements Serializable {
 
     @Override
     public String toString() {
-        return "UserEditRequestDto{" +
+        return "UserEditRequest{" +
                 "email='" + email + '\'' +
-                ", telephone='" + telephone + '\'' +
+                ", mobile='" + mobile + '\'' +
                 ", address='" + address + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", fatherName='" + fatherName + '\'' +
-                ", nationalCode='" + nationalCode + '\'' +
-                ", identityNumber='" + identityNumber + '\'' +
-                ", birthDate='" + birthDate + '\'' +
                 ", birthCity='" + birthCity + '\'' +
                 '}';
     }

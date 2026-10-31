@@ -1,3 +1,4 @@
+
 package com.haraji.security.database.repository;
 
 import com.haraji.security.database.entity.PersonEntity;
@@ -8,8 +9,12 @@ import java.util.Optional;
 
 @Repository
 public interface PersonRepository extends JpaRepository<PersonEntity, Long> {
-    Optional<PersonEntity> findById(Long id);
+
+    Optional<PersonEntity> findByUserId(Long userId);
+
     Optional<PersonEntity> findByNationalCode(String nationalCode);
+
     Optional<PersonEntity> findByEmail(String email);
+
     Optional<PersonEntity> findByMobile(String mobile);
 }

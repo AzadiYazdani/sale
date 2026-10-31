@@ -1,8 +1,10 @@
+
 package com.haraji.security.api;
 
 import com.haraji.common.dto.ApiResponse;
 import com.haraji.common.logging.LogLevel;
 import com.haraji.common.logging.MethodLogging;
+import com.haraji.security.dto.user.AdminUserResponse;
 import com.haraji.security.dto.user.UserEditRequest;
 import com.haraji.security.dto.user.UserResponse;
 import com.haraji.security.service.user.UserService;
@@ -23,8 +25,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "User operations", description = "عملیات مربوط به کاربران")
@@ -38,24 +38,24 @@ public class UserController {
     @GetMapping(params = "!username")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "یافتن همه کاربران به صورت صفحه‌بندی‌شده")
-    public ResponseEntity<ApiResponse<Page<UserResponse>>> getAllUsers(@PageableDefault(size = 20, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<UserResponse> response = userService.getAllByPaging(pageable);
+    public ResponseEntity<ApiResponse<Page<AdminUserResponse>>> getAllUsers(@PageableDefault(size = 20, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<AdminUserResponse> response = userService.getAllByPaging(pageable);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
     @GetMapping("/{userId}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "یافتن کاربر با شناسه")
-    public ResponseEntity<ApiResponse<UserResponse>> getById(@PathVariable("userId") @Min(1) @Parameter(description = "شناسه کاربر", example = "1", required = true) Long userId) {
-        UserResponse response = userService.getById(userId);
+    public ResponseEntity<ApiResponse<AdminUserResponse>> getById(@PathVariable("userId") @Min(1) @Parameter(description = "شناسه کاربر", example = "1", required = true) Long userId) {
+        AdminUserResponse response = userService.getById(userId);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
     @GetMapping(params = "username")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "جست‌وجوی کاربران با بخشی از شناسه ورود")
-    public ResponseEntity<ApiResponse<List<UserResponse>>> searchUsername(@RequestParam("username") @NotBlank @Parameter(description = "بخشی از شناسه ورود", example = "ali", required = true) String username) {
-        List<UserResponse> response = userService.searchUsername(username);
+    public ResponseEntity<ApiResponse<Page<AdminUserResponse>>> searchUsername(@RequestParam("username") @NotBlank @Parameter(description = "بخشی از شناسه ورود", example = "ali", required = true) String username, @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<AdminUserResponse> response = userService.searchUsername(username, pageable);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
@@ -78,8 +78,8 @@ public class UserController {
     @PutMapping("/{userId}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "ویرایش پروفایل کاربر توسط مدیر")
-    public ResponseEntity<ApiResponse<UserResponse>> editByAdmin(@PathVariable("userId") @Min(1) @Parameter(description = "شناسه کاربر", example = "1", required = true) Long userId, @RequestBody @Valid UserEditRequest request) {
-        UserResponse response = userService.editUserByAdmin(userId, request);
+    public ResponseEntity<ApiResponse<AdminUserResponse>> editByAdmin(@PathVariable("userId") @Min(1) @Parameter(description = "شناسه کاربر", example = "1", required = true) Long userId, @RequestBody @Valid UserEditRequest request) {
+        AdminUserResponse response = userService.editUserByAdmin(userId, request);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 }

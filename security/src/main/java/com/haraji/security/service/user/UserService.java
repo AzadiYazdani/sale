@@ -1,5 +1,6 @@
 package com.haraji.security.service.user;
 
+import com.haraji.security.dto.user.AdminUserResponse;
 import com.haraji.security.dto.user.UserEditRequest;
 import com.haraji.security.dto.user.UserResponse;
 import jakarta.validation.Valid;
@@ -13,15 +14,15 @@ import java.util.List;
 @Validated
 public interface UserService {
 
-    Page<UserResponse> getAllByPaging(Pageable pageable);
+    Page<AdminUserResponse> getAllByPaging(Pageable pageable);
 
-    UserResponse getById(@Min(1) Long id);
+    AdminUserResponse getById(@Min(1) Long id);
+
+    Page<AdminUserResponse> searchUsername(String username, Pageable pageable);
 
     UserResponse getCurrentUser();
 
     UserResponse editUser(@Valid UserEditRequest request);
 
-    UserResponse editUserByAdmin(@Min(1) Long userId, @Valid UserEditRequest request);
-
-    List<UserResponse> searchUsername(String username);
+    AdminUserResponse editUserByAdmin(@Min(1) Long userId, @Valid UserEditRequest request);
 }

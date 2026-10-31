@@ -42,7 +42,7 @@ public class UserEntity extends BaseEntity<Long> implements Serializable {
     @Builder.Default
     private List<UserIdentifierEntity> identifiers = new ArrayList<>();
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private PersonEntity person;
 
     public Optional<UserIdentifierEntity> getPrimaryIdentifier() {
