@@ -80,24 +80,18 @@ public class LoginServiceImpl implements LoginService {
 
 
     @Override
+    @Transactional
     public TokenResponse refreshToken(RefreshTokenRequest request) {
 
-        RefreshTokenEntity refreshTokenEntity = refreshTokenService.validateRefreshToken(request.getRefreshToken());
+        RefreshTokenEntity refreshTokenEntity =
+                refreshTokenService.validateRefreshToken(request.getRefreshToken());
+
         UserEntity user = refreshTokenEntity.getUser();
-        /*
-         * Token Rotation
-         *
-         * توکن قبلی را باطل می‌کنیم
-         */
+
         refreshTokenService.revoke(request.getRefreshToken());
-        /*
-         * Refresh Token جدید
-         */
+
         String newRefreshToken = refreshTokenService.createRefreshToken(user);
 
-        /*
-         * Access Token جدید
-         */
         String newAccessToken = jwtUtil.generateAccessToken(user);
 
         return TokenResponse.builder()
@@ -108,6 +102,7 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
+    @Transactional
     public void logout(String refreshToken) {
         refreshTokenService.revoke(refreshToken);
     }

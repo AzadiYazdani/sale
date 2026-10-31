@@ -1,3 +1,4 @@
+
 package com.haraji.security.util;
 
 import com.haraji.security.config.JwtProperties;
@@ -13,30 +14,23 @@ import javax.crypto.SecretKey;
 import java.util.Base64;
 import java.util.Date;
 import java.util.UUID;
-import java.util.function.Function;
 
 @Component
 public class JwtUtil {
 
     private static final String ROLE_CLAIM = "role";
     private static final String BEARER_PREFIX = "Bearer ";
+
     private final JwtProperties jwtProperties;
     private final SecretKey secretKey;
 
     public JwtUtil(JwtProperties jwtProperties) {
         this.jwtProperties = jwtProperties;
-        byte[] keyBytes =
-                Base64.getDecoder()
-                        .decode(jwtProperties.getSecretKey());
-
+        byte[] keyBytes = Base64.getDecoder().decode(jwtProperties.getSecretKey());
         this.secretKey = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    /**
-     * ساخت Access Token
-     */
     public String generateAccessToken(UserEntity user) {
-
         Date now = new Date();
         Date expiration = new Date(now.getTime() + jwtProperties.getExpirationMs());
 
@@ -50,29 +44,42 @@ public class JwtUtil {
                 .compact();
     }
 
-    /**
-     * اعتبارسنجی Token
-     */
-    public boolean validateJwtToken(String token) {
+    public Long validateAndExtractUserId(String token) {
+        Claims claims = extractAllClaims(token);
 
+        String subject = claims.getSubject();
+        String role = claims.get(ROLE_CLAIM, String.class);
+
+        if (subject == null || subject.isBlank()) {
+            throw new IllegalArgumentException("INVALID_JWT_SUBJECT");
+        }
+
+        if (role == null || role.isBlank()) {
+            throw new IllegalArgumentException("INVALID_JWT_ROLE");
+        }
+
+        Long userId = Long.parseLong(subject);
+
+        if (userId <= 0) {
+            throw new IllegalArgumentException("INVALID_JWT_USER_ID");
+        }
+
+        return userId;
+    }
+
+    public boolean validateJwtToken(String token) {
         try {
-            extractAllClaims(token);
+            validateAndExtractUserId(token);
             return true;
         } catch (JwtException | IllegalArgumentException ex) {
             return false;
         }
     }
 
-    /**
-     * استخراج UserId
-     */
     public Long extractUserId(String token) {
-        return Long.parseLong(extractAllClaims(token).getSubject() );
+        return validateAndExtractUserId(token);
     }
 
-    /**
-     * استخراج Claims
-     */
     private Claims extractAllClaims(String token) {
         return Jwts.parser()
                 .verifyWith(secretKey)
@@ -81,21 +88,15 @@ public class JwtUtil {
                 .getPayload();
     }
 
-    /**
-     * استخراج Token از Header
-     */
     public String parseJwtToken(HttpServletRequest request) {
-
         String header = request.getHeader("Authorization");
-        if (header == null) {
+
+        if (header == null || !header.regionMatches(true, 0, BEARER_PREFIX, 0, BEARER_PREFIX.length())) {
             return null;
         }
 
-        if (!header.startsWith(BEARER_PREFIX)) {
-            return null;
-        }
+        String token = header.substring(BEARER_PREFIX.length()).trim();
 
-        return header.substring(BEARER_PREFIX.length());
+        return token.isEmpty() ? null : token;
     }
-
 }

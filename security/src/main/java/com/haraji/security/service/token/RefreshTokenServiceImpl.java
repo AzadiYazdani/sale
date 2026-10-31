@@ -75,8 +75,11 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         });
     }
 
+
     @Override
     public void revokeAll(Long userId) {
-        refreshTokenRepository.findAllByUserId(userId).forEach(token -> token.setRevoked(true));
+        refreshTokenRepository.findAllByUserIdAndRevokedFalse(userId)
+                .forEach(token -> token.setRevoked(true));
     }
+
 }

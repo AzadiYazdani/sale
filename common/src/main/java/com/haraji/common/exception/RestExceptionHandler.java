@@ -1,6 +1,7 @@
 
 package com.haraji.common.exception;
 
+import com.haraji.common.constant.ErrorCode;
 import com.haraji.common.constant.Language;
 import com.haraji.common.dto.ErrorResponse;
 import com.haraji.common.util.MessageArgumentConverter;
@@ -24,40 +25,61 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(BaseException.class)
     public ResponseEntity<ErrorResponse> handleBaseException(BaseException ex, HttpServletRequest request) {
-        ErrorResponse response = ErrorResponse.builder()
-                .status(ex.getStatus().value())
-                .errorCode(ex.getErrorCode().name())
-                .message(messageSource.getMessage(ex.getMessageKey(), MessageArgumentConverter.convert(ex.getArgs(), Language.ENGLISH), AppLocale.ENGLISH))
-                .localizedMessage(messageSource.getMessage(ex.getMessageKey(), MessageArgumentConverter.convert(ex.getArgs(), Language.PERSIAN), AppLocale.PERSIAN))
-                .path(request.getRequestURI())
-                .timestamp(LocalDateTime.now())
-                .build();
 
-        return ResponseEntity.status(ex.getStatus()).body(response);
+        return buildErrorResponse(
+                ex.getStatus(),
+                ex.getErrorCode(),
+                ex.getMessageKey(),
+                ex.getArgs(),
+                request
+        );
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgument(IllegalArgumentException ex, HttpServletRequest request) {
-        return buildErrorResponse(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "Invalid request.", "درخواست نامعتبر است.", request);
+
+        return buildErrorResponse(
+                HttpStatus.BAD_REQUEST,
+                ErrorCode.BAD_REQUEST,
+                "bad.request",
+                null,
+                request
+        );
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponse> handleAccessDenied(AccessDeniedException ex, HttpServletRequest request) {
-        return buildErrorResponse(HttpStatus.FORBIDDEN, "ACCESS_DENIED", "Access denied.", "دسترسی غیرمجاز است.", request);
+
+        return buildErrorResponse(
+                HttpStatus.FORBIDDEN,
+                ErrorCode.ACCESS_DENIED,
+                "access.denied",
+                null,
+                request
+        );
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception ex, HttpServletRequest request) {
+
         logger.error("Unexpected application error", ex);
-        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "An unexpected error occurred.", "خطای داخلی سیستم رخ داده است.", request);
+
+        return buildErrorResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                ErrorCode.INTERNAL_SERVER_ERROR,
+                "internal.server.error",
+                null,
+                request
+        );
     }
 
-    private ResponseEntity<ErrorResponse> buildErrorResponse(HttpStatus status, String errorCode, String message, String localizedMessage, HttpServletRequest request) {
+    private ResponseEntity<ErrorResponse> buildErrorResponse(HttpStatus status, ErrorCode errorCode, String messageKey, Object[] args, HttpServletRequest request) {
+
         ErrorResponse response = ErrorResponse.builder()
                 .status(status.value())
-                .errorCode(errorCode)
-                .message(message)
-                .localizedMessage(localizedMessage)
+                .errorCode(errorCode.name())
+                .message(messageSource.getMessage(messageKey, MessageArgumentConverter.convert(args, Language.ENGLISH), AppLocale.ENGLISH))
+                .localizedMessage(messageSource.getMessage(messageKey, MessageArgumentConverter.convert(args, Language.PERSIAN), AppLocale.PERSIAN))
                 .path(request.getRequestURI())
                 .timestamp(LocalDateTime.now())
                 .build();

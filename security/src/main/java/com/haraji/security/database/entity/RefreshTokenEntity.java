@@ -9,7 +9,14 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "sec_refresh_token")
+@Table(
+        name = "sec_refresh_token",
+        indexes = {
+                @Index(name = "idx_refresh_token_user", columnList = "user_id"),
+                @Index(name = "idx_refresh_token_expire", columnList = "expire_at"),
+                @Index(name = "idx_refresh_token_user_revoked", columnList = "user_id, revoked")
+        }
+)
 @Getter
 @Setter
 @AllArgsConstructor
@@ -29,7 +36,7 @@ public class RefreshTokenEntity extends BaseEntity<Long> {
     @Column(nullable = false)
     private Boolean revoked = false;
 
-    @Column(nullable = false, length = 100)
+    @Column(length = 100)
     private String deviceId;
 
     private String ipAddress;
