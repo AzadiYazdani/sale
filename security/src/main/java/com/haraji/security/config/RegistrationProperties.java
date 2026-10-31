@@ -29,6 +29,7 @@ public class RegistrationProperties {
     public enum IdentifierMode {
         EMAIL,
         PHONE,
-        EMAIL_AND_PHONE
+        EMAIL_AND_PHONE,
+        USERNAME
     }
 }

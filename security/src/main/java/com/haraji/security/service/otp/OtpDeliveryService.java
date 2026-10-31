@@ -1,9 +1,15 @@
+
 package com.haraji.security.service.otp;
 
+import com.haraji.common.exception.InvalidFormatException;
 import com.haraji.security.config.OtpChannelProperties;
 import com.haraji.security.constant.IdentifierType;
 import com.haraji.security.constant.OtpPurpose;
 import com.haraji.security.database.entity.UserIdentifierEntity;
+import com.haraji.security.exception.otp.OtpEmailChannelDisabledException;
+import com.haraji.security.exception.otp.OtpPhoneChannelDisabledException;
+import com.haraji.security.exception.otp.SmsServiceNotConfiguredException;
+import com.haraji.security.exception.otp.UnsupportedOtpIdentifierTypeException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
@@ -16,44 +22,44 @@ public class OtpDeliveryService {
     private final EmailService emailService;
     private final ObjectProvider<SmsService> smsServiceProvider;
 
-    public void send(
-            UserIdentifierEntity identifier,
-            String code,
-            OtpPurpose purpose) {
+    public void send(UserIdentifierEntity identifier, String code, OtpPurpose purpose) {
+
+        if (identifier == null
+                || identifier.getType() == null
+                || identifier.getValue() == null
+                || identifier.getValue().isBlank()
+                || code == null
+                || code.isBlank()
+                || purpose == null) {
+            throw new InvalidFormatException("اطلاعات ارسال کد تأیید معتبر نیست.");
+        }
 
         IdentifierType type = identifier.getType();
 
         if (type == IdentifierType.EMAIL) {
             if (!channelProperties.getEmail().isEnabled()) {
-                throw new IllegalStateException("ارسال OTP از طریق ایمیل غیرفعال است.");
+                throw new OtpEmailChannelDisabledException();
             }
 
-            emailService.sendOtp(
-                    identifier.getValue(),
-                    code,
-                    purpose
-            );
+            emailService.sendOtp(identifier.getValue(), code, purpose);
             return;
         }
 
         if (type == IdentifierType.PHONE) {
             if (!channelProperties.getPhone().isEnabled()) {
-                throw new IllegalStateException("ارسال OTP از طریق پیامک غیرفعال است.");
+                throw new OtpPhoneChannelDisabledException();
             }
+
             SmsService smsService = smsServiceProvider.getIfAvailable();
 
             if (smsService == null) {
-                throw new IllegalStateException("کانال پیامک فعال است، اما پیاده‌سازی SmsService وجود ندارد.");
+                throw new SmsServiceNotConfiguredException();
             }
 
-            smsService.sendOtp(
-                    identifier.getValue(),
-                    code,
-                    purpose
-            );
+            smsService.sendOtp(identifier.getValue(), code, purpose);
             return;
         }
 
-        throw new IllegalArgumentException("نوع شناسه برای ارسال OTP پشتیبانی نمی‌شود.");
+        throw new UnsupportedOtpIdentifierTypeException();
     }
 }

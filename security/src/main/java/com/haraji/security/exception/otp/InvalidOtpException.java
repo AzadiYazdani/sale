@@ -7,13 +7,10 @@ import org.springframework.http.HttpStatus;
 public class InvalidOtpException extends BaseException {
 
     public InvalidOtpException() {
-
-        super(
-                ErrorCode.INVALID_OTP,
-                HttpStatus.BAD_REQUEST,
-                "otp.invalid"
-        );
-
+        super(ErrorCode.INVALID_OTP, HttpStatus.BAD_REQUEST, "otp.invalid");
     }
 
+    public InvalidOtpException(String messageKey) {
+        super(ErrorCode.INVALID_OTP, HttpStatus.BAD_REQUEST, messageKey);
+    }
 }

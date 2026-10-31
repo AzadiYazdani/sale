@@ -1,5 +1,5 @@
-package com.haraji.security.service.user;
 
+package com.haraji.security.service.user;
 
 import com.haraji.security.config.OtpChannelProperties;
 import com.haraji.security.config.RegistrationProperties;
@@ -14,13 +14,19 @@ import com.haraji.security.dto.otp.VerifyOtpRequest;
 import com.haraji.security.dto.otp.VerifyOtpResponse;
 import com.haraji.security.dto.register.RegisterRequest;
 import com.haraji.security.dto.register.RegisterResponse;
-import com.haraji.security.exception.authentication.DuplicateIdentifierException;
+import com.haraji.security.exception.authentication.registration.DuplicateIdentifierException;
+import com.haraji.security.exception.authentication.registration.IdentifierAlreadyVerifiedException;
+import com.haraji.security.exception.authentication.registration.IdentifierNotFoundException;
+import com.haraji.security.exception.authentication.registration.InvalidRegistrationRequestException;
+import com.haraji.security.exception.authentication.registration.RegistrationIdentifierModeException;
+import com.haraji.security.exception.otp.OtpEmailChannelDisabledException;
+import com.haraji.security.exception.otp.OtpPhoneChannelDisabledException;
 import com.haraji.security.service.otp.OtpService;
 import com.haraji.security.util.CommonUtil;
-import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -36,9 +42,13 @@ public class RegisterServiceImpl implements RegisterService {
     @Override
     @Transactional
     public RegisterResponse register(RegisterRequest request) {
-        boolean otpEnabled = registrationProperties.isOtpEnabled();
+        validateRegisterRequest(request);
 
-        IdentifierType type = otpEnabled ? request.getIdentifierType() : IdentifierType.USERNAME;
+        boolean otpEnabled = registrationProperties.isOtpEnabled();
+        IdentifierType type = request.getIdentifierType();
+
+        validateIdentifierMode(type, otpEnabled);
+
         String value = CommonUtil.normalizeIdentifier(request.getIdentifier(), type);
 
         if (otpEnabled) {
@@ -71,29 +81,31 @@ public class RegisterServiceImpl implements RegisterService {
 
         return RegisterResponse.newInstance()
                 .userId(user.getId())
-                .message(otpEnabled ? "کد تأیید برای شناسه ثبت‌شده ارسال شد." : "ثبت‌نام با موفقیت انجام شد.")
+                .message(otpEnabled
+                        ? "کد تأیید برای شناسه ثبت‌شده ارسال شد."
+                        : "ثبت‌نام با موفقیت انجام شد.")
                 .build();
     }
 
     @Override
     @Transactional
     public VerifyOtpResponse verifyRegisterOtp(VerifyOtpRequest request) {
-        IdentifierType type = request.getIdentifierType();
+        validateVerifyOtpRequest(request);
 
+        IdentifierType type = request.getIdentifierType();
         String value = CommonUtil.normalizeIdentifier(request.getIdentifier(), type);
+
         validateChannelEnabled(type);
 
-        UserIdentifierEntity identifier =
-                userIdentifierRepository.findByTypeAndValue(type, value)
-                        .orElseThrow(() ->
-                                new IllegalArgumentException("ثبت‌ نامی با این شناسه پیدا نشد.")
-                        );
+        UserIdentifierEntity identifier = userIdentifierRepository
+                .findByTypeAndValue(type, value)
+                .orElseThrow(IdentifierNotFoundException::new);
 
         if (Boolean.TRUE.equals(identifier.getVerified())) {
-            throw new IllegalStateException("این شناسه قبلاً تأیید شده است.");
+            throw new IdentifierAlreadyVerifiedException();
         }
 
-        otpService.verifyOtp(identifier,OtpPurpose.REGISTER,request.getCode());
+        otpService.verifyOtp(identifier, OtpPurpose.REGISTER, request.getCode());
 
         identifier.setVerified(true);
         userIdentifierRepository.save(identifier);
@@ -108,15 +120,58 @@ public class RegisterServiceImpl implements RegisterService {
                 .build();
     }
 
+    private void validateRegisterRequest(RegisterRequest request) {
+        if (request == null
+                || request.getIdentifierType() == null
+                || request.getIdentifier() == null
+                || request.getIdentifier().isBlank()
+                || request.getPassword() == null
+                || request.getPassword().isBlank()) {
+            throw new InvalidRegistrationRequestException();
+        }
+    }
+
+    private void validateVerifyOtpRequest(VerifyOtpRequest request) {
+        if (request == null
+                || request.getIdentifierType() == null
+                || request.getIdentifier() == null
+                || request.getIdentifier().isBlank()
+                || request.getCode() == null
+                || request.getCode().isBlank()) {
+            throw new InvalidRegistrationRequestException();
+        }
+    }
+
     private void validateChannelEnabled(IdentifierType type) {
-        if (type == IdentifierType.EMAIL
-                && !otpChannelProperties.getEmail().isEnabled()) {
-            throw new IllegalStateException("ثبت‌نام از طریق ایمیل غیرفعال است.");
+        if (type == IdentifierType.EMAIL && !otpChannelProperties.getEmail().isEnabled()) {
+            throw new OtpEmailChannelDisabledException();
         }
 
-        if (type == IdentifierType.PHONE
-                && !otpChannelProperties.getPhone().isEnabled()) {
-            throw new IllegalStateException("ثبت‌نام از طریق شماره تلفن غیرفعال است.");
+        if (type == IdentifierType.PHONE && !otpChannelProperties.getPhone().isEnabled()) {
+            throw new OtpPhoneChannelDisabledException();
+        }
+    }
+
+    private void validateIdentifierMode(IdentifierType type, boolean otpEnabled) {
+        if (otpEnabled) {
+            if (type == IdentifierType.USERNAME) {
+                throw new RegistrationIdentifierModeException();
+            }
+            return;
+        }
+
+        boolean allowed = switch (type) {
+            case EMAIL -> registrationProperties.getAllowedIdentifierModes().contains(RegistrationProperties.IdentifierMode.EMAIL)
+                    || registrationProperties.getAllowedIdentifierModes().contains(RegistrationProperties.IdentifierMode.EMAIL_AND_PHONE);
+
+            case PHONE -> registrationProperties.getAllowedIdentifierModes().contains(RegistrationProperties.IdentifierMode.PHONE)
+                    || registrationProperties.getAllowedIdentifierModes().contains(RegistrationProperties.IdentifierMode.EMAIL_AND_PHONE);
+
+            case USERNAME -> registrationProperties.getAllowedIdentifierModes().contains(RegistrationProperties.IdentifierMode.USERNAME);
+        };
+
+        if (!allowed) {
+            throw new RegistrationIdentifierModeException();
         }
     }
 }

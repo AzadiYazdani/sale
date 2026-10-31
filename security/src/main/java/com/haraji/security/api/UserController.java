@@ -15,6 +15,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -35,10 +36,13 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping(params = "!username")
+    @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "یافتن همه کاربران به صورت صفحه‌بندی‌شده")
-    public ResponseEntity<ApiResponse<Page<AdminUserResponse>>> getAllUsers(@PageableDefault(size = 20, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+    public ResponseEntity<ApiResponse<Page<AdminUserResponse>>> getAllUsers(
+            @ParameterObject
+            @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.DESC)
+            Pageable pageable) {
         Page<AdminUserResponse> response = userService.getAllByPaging(pageable);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
@@ -51,10 +55,13 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
-    @GetMapping(params = "username")
+    @GetMapping("/search")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "جست‌وجوی کاربران با بخشی از شناسه ورود")
-    public ResponseEntity<ApiResponse<Page<AdminUserResponse>>> searchUsername(@RequestParam("username") @NotBlank @Parameter(description = "بخشی از شناسه ورود", example = "ali", required = true) String username, @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+    public ResponseEntity<ApiResponse<Page<AdminUserResponse>>> searchUsername(@RequestParam("username") @NotBlank String username,
+                                                                               @ParameterObject
+                                                                               @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.DESC)
+                                                                               Pageable pageable) {
         Page<AdminUserResponse> response = userService.searchUsername(username, pageable);
         return ResponseEntity.ok(ApiResponse.success(response));
     }

@@ -1,13 +1,20 @@
+
 package com.haraji.app.config.swagger;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.media.IntegerSchema;
+import io.swagger.v3.oas.models.media.StringSchema;
+import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.math.BigDecimal;
 
 @Configuration
 public class OpenApiConfig {
@@ -28,7 +35,6 @@ public class OpenApiConfig {
                         .title(apiTitle)
                         .version(apiVersion)
                         .description(apiDescription))
-                // تعریف امنیت برای استفاده از JWT (همان bearerAuth که در کلاس AuthController استفاده کردید)
                 .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
                 .components(new Components()
                         .addSecuritySchemes("bearerAuth",
@@ -37,5 +43,34 @@ public class OpenApiConfig {
                                         .type(SecurityScheme.Type.HTTP)
                                         .scheme("bearer")
                                         .bearerFormat("JWT")));
+    }
+
+    @Bean
+    public OpenApiCustomizer pageableOpenApiCustomizer() {
+        return openApi -> openApi.getPaths().values().forEach(pathItem ->
+                pathItem.readOperations().forEach(operation -> {
+                    if (operation.getParameters() == null) {
+                        return;
+                    }
+
+                    operation.getParameters().forEach(parameter -> {
+                        if (!"query".equals(parameter.getIn())) {
+                            return;
+                        }
+
+                        switch (parameter.getName()) {
+                            case "page" -> parameter.setSchema(
+                                    new IntegerSchema()._default(0).minimum(BigDecimal.valueOf(0))
+                            );
+                            case "size" -> parameter.setSchema(
+                                    new IntegerSchema()._default(20).minimum(BigDecimal.valueOf(1))
+                            );
+                            case "sort" -> parameter.setSchema(
+                                    new StringSchema()._default("id,desc")
+                            );
+                        }
+                    });
+                })
+        );
     }
 }

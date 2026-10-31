@@ -15,12 +15,8 @@ public class BaseException extends RuntimeException {
 
     private final Object[] args;
 
-    public BaseException(
-            ErrorCode errorCode,
-            HttpStatus status,
-            String messageKey,
-            Object... args) {
-
+    public BaseException(ErrorCode errorCode, HttpStatus status, String messageKey, Object... args) {
+        super(messageKey);
         this.errorCode = errorCode;
         this.status = status;
         this.messageKey = messageKey;

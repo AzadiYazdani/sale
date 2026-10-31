@@ -1,7 +1,7 @@
-
 package com.haraji.security.service.user;
 
 import com.haraji.common.util.DateUtil;
+import com.haraji.security.constant.IdentifierType;
 import com.haraji.security.database.entity.PersonEntity;
 import com.haraji.security.database.entity.UserEntity;
 import com.haraji.security.database.repository.PersonRepository;
@@ -9,6 +9,8 @@ import com.haraji.security.database.repository.UserRepository;
 import com.haraji.security.dto.user.AdminUserResponse;
 import com.haraji.security.dto.user.UserEditRequest;
 import com.haraji.security.dto.user.UserResponse;
+import com.haraji.security.exception.authentication.registration.DuplicateIdentifierException;
+import com.haraji.security.exception.authentication.registration.DuplicateNationalCodeException;
 import com.haraji.security.exception.authentication.UserNotFoundException;
 import com.haraji.security.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
@@ -45,7 +47,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Page<AdminUserResponse> searchUsername(String username, Pageable pageable) {
         if (!StringUtils.hasText(username)) {
-            throw new IllegalArgumentException("عبارت جست‌وجو الزامی است.");
+            throw new IllegalArgumentException("Search term is required.");
         }
 
         return userRepository.searchByIdentifier(username.trim(), pageable)
@@ -77,13 +79,17 @@ public class UserServiceImpl implements UserService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null || !(authentication.getPrincipal() instanceof SecurityUser securityUser)) {
-            throw new AccessDeniedException("کاربر احراز هویت نشده است.");
+            throw new AccessDeniedException("User is not authenticated.");
         }
 
         return findUserById(securityUser.getUser().getId());
     }
 
     private UserEntity updateUser(UserEntity user, UserEditRequest request) {
+        if (request == null) {
+            throw new IllegalArgumentException("User edit request is required.");
+        }
+
         PersonEntity person = user.getPerson();
 
         if (person == null) {
@@ -93,34 +99,43 @@ public class UserServiceImpl implements UserService {
 
         validateUniqueFields(request, person);
 
-        if (request.getEmail() != null) {
+        if (StringUtils.hasText(request.getEmail())) {
             person.setEmail(request.getEmail().trim());
         }
-        if (request.getMobile() != null) {
-            person.setTelephone(request.getMobile().trim());
+
+        if (StringUtils.hasText(request.getMobile())) {
+            person.setMobile(request.getMobile().trim());
         }
-        if (request.getAddress() != null) {
+
+        if (StringUtils.hasText(request.getAddress())) {
             person.setAddress(request.getAddress().trim());
         }
-        if (request.getFirstName() != null) {
+
+        if (StringUtils.hasText(request.getFirstName())) {
             person.setFirstName(request.getFirstName().trim());
         }
-        if (request.getLastName() != null) {
+
+        if (StringUtils.hasText(request.getLastName())) {
             person.setLastName(request.getLastName().trim());
         }
-        if (request.getFatherName() != null) {
+
+        if (StringUtils.hasText(request.getFatherName())) {
             person.setFatherName(request.getFatherName().trim());
         }
-        if (request.getNationalCode() != null) {
+
+        if (StringUtils.hasText(request.getNationalCode())) {
             person.setNationalCode(request.getNationalCode().trim());
         }
-        if (request.getIdentityNumber() != null) {
+
+        if (StringUtils.hasText(request.getIdentityNumber())) {
             person.setIdentityNumber(request.getIdentityNumber().trim());
         }
+
         if (StringUtils.hasText(request.getBirthDate())) {
             person.setBirthDate(DateUtil.getLocalDateFromString(request.getBirthDate().trim()));
         }
-        if (request.getBirthCity() != null) {
+
+        if (StringUtils.hasText(request.getBirthCity())) {
             person.setBirthCity(request.getBirthCity().trim());
         }
 
@@ -136,7 +151,7 @@ public class UserServiceImpl implements UserService {
             personRepository.findByNationalCode(request.getNationalCode().trim())
                     .filter(person -> !Objects.equals(person.getId(), currentPersonId))
                     .ifPresent(person -> {
-                        throw new IllegalArgumentException("این کد ملی قبلاً ثبت شده است.");
+                        throw new DuplicateNationalCodeException();
                     });
         }
 
@@ -144,7 +159,7 @@ public class UserServiceImpl implements UserService {
             personRepository.findByEmail(request.getEmail().trim())
                     .filter(person -> !Objects.equals(person.getId(), currentPersonId))
                     .ifPresent(person -> {
-                        throw new IllegalArgumentException("این ایمیل قبلاً برای شخص دیگری ثبت شده است.");
+                        throw new DuplicateIdentifierException(IdentifierType.EMAIL);
                     });
         }
 
@@ -152,7 +167,7 @@ public class UserServiceImpl implements UserService {
             personRepository.findByMobile(request.getMobile().trim())
                     .filter(person -> !Objects.equals(person.getId(), currentPersonId))
                     .ifPresent(person -> {
-                        throw new IllegalArgumentException("این شماره همراه قبلاً برای شخص دیگری ثبت شده است.");
+                        throw new DuplicateIdentifierException(IdentifierType.PHONE);
                     });
         }
     }

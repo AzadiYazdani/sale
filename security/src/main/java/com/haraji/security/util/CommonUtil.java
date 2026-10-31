@@ -1,8 +1,8 @@
+
 package com.haraji.security.util;
 
 import com.haraji.common.exception.InvalidFormatException;
 import com.haraji.security.constant.IdentifierType;
-import jakarta.annotation.Nonnull;
 
 import java.util.Locale;
 import java.util.regex.Pattern;
@@ -12,13 +12,16 @@ public class CommonUtil {
     private static final Pattern EMAIL_PATTERN =
             Pattern.compile("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$");
 
+    private static final Pattern PHONE_PATTERN =
+            Pattern.compile("^9[0-9]{9}$");
+
     public static String normalizeIdentifier(String rawValue, IdentifierType type) {
         if (type == null) {
-            throw new IllegalArgumentException("نوع شناسه الزامی است.");
+            throw new InvalidFormatException("نوع شناسه الزامی است.");
         }
 
         if (rawValue == null || rawValue.isBlank()) {
-            throw new IllegalArgumentException("مقدار شناسه الزامی است.");
+            throw new InvalidFormatException("مقدار شناسه الزامی است.");
         }
 
         String value = rawValue.trim();
@@ -32,7 +35,7 @@ public class CommonUtil {
 
     private static String normalizeUsername(String username) {
         if (username.length() > 100) {
-            throw new IllegalArgumentException("نام کاربری نمی‌تواند بیشتر از ۱۰۰ کاراکتر باشد.");
+            throw new InvalidFormatException("نام کاربری نمی‌تواند بیشتر از ۱۰۰ کاراکتر باشد.");
         }
 
         return username;
@@ -42,18 +45,14 @@ public class CommonUtil {
         String value = email.trim().toLowerCase(Locale.ROOT);
 
         if (value.length() > 254 || !EMAIL_PATTERN.matcher(value).matches()) {
-            throw new IllegalArgumentException("قالب ایمیل معتبر نیست.");
+            throw new InvalidFormatException("قالب ایمیل معتبر نیست.");
         }
 
         return value;
     }
 
     private static String normalizePhoneNumber(String phone) {
-        String value = phone.trim()
-                .replace(" ", "")
-                .replace("-", "")
-                .replace("(", "")
-                .replace(")", "");
+        String value = normalizePhoneInput(phone);
 
         String digits;
 
@@ -69,15 +68,14 @@ public class CommonUtil {
             digits = value;
         }
 
-        if (!digits.matches("^9[0-9]{9}$")) {
-            throw new IllegalArgumentException("شماره موبایل ایران معتبر نیست.");
+        if (!PHONE_PATTERN.matcher(digits).matches()) {
+            throw new InvalidFormatException("شماره موبایل ایران معتبر نیست.");
         }
 
         return "+98" + digits;
     }
 
-    @Nonnull
-    private static String getString(String phone) {
+    private static String normalizePhoneInput(String phone) {
         StringBuilder converted = new StringBuilder();
 
         for (char ch : phone.toCharArray()) {
@@ -93,8 +91,9 @@ public class CommonUtil {
         String value = converted.toString().replaceAll("[\\s().-]", "");
 
         if (!value.matches("^\\+?[0-9]+$")) {
-            throw new IllegalArgumentException("قالب شماره موبایل معتبر نیست.");
+            throw new InvalidFormatException("قالب شماره موبایل معتبر نیست.");
         }
+
         return value;
     }
 
