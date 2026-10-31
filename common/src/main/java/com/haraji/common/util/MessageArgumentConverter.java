@@ -1,8 +1,8 @@
 
 package com.haraji.common.util;
 
-import com.haraji.common.constant.EntityType;
 import com.haraji.common.constant.Language;
+import com.haraji.common.constant.LocalizedValue;
 
 public final class MessageArgumentConverter {
 
@@ -21,8 +21,8 @@ public final class MessageArgumentConverter {
         for (int i = 0; i < args.length; i++) {
             Object arg = args[i];
 
-            if (arg instanceof EntityType entityType) {
-                converted[i] = entityType.getValue(language);
+            if (arg instanceof LocalizedValue localizedValue) {
+                converted[i] = localizedValue.getValue(language);
             } else {
                 converted[i] = arg;
             }

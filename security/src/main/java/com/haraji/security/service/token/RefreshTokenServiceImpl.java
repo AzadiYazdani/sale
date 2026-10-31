@@ -4,6 +4,7 @@ import com.haraji.security.config.JwtProperties;
 import com.haraji.security.database.entity.RefreshTokenEntity;
 import com.haraji.security.database.entity.UserEntity;
 import com.haraji.security.database.repository.RefreshTokenRepository;
+import com.haraji.security.exception.authentication.token.RefreshTokenReuseException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +34,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
 
     @Override
+    @Transactional(noRollbackFor = RefreshTokenReuseException.class)
     public RefreshTokenEntity validateRefreshToken(String token) {
         if (token == null || token.isBlank()) {
             throw new IllegalArgumentException("Refresh Token الزامی است.");
@@ -42,7 +44,8 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
                 .orElseThrow(() -> new IllegalArgumentException("Refresh Token معتبر نیست."));
 
         if (Boolean.TRUE.equals(refreshToken.getRevoked())) {
-            throw new IllegalArgumentException("Refresh Token باطل شده است.");
+            revokeAll(refreshToken.getUser().getId());
+            throw new RefreshTokenReuseException();
         }
 
         if (refreshToken.getExpireAt() == null || !refreshToken.getExpireAt().isAfter(LocalDateTime.now())) {

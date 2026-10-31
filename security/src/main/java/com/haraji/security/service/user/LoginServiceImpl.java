@@ -18,6 +18,7 @@ import com.haraji.security.exception.authentication.InvalidPasswordException;
 import com.haraji.security.exception.authentication.UserDisabledException;
 import com.haraji.security.exception.authentication.UserIdentifierNotVerifiedException;
 import com.haraji.security.exception.authentication.UserLockedException;
+import com.haraji.security.exception.authentication.token.RefreshTokenReuseException;
 import com.haraji.security.exception.otp.OtpEmailChannelDisabledException;
 import com.haraji.security.exception.otp.OtpPhoneChannelDisabledException;
 import com.haraji.security.service.otp.OtpService;
@@ -80,7 +81,7 @@ public class LoginServiceImpl implements LoginService {
 
 
     @Override
-    @Transactional
+    @Transactional(noRollbackFor = RefreshTokenReuseException.class)
     public TokenResponse refreshToken(RefreshTokenRequest request) {
 
         RefreshTokenEntity refreshTokenEntity =
