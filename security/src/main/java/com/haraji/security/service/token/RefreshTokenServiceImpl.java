@@ -1,3 +1,4 @@
+
 package com.haraji.security.service.token;
 
 import com.haraji.security.config.JwtProperties;
@@ -17,19 +18,24 @@ import java.util.UUID;
 @Transactional
 public class RefreshTokenServiceImpl implements RefreshTokenService {
 
+    private static final String UNKNOWN_DEVICE = "UNKNOWN";
+
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtProperties jwtProperties;
 
     @Override
     public String createRefreshToken(UserEntity user) {
         String token = UUID.randomUUID().toString();
+
         RefreshTokenEntity entity = new RefreshTokenEntity();
         entity.setUser(user);
         entity.setToken(token);
         entity.setExpireAt(LocalDateTime.now().plusDays(jwtProperties.getRefreshExpirationDays()));
         entity.setRevoked(false);
-        entity.setDeviceId("UNKNOWN");
+        entity.setDeviceId(UNKNOWN_DEVICE);
+
         refreshTokenRepository.save(entity);
+
         return token;
     }
 
@@ -43,18 +49,23 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         RefreshTokenEntity refreshToken = refreshTokenRepository.findByTokenForUpdate(token)
                 .orElseThrow(() -> new IllegalArgumentException("Refresh Token معتبر نیست."));
 
+        UserEntity user = refreshToken.getUser();
+
+        if (user == null) {
+            throw new IllegalStateException("کاربر مرتبط با Refresh Token معتبر نیست.");
+        }
+
         if (Boolean.TRUE.equals(refreshToken.getRevoked())) {
-            revokeAll(refreshToken.getUser().getId());
+            revokeAll(user.getId());
             throw new RefreshTokenReuseException();
         }
 
-        if (refreshToken.getExpireAt() == null || !refreshToken.getExpireAt().isAfter(LocalDateTime.now())) {
+        if (refreshToken.getExpireAt() == null ||
+                !refreshToken.getExpireAt().isAfter(LocalDateTime.now())) {
             throw new IllegalArgumentException("Refresh Token منقضی شده است.");
         }
 
-        UserEntity user = refreshToken.getUser();
-
-        if (user == null || !Boolean.TRUE.equals(user.getEnabled())) {
+        if (!Boolean.TRUE.equals(user.getEnabled())) {
             throw new IllegalStateException("حساب کاربری فعال نیست.");
         }
 
@@ -78,11 +89,13 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         });
     }
 
-
     @Override
     public void revokeAll(Long userId) {
+        if (userId == null) {
+            return;
+        }
+
         refreshTokenRepository.findAllByUserIdAndRevokedFalse(userId)
                 .forEach(token -> token.setRevoked(true));
     }
-
 }
