@@ -1,6 +1,5 @@
 package com.haraji.security.service.user;
 
-
 import com.haraji.security.database.entity.UserEntity;
 import com.haraji.security.database.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

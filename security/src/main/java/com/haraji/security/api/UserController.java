@@ -5,6 +5,7 @@ import com.haraji.common.dto.ApiResponse;
 import com.haraji.common.logging.LogLevel;
 import com.haraji.common.logging.MethodLogging;
 import com.haraji.security.dto.user.AdminUserResponse;
+import com.haraji.security.dto.user.UserAccessUpdateRequest;
 import com.haraji.security.dto.user.UserEditRequest;
 import com.haraji.security.dto.user.UserResponse;
 import com.haraji.security.service.user.UserService;
@@ -56,14 +57,13 @@ public class UserController {
     }
 
     @GetMapping("/search")
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "جست‌وجوی کاربران با بخشی از شناسه ورود")
-    public ResponseEntity<ApiResponse<Page<AdminUserResponse>>> searchUsername(@RequestParam("username") @NotBlank String username,
-                                                                               @ParameterObject
-                                                                               @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.DESC)
-                                                                               Pageable pageable) {
-        Page<AdminUserResponse> response = userService.searchUsername(username, pageable);
-        return ResponseEntity.ok(ApiResponse.success(response));
+    public ResponseEntity<ApiResponse<Page<AdminUserResponse>>> searchUsers(
+            @RequestParam String keyword,
+            Pageable pageable
+    ) {
+        return ResponseEntity.ok(
+                ApiResponse.success(userService.searchUsers(keyword, pageable))
+        );
     }
 
     @GetMapping("/me")
@@ -89,4 +89,17 @@ public class UserController {
         AdminUserResponse response = userService.editUserByAdmin(userId, request);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
+
+
+    @PatchMapping("/{userId}/access")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "تغییر نقش و وضعیت دسترسی کاربر توسط مدیر")
+    public ResponseEntity<ApiResponse<AdminUserResponse>> updateUserAccess(
+            @PathVariable("userId") @Min(1) Long userId,
+            @RequestBody @Valid UserAccessUpdateRequest request) {
+
+        AdminUserResponse response = userService.updateUserAccess(userId, request);
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
 }

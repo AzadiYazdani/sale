@@ -11,7 +11,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Builder(setterPrefix = "set", toBuilder = true, builderMethodName = "newInstance")
 @Schema(description = "مدل داده‌ای اطلاعات شخصی")
-public class PersonDto implements Serializable {
+public class PersonResponse implements Serializable {
 
     @Schema(description = "نام کوچک", example = "آزادی")
     private String firstName;

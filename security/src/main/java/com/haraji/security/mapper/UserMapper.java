@@ -7,7 +7,7 @@ import com.haraji.security.database.entity.PersonEntity;
 import com.haraji.security.database.entity.UserEntity;
 import com.haraji.security.database.entity.UserIdentifierEntity;
 import com.haraji.security.dto.user.AdminUserResponse;
-import com.haraji.security.dto.user.PersonDto;
+import com.haraji.security.dto.user.PersonResponse;
 import com.haraji.security.dto.user.UserResponse;
 import org.mapstruct.Builder;
 import org.mapstruct.Mapper;
@@ -29,7 +29,7 @@ public interface UserMapper {
     AdminUserResponse toAdminUserResponse(UserEntity user);
 
     @Mapping(target = "birthDate", source = "birthDate", qualifiedByName = "toJalaliDate")
-    PersonDto toPersonDto(PersonEntity entity);
+    PersonResponse toPersonDto(PersonEntity entity);
 
     default String getPrimaryIdentifier(UserEntity entity) {
         if (entity == null || entity.getIdentifiers() == null) return null;

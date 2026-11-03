@@ -1,7 +1,6 @@
 
 package com.haraji.security.config.filter;
 
-
 import com.haraji.security.exception.authentication.JwtAuthenticationEntryPoint;
 import com.haraji.security.service.user.CustomUserDetailsService;
 import com.haraji.security.util.JwtUtil;
@@ -64,15 +63,9 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
             UserDetails userDetails = userDetailsService.loadUserById(userId);
 
             UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(
-                            userDetails,
-                            null,
-                            userDetails.getAuthorities()
-                    );
+                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
-            authentication.setDetails(
-                    new WebAuthenticationDetailsSource().buildDetails(request)
-            );
+            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 

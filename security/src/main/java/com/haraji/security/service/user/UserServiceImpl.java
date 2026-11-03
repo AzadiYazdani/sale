@@ -2,17 +2,20 @@ package com.haraji.security.service.user;
 
 import com.haraji.common.util.DateUtil;
 import com.haraji.security.constant.IdentifierType;
+import com.haraji.security.constant.RoleType;
 import com.haraji.security.database.entity.PersonEntity;
 import com.haraji.security.database.entity.UserEntity;
 import com.haraji.security.database.repository.PersonRepository;
 import com.haraji.security.database.repository.UserRepository;
 import com.haraji.security.dto.user.AdminUserResponse;
+import com.haraji.security.dto.user.UserAccessUpdateRequest;
 import com.haraji.security.dto.user.UserEditRequest;
 import com.haraji.security.dto.user.UserResponse;
 import com.haraji.security.exception.authentication.registration.DuplicateIdentifierException;
 import com.haraji.security.exception.authentication.registration.DuplicateNationalCodeException;
 import com.haraji.security.exception.authentication.UserNotFoundException;
 import com.haraji.security.mapper.UserMapper;
+import com.haraji.security.service.token.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +35,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PersonRepository personRepository;
+    private final RefreshTokenService refreshTokenService;
     private final UserMapper userMapper;
 
     @Override
@@ -44,15 +48,17 @@ public class UserServiceImpl implements UserService {
         return userMapper.toAdminUserResponse(findUserById(id));
     }
 
+
     @Override
-    public Page<AdminUserResponse> searchUsername(String username, Pageable pageable) {
-        if (!StringUtils.hasText(username)) {
+    public Page<AdminUserResponse> searchUsers(String keyword, Pageable pageable) {
+        if (!StringUtils.hasText(keyword)) {
             throw new IllegalArgumentException("Search term is required.");
         }
 
-        return userRepository.searchByIdentifier(username.trim(), pageable)
+        return userRepository.searchUsers(keyword.trim(), pageable)
                 .map(userMapper::toAdminUserResponse);
     }
+
 
     @Override
     public UserResponse getCurrentUser() {
@@ -171,4 +177,70 @@ public class UserServiceImpl implements UserService {
                     });
         }
     }
+
+    @Override
+    @Transactional
+    public AdminUserResponse updateUserAccess(Long userId, UserAccessUpdateRequest request) {
+        if (userId == null || userId <= 0) {
+            throw new IllegalArgumentException("شناسه کاربر معتبر نیست.");
+        }
+
+        if (request == null || (request.getRole() == null
+                && request.getEnabled() == null
+                && request.getLocked() == null)) {
+            throw new IllegalArgumentException("حداقل یکی از فیلدهای دسترسی باید مشخص شود.");
+        }
+
+        UserEntity currentUser = findCurrentUser();
+
+        if (Objects.equals(currentUser.getId(), userId)) {
+            throw new AccessDeniedException("امکان تغییر دسترسی حساب کاربری خودتان وجود ندارد.");
+        }
+
+        UserEntity targetUser = findUserById(userId);
+
+        RoleType newRole = request.getRole() != null
+                ? request.getRole()
+                : targetUser.getRole();
+
+        boolean newEnabled = request.getEnabled() != null
+                ? request.getEnabled()
+                : Boolean.TRUE.equals(targetUser.getEnabled());
+
+        boolean newLocked = request.getLocked() != null
+                ? request.getLocked()
+                : Boolean.TRUE.equals(targetUser.getLocked());
+
+        // حساب مسدود باید حتماً غیرفعال باشد.
+        if (newLocked) {
+            newEnabled = false;
+        }
+
+        boolean currentlyActiveAdmin = targetUser.getRole() == RoleType.ADMIN
+                && Boolean.TRUE.equals(targetUser.getEnabled())
+                && !Boolean.TRUE.equals(targetUser.getLocked());
+
+        boolean willRemainActiveAdmin = newRole == RoleType.ADMIN && newEnabled;
+
+        // جلوگیری از غیرفعال شدن یا تغییر نقش آخرین مدیر فعال
+        if (currentlyActiveAdmin && !willRemainActiveAdmin
+                && userRepository.countByRoleAndEnabledTrueAndLockedFalse(RoleType.ADMIN) <= 1) {
+            throw new IllegalStateException(
+                    "امکان غیرفعال‌کردن، قفل‌کردن یا تغییر نقش آخرین مدیر فعال وجود ندارد."
+            );
+        }
+
+        targetUser.setRole(newRole);
+        targetUser.setEnabled(newEnabled);
+        targetUser.setLocked(newLocked);
+
+        UserEntity savedUser = userRepository.save(targetUser);
+
+        // باطل کردن تمام Refresh Tokenهای کاربر پس از تغییر دسترسی
+        refreshTokenService.revokeAll(savedUser.getId());
+
+        return userMapper.toAdminUserResponse(savedUser);
+    }
+
+
 }

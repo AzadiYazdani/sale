@@ -1,8 +1,10 @@
+
 package com.haraji.security.database.entity;
 
 import com.haraji.security.constant.RoleType;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Formula;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -45,10 +47,12 @@ public class UserEntity extends BaseEntity<Long> implements Serializable {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private PersonEntity person;
 
+    @Formula("(select ui.value from sale_db.sec_user_identifier ui where ui.user_id = {alias}.id and ui.primary_identifier = true)")
+    private String primaryIdentifierValue;
+
     public Optional<UserIdentifierEntity> getPrimaryIdentifier() {
         return identifiers.stream()
                 .filter(UserIdentifierEntity::getPrimaryIdentifier)
                 .findFirst();
-
     }
 }

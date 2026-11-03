@@ -28,5 +28,5 @@ public class UserResponse {
     private String createdDate;
 
     @Schema(description = "اطلاعات شخصی کاربر")
-    private PersonDto person;
+    private PersonResponse person;
 }
