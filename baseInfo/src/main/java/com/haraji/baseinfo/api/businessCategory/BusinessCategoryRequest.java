@@ -12,9 +12,9 @@ import lombok.Setter;
 @Setter
 public class BusinessCategoryRequest {
 
-    @NotNull(message = "شناسه رسته الزامی است.")
-    @Min(value = 1, message = "شناسه رسته باید بزرگ‌تر از صفر باشد.")
-    private Long businessCategoryId;
+    @NotNull(message = "شناسه اتحادیه الزامی است.")
+    @Min(value = 1, message = "شناسه اتحادیه باید بزرگ‌تر از صفر باشد.")
+    private Long businessUnionId;
 
     @NotBlank(message = "عنوان رسته الزامی است.")
     @Size(max = 200, message = "عنوان رسته نباید بیشتر از ۲۰۰ کاراکتر باشد.")

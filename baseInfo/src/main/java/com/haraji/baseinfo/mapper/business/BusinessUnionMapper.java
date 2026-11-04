@@ -1,18 +1,35 @@
+
 package com.haraji.baseinfo.mapper.business;
 
-
+import com.haraji.baseinfo.api.businessUnion.BusinessUnionRequest;
 import com.haraji.baseinfo.api.businessUnion.BusinessUnionResponse;
 import com.haraji.baseinfo.database.entity.business.BusinessUnionEntity;
-import org.mapstruct.Builder;
-import org.mapstruct.Mapper;
+import com.haraji.baseinfo.database.entity.location.CityEntity;
+import org.mapstruct.*;
 
 import java.util.List;
 
 @Mapper(componentModel = "spring", builder = @Builder(disableBuilder = true))
 public interface BusinessUnionMapper {
 
-    List<BusinessUnionResponse> toDtoResponseList(List<BusinessUnionEntity> entities);
-    
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "city", source = "cityId")
+    BusinessUnionEntity toEntity(BusinessUnionRequest request);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "city", source = "cityId")
+    void updateEntity(BusinessUnionRequest request, @MappingTarget BusinessUnionEntity entity);
+
+    @Mapping(target = "cityId", source = "city.id")
     BusinessUnionResponse toDtoResponse(BusinessUnionEntity entity);
 
+    List<BusinessUnionResponse> toDtoResponseList(List<BusinessUnionEntity> entities);
+
+    default CityEntity map(Long cityId) {
+        if (cityId == null) {
+            return null;
+        }
+
+        return CityEntity.newInstance().setId(cityId).build();
+    }
 }

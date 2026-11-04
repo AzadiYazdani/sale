@@ -1,6 +1,7 @@
 
 package com.haraji.baseinfo.service.business.businessunion;
 
+
 import com.haraji.baseinfo.api.businessUnion.BusinessUnionRequest;
 import com.haraji.baseinfo.api.businessUnion.BusinessUnionResponse;
 import jakarta.validation.Valid;
@@ -18,15 +19,15 @@ public interface BusinessUnionService {
 
     BusinessUnionResponse getById(@Min(1) Long id);
 
-    List<BusinessUnionResponse> getAll();
-
     Page<BusinessUnionResponse> getAllByPaging(@NotNull Pageable pageable);
 
-    List<BusinessUnionResponse> getByCityId(@Min(1) Long cityId);
-
-    Page<BusinessUnionResponse> getByCityIdPaging(@Min(1) Long cityId, @NotNull Pageable pageable);
+    List<BusinessUnionResponse> getAll();
 
     List<BusinessUnionResponse> searchTitle(@NotBlank String title);
+
+    List<BusinessUnionResponse> getAllByCityId(@Min(1) Long cityId);
+
+    Page<BusinessUnionResponse> getAllByCityIdPaging(@Min(1) Long cityId, @NotNull Pageable pageable);
 
     BusinessUnionResponse create(@Valid @NotNull BusinessUnionRequest request);
 

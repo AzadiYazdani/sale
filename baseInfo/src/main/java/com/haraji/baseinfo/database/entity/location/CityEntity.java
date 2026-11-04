@@ -29,7 +29,6 @@ public class CityEntity implements Serializable {
     )
     private ProvinceEntity province;
 
-
     @Column(nullable = false, length = 100)
     private String name;
 }

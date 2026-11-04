@@ -1,3 +1,4 @@
+
 package com.haraji.baseinfo.database.repository.business;
 
 import com.haraji.baseinfo.database.entity.business.BusinessCategoryEntity;
@@ -9,9 +10,11 @@ import java.util.List;
 
 public interface BusinessCategoryRepository extends JpaRepository<BusinessCategoryEntity, Long> {
 
-    List<BusinessCategoryEntity> findAllByParentId(Long parentId);
+    List<BusinessCategoryEntity> findAllByBusinessUnion_Id(Long businessUnionId);
+
+    Page<BusinessCategoryEntity> findAllByBusinessUnion_Id(Long businessUnionId, Pageable pageable);
 
     List<BusinessCategoryEntity> findAllByTitleContainingIgnoreCase(String title);
 
-    Page<BusinessCategoryEntity> findAllBy(Pageable pageable);
+    long countByBusinessUnion_Id(Long businessUnionId);
 }

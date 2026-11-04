@@ -1,26 +1,35 @@
+
 package com.haraji.baseinfo.service.business.businesscategory;
+
 
 import com.haraji.baseinfo.api.businessCategory.BusinessCategoryRequest;
 import com.haraji.baseinfo.api.businessCategory.BusinessCategoryResponse;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 
+@Validated
 public interface BusinessCategoryService {
-    BusinessCategoryResponse getById(Long id);
+
+    BusinessCategoryResponse getById(@Min(1) Long id);
+
+    Page<BusinessCategoryResponse> getAllByPaging(@NotNull Pageable pageable);
 
     List<BusinessCategoryResponse> getAll();
 
-    Page<BusinessCategoryResponse> getAllByPaging(Pageable pageable);
+    List<BusinessCategoryResponse> searchTitle(@NotBlank String title);
 
-    List<BusinessCategoryResponse> getByParentId(Long parentId);
+    List<BusinessCategoryResponse> getAllByBusinessUnionId(@Min(1) Long businessUnionId);
 
-    List<BusinessCategoryResponse> searchTitle(String title);
+    BusinessCategoryResponse create(@Valid @NotNull BusinessCategoryRequest request);
 
-    BusinessCategoryResponse create(BusinessCategoryRequest request);
+    BusinessCategoryResponse update(@Min(1) Long id, @Valid @NotNull BusinessCategoryRequest request);
 
-    BusinessCategoryResponse update(Long id, BusinessCategoryRequest request);
-
-    void delete(Long id);
+    void delete(@Min(1) Long id);
 }

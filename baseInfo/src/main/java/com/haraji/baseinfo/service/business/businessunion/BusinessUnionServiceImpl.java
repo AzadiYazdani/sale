@@ -4,13 +4,21 @@ package com.haraji.baseinfo.service.business.businessunion;
 import com.haraji.baseinfo.api.businessUnion.BusinessUnionRequest;
 import com.haraji.baseinfo.api.businessUnion.BusinessUnionResponse;
 import com.haraji.baseinfo.database.entity.business.BusinessUnionEntity;
+import com.haraji.baseinfo.database.repository.business.BusinessCategoryRepository;
 import com.haraji.baseinfo.database.repository.business.BusinessUnionRepository;
-import jakarta.persistence.EntityNotFoundException;
+import com.haraji.baseinfo.database.repository.location.CityRepository;
+import com.haraji.baseinfo.mapper.business.BusinessUnionMapper;
+import com.haraji.common.constant.EntityType;
+import com.haraji.common.exception.BadRequestException;
+import com.haraji.common.exception.EntityNotFoundException;
+import com.haraji.common.logging.LogLevel;
+import com.haraji.common.logging.MethodLogging;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,86 +28,115 @@ import org.springframework.validation.annotation.Validated;
 import java.util.List;
 
 @Service
+@Slf4j
 @Validated
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@MethodLogging(level = LogLevel.DEBUG)
 public class BusinessUnionServiceImpl implements BusinessUnionService {
 
     private final BusinessUnionRepository businessUnionRepository;
+    private final BusinessCategoryRepository businessCategoryRepository;
+    private final CityRepository cityRepository;
+    private final BusinessUnionMapper businessUnionMapper;
 
     @Override
+    @Transactional(readOnly = true)
     public BusinessUnionResponse getById(@Min(1) Long id) {
-        return toResponse(findById(id));
+        BusinessUnionEntity entity = businessUnionRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(EntityType.BUSINESS_UNION, id));
+
+        return businessUnionMapper.toDtoResponse(entity);
     }
 
     @Override
-    public List<BusinessUnionResponse> getAll() {
-        return businessUnionRepository.findAll().stream().map(this::toResponse).toList();
-    }
-
-    @Override
+    @Transactional(readOnly = true)
     public Page<BusinessUnionResponse> getAllByPaging(@NotNull Pageable pageable) {
-        return businessUnionRepository.findAll(pageable).map(this::toResponse);
+        return businessUnionRepository.findAll(pageable)
+                .map(businessUnionMapper::toDtoResponse);
     }
 
     @Override
-    public List<BusinessUnionResponse> getByCityId(@Min(1) Long cityId) {
-        return businessUnionRepository.findAllByCityId(cityId).stream().map(this::toResponse).toList();
+    @Transactional(readOnly = true)
+    public List<BusinessUnionResponse> getAll() {
+        return businessUnionMapper.toDtoResponseList(businessUnionRepository.findAll());
     }
 
     @Override
-    public Page<BusinessUnionResponse> getByCityIdPaging(@Min(1) Long cityId, @NotNull Pageable pageable) {
-        return businessUnionRepository.findAllByCityId(cityId, pageable).map(this::toResponse);
-    }
-
-    @Override
+    @Transactional(readOnly = true)
     public List<BusinessUnionResponse> searchTitle(@NotBlank String title) {
-        return businessUnionRepository.findAllByTitleContainingIgnoreCase(title.trim()).stream().map(this::toResponse).toList();
+        if (title == null || title.isBlank()) {
+            throw new BadRequestException();
+        }
+
+        return businessUnionMapper.toDtoResponseList(
+                businessUnionRepository.findAllByTitleContainingIgnoreCase(title.trim())
+        );
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<BusinessUnionResponse> getAllByCityId(@Min(1) Long cityId) {
+        return businessUnionMapper.toDtoResponseList(
+                businessUnionRepository.findAllByCity_Id(cityId)
+        );
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<BusinessUnionResponse> getAllByCityIdPaging(
+            @Min(1) Long cityId,
+            @NotNull Pageable pageable
+    ) {
+        return businessUnionRepository.findAllByCity_Id(cityId, pageable)
+                .map(businessUnionMapper::toDtoResponse);
     }
 
     @Override
     @Transactional
     public BusinessUnionResponse create(@Valid @NotNull BusinessUnionRequest request) {
-        BusinessUnionEntity entity = new BusinessUnionEntity();
-        entity.setCityId(request.getCityId());
-        entity.setTitle(request.getTitle().trim());
-        entity.setBoss(request.getBoss());
-        entity.setAddress(request.getAddress());
-        entity.setTelephone(request.getTelephone());
-        return toResponse(businessUnionRepository.save(entity));
+        validateCity(request.getCityId());
+
+        BusinessUnionEntity entity = businessUnionMapper.toEntity(request);
+
+        return businessUnionMapper.toDtoResponse(
+                businessUnionRepository.save(entity)
+        );
     }
 
     @Override
     @Transactional
-    public BusinessUnionResponse update(@Min(1) Long id, @Valid @NotNull BusinessUnionRequest request) {
-        BusinessUnionEntity entity = findById(id);
-        entity.setCityId(request.getCityId());
-        entity.setTitle(request.getTitle().trim());
-        entity.setBoss(request.getBoss());
-        entity.setAddress(request.getAddress());
-        entity.setTelephone(request.getTelephone());
-        return toResponse(businessUnionRepository.save(entity));
+    public BusinessUnionResponse update(
+            @Min(1) Long id,
+            @Valid @NotNull BusinessUnionRequest request
+    ) {
+        BusinessUnionEntity entity = businessUnionRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(EntityType.BUSINESS_UNION, id));
+
+        validateCity(request.getCityId());
+
+        businessUnionMapper.updateEntity(request, entity);
+
+        return businessUnionMapper.toDtoResponse(
+                businessUnionRepository.save(entity)
+        );
     }
 
     @Override
     @Transactional
     public void delete(@Min(1) Long id) {
-        businessUnionRepository.delete(findById(id));
+        BusinessUnionEntity entity = businessUnionRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(EntityType.BUSINESS_UNION, id));
+
+        if (businessCategoryRepository.countByBusinessUnion_Id(id) > 0) {
+            throw new BadRequestException();
+        }
+
+        businessUnionRepository.delete(entity);
     }
 
-    private BusinessUnionEntity findById(Long id) {
-        return businessUnionRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("اتحادیه صنفی با شناسه " + id + " یافت نشد."));
-    }
-
-    private BusinessUnionResponse toResponse(BusinessUnionEntity entity) {
-        return BusinessUnionResponse.newInstance()
-                .setId(entity.getId())
-                .setCityId(entity.getCityId())
-                .setTitle(entity.getTitle())
-                .setBoss(entity.getBoss())
-                .setAddress(entity.getAddress())
-                .setTelephone(entity.getTelephone())
-                .build();
+    private void validateCity(Long cityId) {
+        if (!cityRepository.existsById(cityId)) {
+            throw new EntityNotFoundException(EntityType.CITY, cityId);
+        }
     }
 }

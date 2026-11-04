@@ -35,53 +35,79 @@ public class BusinessCategoryController {
     @GetMapping
     @Operation(summary = "دریافت تمام رسته‌های واحد صنفی")
     public ResponseEntity<ApiResponse<List<BusinessCategoryResponse>>> getAll() {
-        return ResponseEntity.ok(ApiResponse.success(businessCategoryService.getAll()));
+        return ResponseEntity.ok(ApiResponse.success(businessCategoryService.getAll())
+        );
     }
 
     @GetMapping("/paging")
     @Operation(summary = "دریافت رسته‌های واحد صنفی به صورت صفحه‌بندی‌شده")
     public ResponseEntity<ApiResponse<Page<BusinessCategoryResponse>>> getAllByPaging(
-            @PageableDefault(size = 20, sort = "title", direction = Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.ok(ApiResponse.success(businessCategoryService.getAllByPaging(pageable)));
+            @PageableDefault(size = 20, sort = "title", direction = Sort.Direction.ASC)
+            Pageable pageable) {
+
+        return ResponseEntity.ok(ApiResponse.success(businessCategoryService.getAllByPaging(pageable))
+        );
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "دریافت رسته واحد صنفی بر اساس شناسه")
-    public ResponseEntity<ApiResponse<BusinessCategoryResponse>> getById(@PathVariable @Min(1) Long id) {
-        return ResponseEntity.ok(ApiResponse.success(businessCategoryService.getById(id)));
+    public ResponseEntity<ApiResponse<BusinessCategoryResponse>> getById(
+            @PathVariable @Min(1) Long id) {
+
+        return ResponseEntity.ok(
+                ApiResponse.success(businessCategoryService.getById(id))
+        );
     }
 
-    @GetMapping("/parent/{parentId}")
-    @Operation(summary = "دریافت زیرمجموعه‌های یک رسته")
-    public ResponseEntity<ApiResponse<List<BusinessCategoryResponse>>> getByParentId(@PathVariable @Min(1) Long parentId) {
-        return ResponseEntity.ok(ApiResponse.success(businessCategoryService.getByParentId(parentId)));
+    @GetMapping("/union/{businessUnionId}")
+    @Operation(summary = "دریافت رسته‌های یک اتحادیه")
+    public ResponseEntity<ApiResponse<List<BusinessCategoryResponse>>> getByBusinessUnionId(
+            @PathVariable @Min(1) Long businessUnionId) {
+
+        return ResponseEntity.ok(
+                ApiResponse.success(businessCategoryService.getAllByBusinessUnionId(businessUnionId)
+                )
+        );
     }
 
     @GetMapping("/search")
     @Operation(summary = "جست‌وجوی رسته بر اساس عنوان")
-    public ResponseEntity<ApiResponse<List<BusinessCategoryResponse>>> search(@RequestParam("title") @NotBlank String title) {
-        return ResponseEntity.ok(ApiResponse.success(businessCategoryService.searchTitle(title)));
+    public ResponseEntity<ApiResponse<List<BusinessCategoryResponse>>> search(
+            @RequestParam("title") @NotBlank String title) {
+
+        return ResponseEntity.ok(ApiResponse.success(businessCategoryService.searchTitle(title))
+        );
     }
 
     @PostMapping("/add")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "ثبت رسته جدید")
-    public ResponseEntity<ApiResponse<BusinessCategoryResponse>> create(@Valid @RequestBody BusinessCategoryRequest request) {
-        return ResponseEntity.ok(ApiResponse.success(businessCategoryService.create(request)));
+    public ResponseEntity<ApiResponse<BusinessCategoryResponse>> create(
+            @Valid @RequestBody BusinessCategoryRequest request) {
+
+        return ResponseEntity.ok(ApiResponse.success(businessCategoryService.create(request))
+        );
     }
 
     @PutMapping("/update/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "ویرایش رسته")
-    public ResponseEntity<ApiResponse<BusinessCategoryResponse>> update(@PathVariable @Min(1) Long id, @Valid @RequestBody BusinessCategoryRequest request) {
-        return ResponseEntity.ok(ApiResponse.success(businessCategoryService.update(id, request)));
+    public ResponseEntity<ApiResponse<BusinessCategoryResponse>> update(
+            @PathVariable @Min(1) Long id,
+            @Valid @RequestBody BusinessCategoryRequest request) {
+
+        return ResponseEntity.ok(ApiResponse.success(businessCategoryService.update(id, request))
+        );
     }
 
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "حذف رسته")
-    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable @Min(1) Long id) {
+    public ResponseEntity<ApiResponse<Void>> delete(
+            @PathVariable @Min(1) Long id) {
+
         businessCategoryService.delete(id);
+
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 }

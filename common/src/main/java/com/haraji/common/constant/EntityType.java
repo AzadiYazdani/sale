@@ -13,6 +13,7 @@ public enum EntityType implements LocalizedValue {
     PROVINCE("Province", "استان"),
     ACTIVITY_TYPE("Activity Type", "نوع کسب‌وکار"),
     BUSINESS_UNION("Business Union", "اتحادیه صنفی"),
+    BUSINESS_CATEGORY("Business category", "رشته شغلی"),
     SALE("Sale", "حراجی");
 
     private final String englishValue;

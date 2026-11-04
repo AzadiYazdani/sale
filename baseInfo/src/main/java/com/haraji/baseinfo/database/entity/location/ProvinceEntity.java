@@ -1,3 +1,4 @@
+
 package com.haraji.baseinfo.database.entity.location;
 
 import jakarta.persistence.*;
@@ -6,7 +7,7 @@ import lombok.*;
 import java.util.List;
 
 @Entity
-@Table(schema = "sale_db",name = "base_province")
+@Table(schema = "sale_db", name = "base_province")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -17,7 +18,7 @@ public class ProvinceEntity {
     @Id
     private Long id;
 
-    @JoinColumn(name = "name")
+    @Column(nullable = false, length = 100)
     private String name;
 
     @OneToMany(mappedBy = "province", fetch = FetchType.LAZY)

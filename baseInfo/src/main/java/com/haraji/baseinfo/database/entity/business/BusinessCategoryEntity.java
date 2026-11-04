@@ -17,8 +17,12 @@ public class BusinessCategoryEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "parent_Id")
-    private Long parentId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(
+            name = "business_union_id",
+            nullable = false
+    )
+    private BusinessUnionEntity businessUnion;
 
     private String title;
 
