@@ -14,22 +14,31 @@ public interface BusinessUnionMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "city", source = "cityId")
+    @Mapping(target = "businessCategoryEntities", ignore = true)
     BusinessUnionEntity toEntity(BusinessUnionRequest request);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "city", source = "cityId")
-    void updateEntity(BusinessUnionRequest request, @MappingTarget BusinessUnionEntity entity);
+    @Mapping(target = "businessCategoryEntities", ignore = true)
+    void updateEntity(
+            BusinessUnionRequest request,
+            @MappingTarget BusinessUnionEntity entity
+    );
 
     @Mapping(target = "cityId", source = "city.id")
     BusinessUnionResponse toDtoResponse(BusinessUnionEntity entity);
 
-    List<BusinessUnionResponse> toDtoResponseList(List<BusinessUnionEntity> entities);
+    List<BusinessUnionResponse> toDtoResponseList(
+            List<BusinessUnionEntity> entities
+    );
 
     default CityEntity map(Long cityId) {
         if (cityId == null) {
             return null;
         }
 
-        return CityEntity.newInstance().setId(cityId).build();
+        return CityEntity.newInstance()
+                .setId(cityId)
+                .build();
     }
 }
