@@ -16,4 +16,6 @@ public class ActivityTypeRequest {
     @NotBlank(message = "عنوان نوع فعالیت الزامی است.")
     @Size(max = 200, message = "عنوان نوع فعالیت نباید بیشتر از ۲۰۰ کاراکتر باشد.")
     private String title;
+
+    private String description;
 }

@@ -1,4 +1,3 @@
-
 package com.haraji.baseinfo.api.businessUnion;
 
 import com.haraji.baseinfo.service.business.businessunion.BusinessUnionService;
@@ -39,26 +38,40 @@ public class BusinessUnionController {
     }
 
     @GetMapping("/paging")
-    @Operation(summary = "دریافت اتحادیه‌های صنفی به صورت صفحه‌بندی‌شده")
+    @Operation(summary = "دریافت صفحه‌بندی‌شده اتحادیه‌ها با امکان فیلتر استان، شهر و عنوان")
     public ResponseEntity<ApiResponse<Page<BusinessUnionResponse>>> getAllByPaging(
+            @RequestParam(required = false) @Min(1) Long provinceId,
+            @RequestParam(required = false) @Min(1) Long cityId,
+            @RequestParam(required = false) String title,
             @PageableDefault(size = 20, sort = "title", direction = Sort.Direction.DESC)
-            Pageable pageable) {
-        return ResponseEntity.ok(ApiResponse.success(businessUnionService.getAllByPaging(pageable)));
+            Pageable pageable
+    ) {
+        return ResponseEntity.ok(ApiResponse.success(
+                businessUnionService.getAllByFilters(
+                        provinceId,
+                        cityId,
+                        title,
+                        pageable
+                )
+        ));
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "دریافت اتحادیه صنفی بر اساس شناسه")
     public ResponseEntity<ApiResponse<BusinessUnionResponse>> getById(
-            @PathVariable @Min(1) Long id) {
+            @PathVariable @Min(1) Long id
+    ) {
         return ResponseEntity.ok(ApiResponse.success(businessUnionService.getById(id)));
     }
 
     @GetMapping("/city/{cityId}")
     @Operation(summary = "دریافت تمام اتحادیه‌های صنفی یک شهر برای کمبو")
     public ResponseEntity<ApiResponse<List<BusinessUnionResponse>>> getAllByCityId(
-            @PathVariable @Min(1) Long cityId) {
+            @PathVariable @Min(1) Long cityId
+    ) {
         return ResponseEntity.ok(ApiResponse.success(
-                businessUnionService.getAllByCityId(cityId)));
+                businessUnionService.getAllByCityId(cityId)
+        ));
     }
 
     @GetMapping("/city/{cityId}/paging")
@@ -66,24 +79,32 @@ public class BusinessUnionController {
     public ResponseEntity<ApiResponse<Page<BusinessUnionResponse>>> getAllByCityIdPaging(
             @PathVariable @Min(1) Long cityId,
             @PageableDefault(size = 20, sort = "title", direction = Sort.Direction.DESC)
-            Pageable pageable) {
+            Pageable pageable
+    ) {
         return ResponseEntity.ok(ApiResponse.success(
-                businessUnionService.getAllByCityIdPaging(cityId, pageable)));
+                businessUnionService.getAllByCityIdPaging(cityId, pageable)
+        ));
     }
 
     @GetMapping("/search")
     @Operation(summary = "جست‌وجوی اتحادیه صنفی بر اساس عنوان")
     public ResponseEntity<ApiResponse<List<BusinessUnionResponse>>> search(
-            @RequestParam("title") @NotBlank String title) {
-        return ResponseEntity.ok(ApiResponse.success(businessUnionService.searchTitle(title)));
+            @RequestParam("title") @NotBlank String title
+    ) {
+        return ResponseEntity.ok(ApiResponse.success(
+                businessUnionService.searchTitle(title)
+        ));
     }
 
     @PostMapping("/add")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "ثبت اتحادیه صنفی")
     public ResponseEntity<ApiResponse<BusinessUnionResponse>> create(
-            @Valid @RequestBody BusinessUnionRequest request) {
-        return ResponseEntity.ok(ApiResponse.success(businessUnionService.create(request)));
+            @Valid @RequestBody BusinessUnionRequest request
+    ) {
+        return ResponseEntity.ok(ApiResponse.success(
+                businessUnionService.create(request)
+        ));
     }
 
     @PutMapping("/update/{id}")
@@ -91,14 +112,19 @@ public class BusinessUnionController {
     @Operation(summary = "ویرایش اتحادیه صنفی")
     public ResponseEntity<ApiResponse<BusinessUnionResponse>> update(
             @PathVariable @Min(1) Long id,
-            @Valid @RequestBody BusinessUnionRequest request) {
-        return ResponseEntity.ok(ApiResponse.success(businessUnionService.update(id, request)));
+            @Valid @RequestBody BusinessUnionRequest request
+    ) {
+        return ResponseEntity.ok(ApiResponse.success(
+                businessUnionService.update(id, request)
+        ));
     }
 
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "حذف اتحادیه صنفی")
-    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable @Min(1) Long id) {
+    public ResponseEntity<ApiResponse<Void>> delete(
+            @PathVariable @Min(1) Long id
+    ) {
         businessUnionService.delete(id);
         return ResponseEntity.ok(ApiResponse.success(null));
     }

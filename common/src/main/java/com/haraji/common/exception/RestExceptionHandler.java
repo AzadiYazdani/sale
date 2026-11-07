@@ -135,18 +135,52 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         );
     }
 
-    @ExceptionHandler(BindException.class)
-    public ResponseEntity<ErrorResponse> handleBindException(
-            BindException ex,
-            HttpServletRequest request) {
+    @Override
+    protected ResponseEntity<Object> handleExceptionInternal(
+            Exception ex,
+            Object body,
+            HttpHeaders headers,
+            HttpStatusCode statusCode,
+            WebRequest request) {
 
-        return buildErrorResponse(
-                HttpStatus.BAD_REQUEST,
-                ErrorCode.BAD_REQUEST,
-                "violation.invalid.input",
+        HttpStatus status = HttpStatus.valueOf(statusCode.value());
+
+        String messageKey;
+        ErrorCode errorCode;
+
+        if (ex instanceof BindException ||
+                ex instanceof MethodArgumentNotValidException) {
+
+            status = HttpStatus.BAD_REQUEST;
+            messageKey = "violation.invalid.input";
+            errorCode = ErrorCode.BAD_REQUEST;
+
+        } else if (ex instanceof HttpMessageNotReadableException) {
+
+            status = HttpStatus.BAD_REQUEST;
+            messageKey = "invalid.request.format";
+            errorCode = ErrorCode.INVALID_FORMAT;
+
+        } else {
+            return super.handleExceptionInternal(
+                    ex, body, headers, statusCode, request
+            );
+        }
+
+        HttpServletRequest servletRequest =
+                ((ServletWebRequest) request).getRequest();
+
+        ResponseEntity<ErrorResponse> response = buildErrorResponse(
+                status,
+                errorCode,
+                messageKey,
                 null,
-                request
+                servletRequest
         );
+
+        return ResponseEntity.status(status)
+                .headers(headers)
+                .body(response.getBody());
     }
 
     private ResponseEntity<Object> buildValidationResponse(

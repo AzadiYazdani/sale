@@ -1,4 +1,3 @@
-
 package com.haraji.baseinfo.service.business.businessunion;
 
 import com.haraji.baseinfo.api.businessUnion.BusinessUnionRequest;
@@ -53,6 +52,26 @@ public class BusinessUnionServiceImpl implements BusinessUnionService {
     public Page<BusinessUnionResponse> getAllByPaging(@NotNull Pageable pageable) {
         return businessUnionRepository.findAll(pageable)
                 .map(businessUnionMapper::toDtoResponse);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<BusinessUnionResponse> getAllByFilters(
+            @Min(1) Long provinceId,
+            @Min(1) Long cityId,
+            String title,
+            @NotNull Pageable pageable
+    ) {
+        String searchTitle = title == null || title.isBlank()
+                ? null
+                : title.trim();
+
+        return businessUnionRepository.findAllByFilters(
+                provinceId,
+                cityId,
+                searchTitle,
+                pageable
+        ).map(businessUnionMapper::toDtoResponse);
     }
 
     @Override
