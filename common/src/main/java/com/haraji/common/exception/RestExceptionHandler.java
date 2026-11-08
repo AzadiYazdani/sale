@@ -1,60 +1,235 @@
+
 package com.haraji.common.exception;
 
-
-
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
+import com.haraji.common.constant.ErrorCode;
+import com.haraji.common.constant.Language;
+import com.haraji.common.dto.ErrorResponse;
+import com.haraji.common.util.MessageArgumentConverter;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolationException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
-@Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
+@RequiredArgsConstructor
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
+    private final MessageSource messageSource;
 
     @ExceptionHandler(BaseException.class)
-    public ResponseEntity<Object> handleBusinessException(
-            BaseException ex, WebRequest request) {
+    public ResponseEntity<ErrorResponse> handleBaseException(
+            BaseException ex,
+            HttpServletRequest request) {
 
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("message", ex.getMessage());
-
-        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+        return buildErrorResponse(
+                ex.getStatus(),
+                ex.getErrorCode(),
+                ex.getMessageKey(),
+                ex.getArgs(),
+                request
+        );
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalArgument(
+            IllegalArgumentException ex,
+            HttpServletRequest request) {
+
+        return buildErrorResponse(
+                HttpStatus.BAD_REQUEST,
+                ErrorCode.BAD_REQUEST,
+                "bad.request",
+                null,
+                request
+        );
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDenied(
+            AccessDeniedException ex,
+            HttpServletRequest request) {
+
+        return buildErrorResponse(
+                HttpStatus.FORBIDDEN,
+                ErrorCode.ACCESS_DENIED,
+                "access.denied",
+                null,
+                request
+        );
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorResponse> handleConstraintViolation(
+            ConstraintViolationException ex,
+            HttpServletRequest request) {
+
+        return buildErrorResponse(
+                HttpStatus.BAD_REQUEST,
+                ErrorCode.BAD_REQUEST,
+                "violation.invalid.input",
+                null,
+                request
+        );
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleException(
+            Exception ex,
+            HttpServletRequest request) {
+
+        logger.error("Unexpected application error", ex);
+
+        return buildErrorResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                ErrorCode.INTERNAL_SERVER_ERROR,
+                "internal.server.error",
+                null,
+                request
+        );
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(
+            HttpMessageNotReadableException ex,
+            HttpHeaders headers,
+            HttpStatusCode status,
+            WebRequest request) {
+
+        return buildValidationResponse(
+                HttpStatus.BAD_REQUEST,
+                ErrorCode.INVALID_FORMAT,
+                "invalid.request.format",
+                headers,
+                request
+        );
+    }
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
-            MethodArgumentNotValidException ex, HttpHeaders headers,
-            HttpStatus status, WebRequest request) {
+            MethodArgumentNotValidException ex,
+            HttpHeaders headers,
+            HttpStatusCode status,
+            WebRequest request) {
 
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDate.now());
-        body.put("status", status.value());
+        return buildValidationResponse(
+                HttpStatus.BAD_REQUEST,
+                ErrorCode.BAD_REQUEST,
+                "violation.invalid.input",
+                headers,
+                request
+        );
+    }
 
-        List<String> errors = ex.getBindingResult()
-                .getFieldErrors()
-                .stream()
-                .map(x -> x.getDefaultMessage())
-                .collect(Collectors.toList());
+    @Override
+    protected ResponseEntity<Object> handleExceptionInternal(
+            Exception ex,
+            Object body,
+            HttpHeaders headers,
+            HttpStatusCode statusCode,
+            WebRequest request) {
 
-        body.put("errors", errors);
+        HttpStatus status = HttpStatus.valueOf(statusCode.value());
 
-        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+        String messageKey;
+        ErrorCode errorCode;
+
+        if (ex instanceof BindException ||
+                ex instanceof MethodArgumentNotValidException) {
+
+            status = HttpStatus.BAD_REQUEST;
+            messageKey = "violation.invalid.input";
+            errorCode = ErrorCode.BAD_REQUEST;
+
+        } else if (ex instanceof HttpMessageNotReadableException) {
+
+            status = HttpStatus.BAD_REQUEST;
+            messageKey = "invalid.request.format";
+            errorCode = ErrorCode.INVALID_FORMAT;
+
+        } else {
+            return super.handleExceptionInternal(
+                    ex, body, headers, statusCode, request
+            );
+        }
+
+        HttpServletRequest servletRequest =
+                ((ServletWebRequest) request).getRequest();
+
+        ResponseEntity<ErrorResponse> response = buildErrorResponse(
+                status,
+                errorCode,
+                messageKey,
+                null,
+                servletRequest
+        );
+
+        return ResponseEntity.status(status)
+                .headers(headers)
+                .body(response.getBody());
+    }
+
+    private ResponseEntity<Object> buildValidationResponse(
+            HttpStatus status,
+            ErrorCode errorCode,
+            String messageKey,
+            HttpHeaders headers,
+            WebRequest request) {
+
+        HttpServletRequest servletRequest =
+                ((ServletWebRequest) request).getRequest();
+
+        ResponseEntity<ErrorResponse> response = buildErrorResponse(
+                status,
+                errorCode,
+                messageKey,
+                null,
+                servletRequest
+        );
+
+        return ResponseEntity.status(status)
+                .headers(headers)
+                .body(response.getBody());
+    }
+
+    private ResponseEntity<ErrorResponse> buildErrorResponse(
+            HttpStatus status,
+            ErrorCode errorCode,
+            String messageKey,
+            Object[] args,
+            HttpServletRequest request) {
+
+        ErrorResponse response = ErrorResponse.builder()
+                .status(status.value())
+                .errorCode(errorCode.name())
+                .message(messageSource.getMessage(
+                        messageKey,
+                        MessageArgumentConverter.convert(args, Language.ENGLISH),
+                        AppLocale.ENGLISH
+                ))
+                .localizedMessage(messageSource.getMessage(
+                        messageKey,
+                        MessageArgumentConverter.convert(args, Language.PERSIAN),
+                        AppLocale.PERSIAN
+                ))
+                .path(request.getRequestURI())
+                .timestamp(LocalDateTime.now())
+                .build();
+
+        return ResponseEntity.status(status).body(response);
     }
 }
-

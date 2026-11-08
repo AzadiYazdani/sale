@@ -1,11 +1,11 @@
 package com.haraji.baseinfo.database.entity.business;
 
+import jakarta.persistence.*;
 import lombok.*;
 
-import javax.persistence.*;
-
 @Entity
-@Table(schema = "sale_db", name = "activity_type")
+// نوع فعالیت کسب و کار
+@Table(schema = "sale_db", name = "base_activity_type")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -15,8 +15,10 @@ public class ActivityTypeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     private String title;
+
+    private String description;
 
 }

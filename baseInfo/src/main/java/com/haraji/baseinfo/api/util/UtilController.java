@@ -1,15 +1,13 @@
 package com.haraji.baseinfo.api.util;
 
-
-import com.haraji.baseinfo.api.location.state.StateResponseDto;
-import com.haraji.common.dto.ResponseDto;
-import com.haraji.common.util.DateUtility;
-import java.time.LocalDate;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import com.haraji.common.dto.ApiResponse;
+import com.haraji.common.exception.InvalidFormatException;
+import com.haraji.common.util.DateUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.NotBlank;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -18,26 +16,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
+import java.time.LocalDate;
 
 @RestController
-@Api(value = "Util operations")
+@Tag(name = "Util operations")
 @RequestMapping("/util")
 @Slf4j
 @Validated
 public class UtilController {
 
-
-    @GetMapping(value = "/date")
-    @ApiOperation(value = "تبدیل زمان", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseDto<LocalDate>> getAllStates(@RequestParam @Valid @ApiParam(value = "تاریخ", example = "1/1/1358", required = true) String date ) {
+    @GetMapping(value = "/date", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "تبدیل زمان")
+    public ResponseEntity<ApiResponse<LocalDate>> getDate(
+            @RequestParam @NotBlank @Parameter(description = "تاریخ", example = "1358/01/01", required = true)
+            String date) {
+        log.debug("Received date={}", date);
         try {
-            LocalDate localdate = DateUtility.getLocalDateFromString(date);
-            return new ResponseEntity<ResponseDto<LocalDate>>(ResponseDto.success(localdate), HttpStatus.OK);
-
-        }catch (Exception e){
-            return new ResponseEntity<ResponseDto<LocalDate>>(ResponseDto.success(null), HttpStatus.BAD_REQUEST);
+            LocalDate response = DateUtil.getLocalDateFromString(date);
+            return ResponseEntity.ok(ApiResponse.success(response));
+        } catch (Exception ex) {
+            throw new InvalidFormatException();
         }
     }
-
 }

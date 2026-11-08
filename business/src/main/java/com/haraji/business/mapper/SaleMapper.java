@@ -1,10 +1,10 @@
 package com.haraji.business.mapper;
 
 
+import com.haraji.business.api.SaleResponseDto;
 import com.haraji.business.database.entity.SaleViewEntity;
 import com.haraji.business.model.SaleView;
 import com.haraji.common.mapper.StructMapper;
-import com.haraji.business.api.SaleResponseDto;
 import org.mapstruct.Mapper;
 
 
@@ -14,7 +14,7 @@ public abstract class SaleMapper extends StructMapper<SaleView, SaleViewEntity, 
 
 //    public abstract SaleView toModel(SaleViewEntity entity);
 //
-//    public abstract List<SaleView> toModelList(List<SaleViewEntity> stateEntityList);
+//    public abstract List<SaleView> toModelList(List<SaleViewEntity> provinceEntityList);
 //
 //    public abstract SaleViewResponseDto toDtoResponse(SaleView entity);
 //

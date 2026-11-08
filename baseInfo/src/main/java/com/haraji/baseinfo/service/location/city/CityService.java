@@ -1,18 +1,14 @@
 package com.haraji.baseinfo.service.location.city;
 
+import com.haraji.baseinfo.api.location.CityResponse;
+import jakarta.validation.constraints.Min;
+import org.springframework.validation.annotation.Validated;
 
-import com.haraji.baseinfo.model.location.City;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import java.util.List;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-
+@Validated
 public interface CityService {
 
-    City getById(@Min(1) int id);
-
-    Page<City> getAllByPaging(@Valid @NotNull Pageable pageable);
+    List<CityResponse> getByProvinceId(@Min(1) Long provinceId);
 
 }

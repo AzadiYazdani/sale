@@ -1,13 +1,15 @@
 package com.haraji.baseinfo.database.entity.location;
 
+import jakarta.persistence.*;
 import lombok.*;
 
-import javax.persistence.*;
 import java.io.Serializable;
 
-
 @Entity
-@Table(schema = "sale_db", name = "city")
+@Table(
+        schema = "sale_db",
+        name = "base_city"
+)
 @Getter
 @Setter
 @AllArgsConstructor
@@ -17,12 +19,16 @@ public class CityEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
 
-    @ManyToOne
-    @JoinColumn(name = "fk_state")
-    private StateEntity state;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(
+            name = "province_id",
+            nullable = false
+    )
+    private ProvinceEntity province;
 
-    private String title;
+    @Column(nullable = false, length = 100)
+    private String name;
 }

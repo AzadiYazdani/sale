@@ -1,14 +1,13 @@
 package com.haraji.business.database.entity;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Immutable;
 import org.joda.time.DateTime;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
 
 
 @Entity
@@ -21,9 +20,9 @@ public class SaleViewEntity {
 
     @Id
     @Column()
-    private long saleId;
+    private Long saleId;
 
-    private int businessId;
+    private Long businessId;
 
     private String business_title_per;
 
@@ -62,5 +61,7 @@ public class SaleViewEntity {
     private String description;
 
     private boolean active;
+
+    private Boolean isEdit;
 
 }

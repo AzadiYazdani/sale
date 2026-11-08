@@ -23,8 +23,8 @@ public class LocationControllerTest {
     MockMvc mockMvc;
 
     @Test
-    public void getAllStates_Correct() throws Exception {
-        mockMvc.perform(get("/location/states")
+    public void getAllProvinces_Correct() throws Exception {
+        mockMvc.perform(get("/location/provinces")
                         .content(asJsonString(getPageRequestDto()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -33,7 +33,7 @@ public class LocationControllerTest {
 
     @Test
     public void getAllByPaging_Correct() throws Exception {
-        mockMvc.perform(get("/location/states")
+        mockMvc.perform(get("/location/provinces")
                         .content(asJsonString(getPageRequestDto()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -55,7 +55,7 @@ public class LocationControllerTest {
 
     @Test
     public void getById() throws Exception {
-        mockMvc.perform(get("/states/1")
+        mockMvc.perform(get("/provinces/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());

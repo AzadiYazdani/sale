@@ -14,9 +14,9 @@ import org.joda.time.DateTime;
 //@Builder(setterPrefix = "set", toBuilder = true, builderMethodName = "newInstance")
 public class SaleView {
 
-    private long idOff;
+    private Long idOff;
 
-    private int id_business;
+    private Long id_business;
 
     private String business_title_per;
 

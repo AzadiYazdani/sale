@@ -1,0 +1,16 @@
+package com.haraji.security.service.token;
+
+import com.haraji.security.database.entity.RefreshTokenEntity;
+import com.haraji.security.database.entity.UserEntity;
+
+public interface RefreshTokenService {
+
+    String createRefreshToken(UserEntity user);
+
+    RefreshTokenEntity validateRefreshToken(String token);
+
+    void revoke(String token);
+
+    void revokeAll(Long userId);
+
+}
