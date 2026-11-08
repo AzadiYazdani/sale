@@ -1,8 +1,10 @@
 package com.haraji.security.database.entity;
 
 import com.haraji.security.constant.IdentifierType;
+import com.haraji.baseinfo.database.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+
 
 @Entity
 @Table(schema = "sale_db",

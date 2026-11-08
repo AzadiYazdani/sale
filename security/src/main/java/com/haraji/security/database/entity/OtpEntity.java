@@ -1,6 +1,7 @@
 package com.haraji.security.database.entity;
 
 import com.haraji.security.constant.OtpPurpose;
+import com.haraji.baseinfo.database.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

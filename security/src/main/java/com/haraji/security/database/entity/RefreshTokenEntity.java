@@ -1,5 +1,6 @@
 package com.haraji.security.database.entity;
 
+import com.haraji.baseinfo.database.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

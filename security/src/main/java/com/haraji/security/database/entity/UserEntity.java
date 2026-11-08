@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import com.haraji.baseinfo.database.entity.BaseEntity;
 
 @Entity
 @Table(schema = "sale_db", name = "sec_user")

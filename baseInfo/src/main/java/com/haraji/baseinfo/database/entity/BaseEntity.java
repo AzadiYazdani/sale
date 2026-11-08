@@ -1,4 +1,4 @@
-package com.haraji.security.database.entity;
+package com.haraji.baseinfo.database.entity;
 
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
